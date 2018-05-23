@@ -86,8 +86,5 @@
     "uglifyify": "^3.0.1",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^1.1.2"
-  },
-  "dependencies_temp_disabled": {
-    "an-video-viewability": "^1.9.0"
   }
 }
