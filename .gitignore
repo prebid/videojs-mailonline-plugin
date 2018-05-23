@@ -1,0 +1,9 @@
+.DS_Store
+node_modules/
+bower_components/
+dev/
+.idea/
+coverage/
+*.swp
+*.swo
+.publish/
