@@ -1,8 +1,8 @@
 /**
- * Appnexus Viewability Wrapper
+ * Viewability Wrapper
  */
 
-//var ANVideoViewabilityTracker = require("an-video-viewability");//appnexus viewability library
+//var ANVideoViewabilityTracker = require("an-video-viewability");//viewability library
 var ANVideoViewabilityTracker = null;
 var logger = require("./consoleLogger");
 var debug = function (message) {

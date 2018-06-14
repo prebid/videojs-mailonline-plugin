@@ -55,7 +55,7 @@ module.exports = function VASTPlugin(options) {
     // 4 - error, warn, info, log, debug
     verbosity: 0,
     
-    // APN options
+    // plugin options
     playsInBreak: false,
     skipText: 'Skip in %%TIME%% seconds',
     skipButtonText: 'Skip ad',
@@ -368,11 +368,11 @@ module.exports = function VASTPlugin(options) {
     	if (window._molSettings.playsInBreak) {
     		player.off('timeupdate', updateTimeControls);
     		if (window._molSettings.timeOffset) {
-				player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = 'block';
-				var apnTimeDisplay = document.getElementById('apn_time_display');
-				if (apnTimeDisplay) {
-					apnTimeDisplay.style.display = 'none';
-				}
+          player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = 'block';
+          var bcTimeDisplay = document.getElementById('bc_time_display');
+          if (bcTimeDisplay) {
+            bcTimeDisplay.style.display = 'none';
+          }
     		}
     	}
       player.controlBar.removeChild('AdsLabel');
@@ -388,32 +388,32 @@ module.exports = function VASTPlugin(options) {
     		return str;
     	};
     	
-		if (window._molSettings.breakDuration) {
-			if (player.duration() != window._molSettings.breakDuration) {
-				if (player.duration()) {
-					window._molSettings.realVideoDuration = player.duration();
-				}
-				player.duration(window._molSettings.breakDuration);
-			}
-		}
-		if (window._molSettings.timeOffset) {
-			var apnTimeDisplay = document.getElementById('apn_time_display');
-			if (!apnTimeDisplay) {
-				apnTimeDisplay = document.createElement('div');
-				player.controlBar.getChild('currentTimeDisplay').el_.appendChild(apnTimeDisplay);
-				apnTimeDisplay.id = 'apn_time_display';
-				apnTimeDisplay.class = 'vjs-current-time-display';
-				apnTimeDisplay['aria-live'] = 'off';
-				apnTimeDisplay.innerHTML = '<span class="vjs-control-text"></span>0:00';
-				player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = 'none';
-			}
-			else {
-				player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = 'none';
-				apnTimeDisplay.style.display = 'block';
-			}
-			var time = player.currentTime() + window._molSettings.timeOffset;
-			apnTimeDisplay.childNodes[1].nodeValue = convertTimeToStr(time);
-		}
+      if (window._molSettings.breakDuration) {
+        if (player.duration() != window._molSettings.breakDuration) {
+          if (player.duration()) {
+            window._molSettings.realVideoDuration = player.duration();
+          }
+          player.duration(window._molSettings.breakDuration);
+        }
+      }
+      if (window._molSettings.timeOffset) {
+        var bcTimeDisplay = document.getElementById('bc_time_display');
+        if (!bcTimeDisplay) {
+          bcTimeDisplay = document.createElement('div');
+          player.controlBar.getChild('currentTimeDisplay').el_.appendChild(bcTimeDisplay);
+          bcTimeDisplay.id = 'bc_time_display';
+          bcTimeDisplay.class = 'vjs-current-time-display';
+          bcTimeDisplay['aria-live'] = 'off';
+          bcTimeDisplay.innerHTML = '<span class="vjs-control-text"></span>0:00';
+          player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = 'none';
+        }
+        else {
+          player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = 'none';
+          bcTimeDisplay.style.display = 'block';
+        }
+        var time = player.currentTime() + window._molSettings.timeOffset;
+        bcTimeDisplay.childNodes[1].nodeValue = convertTimeToStr(time);
+      }
     }
 
     function preventManualProgress() {

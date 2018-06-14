@@ -34,7 +34,7 @@ var isProduction = config.env === 'production';
 
 var pkg = require('./../package.json');
 var versionText = "v" + pkg.version;
-var licenseHeaders = fs.readFileSync('license-apn-mol.txt');
+var licenseHeaders = fs.readFileSync('license-bc-mol.txt');
 var curDateObj = new Date();
 var copyrightText = "(c)" + curDateObj.getUTCFullYear() + " AppNexus, Inc.";
 var bannerText = "/*! " + copyrightText + " " + versionText + '\n' + licenseHeaders + "*/\n";
@@ -160,7 +160,7 @@ gulp.task('build-styles', function () {
       .on('error', sass.logError))
     .pipe(sourcemaps.write())
     .pipe(rename(function(path) {
-    	path.basename = 'apn_vpaid_vast_mo';
+    	path.basename = 'bc_vpaid_vast_mo';
     }))
     .pipe(gulp.dest(destPath))
     .pipe(gulpif(isProduction, buildProdCss()))

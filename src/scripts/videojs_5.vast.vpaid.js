@@ -14,7 +14,7 @@ window._molSettings = null;
 require('./plugin/components/ads-label_5');
 require('./plugin/components/black-poster_5');
 
-console.log('AppNexus MailOnline plugin version 1.1.25');
+console.log('Prebid MailOnline plugin version 1.1.25');
 
 var videoJsVAST = require('./plugin/videojs.vast.vpaid');
 

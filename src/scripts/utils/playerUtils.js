@@ -432,7 +432,7 @@ playerUtils.once = function once(player, events, handler) {
   });
 };
 
-//APN utils
+//plugin utils
 playerUtils.showBigPlayButton = function(player, show) {
 	var button = player.bigPlayButton.el_;
 	if (button) {

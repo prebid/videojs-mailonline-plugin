@@ -45,7 +45,7 @@ function VPAIDIntegrator(player, settings) {
 
   function createVPAIDContainerEl() {
     var containerEl = document.createElement('div');
-    containerEl.id = 'APN-VPAID-container';
+    containerEl.id = 'BC-VPAID-container';
     dom.addClass(containerEl, 'VPAID-container');
     player.el().insertBefore(containerEl, player.controlBar.el());
     return containerEl;
@@ -129,7 +129,7 @@ VPAIDIntegrator.prototype.playAd = function playVPaidAd(vastResponse, callback) 
 
   function removeAdUnit() {
     if (tech) {
-    	console.log('[APN] VPAIDIntegrator->Calling unloadAdUnit (implicitly invokes stopAd and unsubscribes VPAID events)');
+      console.log('[BC-MOL] VPAIDIntegrator->Calling unloadAdUnit (implicitly invokes stopAd and unsubscribes VPAID events)');
       tech.unloadAdUnit();
     }
     dom.removeClass(player.el(), 'vjs-vpaid-ad');
@@ -361,25 +361,25 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
 			return str;
 		};
 		
-		var apnTimeDisplay = document.getElementById('apn_time_display');
-		if (!apnTimeDisplay) {
-			apnTimeDisplay = document.createElement('div');
-			player.controlBar.getChild('currentTimeDisplay').el_.appendChild(apnTimeDisplay);
-			apnTimeDisplay.id = 'apn_time_display';
-			apnTimeDisplay.class = 'vjs-current-time-display';
-			apnTimeDisplay['aria-live'] = 'off';
-			apnTimeDisplay.innerHTML = '<span class="vjs-control-text"></span>0:00';
+		var bcTimeDisplay = document.getElementById('bc_time_display');
+		if (!bcTimeDisplay) {
+			bcTimeDisplay = document.createElement('div');
+			player.controlBar.getChild('currentTimeDisplay').el_.appendChild(bcTimeDisplay);
+			bcTimeDisplay.id = 'bc_time_display';
+			bcTimeDisplay.class = 'vjs-current-time-display';
+			bcTimeDisplay['aria-live'] = 'off';
+			bcTimeDisplay.innerHTML = '<span class="vjs-control-text"></span>0:00';
 			player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = 'none';
 		}
 		else {
 			player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = 'none';
-			apnTimeDisplay.style.display = 'block';
+			bcTimeDisplay.style.display = 'block';
 		}
 		adUnit.getAdRemainingTime(function(that, time) {
 			if (time >= 0) {
 				var curTime = player.duration() - time;
 				if (curTime >= 0) {
-					apnTimeDisplay.childNodes[1].nodeValue = convertTimeToStr(curTime);
+					bcTimeDisplay.childNodes[1].nodeValue = convertTimeToStr(curTime);
 				}
 			}
 		});
@@ -547,7 +547,6 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
     		window.open(clickThruUrl, '_blank');
     	}
     }
-    //addClickThroughDivBlocker('https://www.appnexus.com/en');
     
     // VIDLA-2269 (Ad does not pause when browsing out to a click url from a vpaid ad)
     adUnit.pauseAd(utilities.noop);
@@ -1047,9 +1046,9 @@ VPAIDIntegrator.prototype._finishPlaying = function (adUnit, vastResponse, next)
 			if (that.timeUpdateTimer) {
 				clearInterval(that.timeUpdateTimer);
 				that.timeUpdateTimer = null;
-				var apnTimeDisplay = document.getElementById('apn_time_display');
-				if (apnTimeDisplay) {
-					player.controlBar.getChild('currentTimeDisplay').el_.removeChild(apnTimeDisplay);
+				var bcTimeDisplay = document.getElementById('bc_time_display');
+				if (bcTimeDisplay) {
+					player.controlBar.getChild('currentTimeDisplay').el_.removeChild(bcTimeDisplay);
 				}
 				player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = '';
 			}
