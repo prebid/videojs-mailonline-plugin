@@ -27,6 +27,7 @@ describe("VPAIDIntegrator", function () {
 
     this.resizeAd = sinon.spy();
     this.skipAd = sinon.spy();
+    this.stopAd = sinon.spy();
     this.setVolume = function(vol) {
       this.volume = vol;
     };
