@@ -1,4 +1,4 @@
-# appnexus/videojs-vast-vpaid plugin
+# videojs-vast-vpaid plugin
 
 This plugin is used to render video ads inside of a videojs player.  It originated from the MailOnline/videojs-vast-vpaid plugin (version 0.0.0 dated Sep 28, 2016) which was created to allow videojs to monetise its videos. This plugin implementation includes some modifications whose purpose is to enhance and extend video ad playback behavior.
 
@@ -41,7 +41,7 @@ To integrate the plugin with videoJs you need to:
 **3- After adding videoJs, add the plugin script stylesheet**
 ```html
 <!-- Common -->
-<link href="/path/to/apn_vpaid_vast_mo.css" rel="stylesheet">
+<link href="/path/to/bc_vpaid_vast_mo.css" rel="stylesheet">
 ```
 and the videojs version specific plugin
 ```html

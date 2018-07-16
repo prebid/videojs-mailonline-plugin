@@ -4,6 +4,7 @@ var TrackingEvent = require('./TrackingEvent');
 var MediaFile = require('./MediaFile');
 var VideoClicks = require('./VideoClicks');
 var InteractiveCreativeFile = require('./InteractiveCreativeFile');
+var Icon = require('./Icon');
 
 var utilities = require('../../utils/utilityFunctions');
 var parsers = require('./parsers');
@@ -60,6 +61,10 @@ function Linear(linearJTree) {
 	  }
   }
 
+  if (linearJTree.icons) {
+    this.icons = parseIcons(linearJTree.icons && linearJTree.icons.icon);
+  }
+
   /*** Local functions ***/
   function parseTrackingEvents(trackingEvents, duration) {
     var trackings = [];
@@ -82,6 +87,18 @@ function Linear(linearJTree) {
       });
     }
     return mediaFiles;
+  }
+
+  function parseIcons(iconsJxonTree) {
+    var icons = [];
+    if (utilities.isDefined(iconsJxonTree)) {
+      iconsJxonTree = utilities.isArray(iconsJxonTree) ? iconsJxonTree : [iconsJxonTree];
+
+      iconsJxonTree.forEach(function (iconData) {
+        icons.push(new Icon(iconData));
+      });
+    }
+    return icons;
   }
 }
 

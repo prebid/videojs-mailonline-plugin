@@ -6,6 +6,7 @@ var vastUtil = require('../ads/vast/vastUtil');
 
 var VASTIntegrator = require('../ads/vast/VASTIntegrator');
 var VPAIDIntegrator = require('../ads/vpaid/VPAIDIntegrator');
+var IconIntegrator = require('../ads/icon/IconIntegrator');
 
 var async = require('../utils/async');
 var dom = require('../utils/dom');
@@ -18,8 +19,9 @@ var logger = require ('../utils/consoleLogger');
 module.exports = function VASTPlugin(options) {
   var snapshot;
   var player = this;
-  var vast = new VASTClient();
+  var vast = new VASTClient({wrapperLimit: options.wrapperLimit});
   var adsCanceled = false;
+  var playlistNextButton;
   var defaultOpts = {
     // maximum amount of time in ms to wait to receive `adsready` from the ad
     // implementation after play has been requested. Ad implementations are
@@ -352,6 +354,8 @@ module.exports = function VASTPlugin(options) {
     player.vast.adUnit = adIntegrator.playAd(vastResponse, callback);
     player.vast.VPAID = isAdVPAID;
 
+    var adIconIntegrator;
+
     /*** Local functions ****/
     function addAdsLabel() {
     	if (window._molSettings.playsInBreak) {
@@ -362,13 +366,23 @@ module.exports = function VASTPlugin(options) {
       }
 
       player.controlBar.addChild('AdsLabel');
+      if (vastResponse.icons && vastResponse.icons.length > 0) {
+        adIconIntegrator = new IconIntegrator(player);
+        adIconIntegrator.renderIcons(vastResponse.icons, callback);
+      }
+
+      var elems = document.getElementsByClassName('vjs-next-button');
+      if (elems && elems.length > 0) {
+        playlistNextButton = elems[0];
+        playlistNextButton.style.display = 'none';
+      }
     }
 
     function removeAdsLabel() {
     	if (window._molSettings.playsInBreak) {
     		player.off('timeupdate', updateTimeControls);
     		if (window._molSettings.timeOffset) {
-          player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = 'block';
+          showOriginalTimeDisplay(true);
           var bcTimeDisplay = document.getElementById('bc_time_display');
           if (bcTimeDisplay) {
             bcTimeDisplay.style.display = 'none';
@@ -376,7 +390,20 @@ module.exports = function VASTPlugin(options) {
     		}
     	}
       player.controlBar.removeChild('AdsLabel');
+      if (playlistNextButton) {
+        playlistNextButton.style.display = '';
+        playlistNextButton = null;
+      }
       adFinished = true;
+    }
+
+    function showOriginalTimeDisplay(show) {
+      var children = player.controlBar.getChild('currentTimeDisplay').el_.children;
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].id != 'bc_time_display') {
+          children[i].style.display = show ? '' : 'none';
+        }
+      }
     }
 
     function updateTimeControls() {
@@ -405,10 +432,10 @@ module.exports = function VASTPlugin(options) {
           bcTimeDisplay.class = 'vjs-current-time-display';
           bcTimeDisplay['aria-live'] = 'off';
           bcTimeDisplay.innerHTML = '<span class="vjs-control-text"></span>0:00';
-          player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = 'none';
+          showOriginalTimeDisplay(false);
         }
         else {
-          player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = 'none';
+          showOriginalTimeDisplay(false);
           bcTimeDisplay.style.display = 'block';
         }
         var time = player.currentTime() + window._molSettings.timeOffset;

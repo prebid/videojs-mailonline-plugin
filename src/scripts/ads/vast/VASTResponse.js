@@ -28,6 +28,7 @@ function VASTResponse() {
   this.adTitle = '';
   this.duration = undefined;
   this.skipoffset = undefined;
+  this.icons = [];
 }
 
 VASTResponse.prototype.addAd = function (ad) {
@@ -133,6 +134,10 @@ VASTResponse.prototype._addAdParameters = function (adParameters) {
   }
 };
 
+VASTResponse.prototype._addIcons = function (icons) {
+  utilities.isArray(icons) && appendToArray(this.icons, icons);
+};
+
 VASTResponse.prototype._addLinear = function (linear) {
   if (linear instanceof Linear) {
     this._addDuration(linear.duration);
@@ -141,6 +146,7 @@ VASTResponse.prototype._addLinear = function (linear) {
     this._addMediaFiles(linear.mediaFiles);
     this._addSkipoffset(linear.skipoffset);
     this._addAdParameters(linear.adParameters);
+    this._addIcons(linear.icons);
     this._linearAdded = true;
   }
 };
@@ -174,6 +180,7 @@ VASTResponse.prototype._addWrapper = function (wrapper) {
         that._addVideoClicks(linear.videoClicks);
         that.clickThrough = undefined;//We ensure that no clickThrough has been added
         that._addTrackingEvents(linear.trackingEvents);
+        that._addIcons(linear.icons);
       }
     });
   }
