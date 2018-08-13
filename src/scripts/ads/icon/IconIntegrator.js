@@ -190,7 +190,8 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
 
     if (icon.icon.iconClickThrough) {
       icon.div.style.cursor = "pointer";
-      icon.div.addEventListener('click', handleClick(icon));
+      icon.clickHandler = handleClick(icon);
+      icon.div.addEventListener('click', icon.clickHandler);
     }
 
     startIcon(icon, yPosition);
@@ -219,7 +220,7 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
                 else {
                   ic.div.style.bottom = (ic.origY + cbHeight) + 'px';
                 }
-                adgustIconsPosition(ic, cbHeight, that, 1);                  
+                adjustIconsPosition(ic, cbHeight, that, 1);                  
               }
             }
             else {
@@ -237,7 +238,7 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
   }
 
   /**** local functions ******/
-  function adgustIconsPosition(ic, cbHeight, that, level) {
+  function adjustIconsPosition(ic, cbHeight, that, level) {
     for (var i = 0; i < that.icons.length; i++) {
       var icon = that.icons[i];
       if (icon.div.style.display === 'block' && icon.div != ic.div) {
@@ -255,7 +256,7 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
           // protection against infinite recursive
           level++;
           if (level < 5) {
-            adgustIconsPosition(icon, cbHeight, that, level);    
+            adjustIconsPosition(icon, cbHeight, that, level);    
           }              
         }
       }
@@ -297,7 +298,7 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
 
   function handleClick(icon) {
     return function() {
-      icon.div.removeEventListener('click', handleClick(icon));
+      icon.div.removeEventListener('click', icon.clickHandler);
       trackUrls(icon.icon.iconClickTrackings);
       player.pause();
       window.open(icon.icon.iconClickThrough, '_blank');
@@ -315,12 +316,12 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
           if (elementsIntersected(that.icons[j].div, icon.div)) {
             var rect1 = that.icons[j].div.getBoundingClientRect();
             if (yPosition === 'top') {
-              icon.div.style.top = (that.icons[j].div.offsetTop + that.icons[j].div.offsetHeight + 1) + "px";
+              icon.div.style.top = (that.icons[j].div.offsetTop + that.icons[j].div.offsetHeight + 1) + 'px';
               icon.origY = that.icons[j].div.offsetTop + that.icons[j].div.offsetHeight + 1;
             }
             else {
               var rect2 = that.player.el().getBoundingClientRect();
-              icon.div.style.bottom = (rect2.height + rect2.top - rect1.top + 1) + "px";
+              icon.div.style.bottom = (rect2.height + rect2.top - rect1.top + 1) + 'px';
               icon.origY = rect2.height + rect2.top - rect1.top + 1;
             }
           }
