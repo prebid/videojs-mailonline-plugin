@@ -19,22 +19,24 @@ describe("IconIntegrator", function () {
   }
 
   function createIcons() {
-    var xmlStr1 = '<Icon program="static1" width="80" height="80" xPosition="right" yPosition="bottom" offset="00:00:01" duration="00:00:02" apiFramework="string">' +
-      '<StaticResource creativeType="Image/jpeg">http://fake.net/images/Fallback_1.jpeg</StaticResource>' +
-      '<IconClicks>' +
-      '<IconClickTracking>http://fake.net/trackers/IconClickTracker_1.png</IconClickTracking>' +
-      '<IconClickThrough>http://www.wikipedia.com</IconClickThrough>' +
-      '</IconClicks>' +
-      '<IconViewTracking>http://fake.net/trackers/IconViewTracker_1.png</IconViewTracking>' +
-      '</Icon>';
-    var xmlStr2 = '<Icon program="static2" width="80" height="80" xPosition="right" yPosition="bottom" offset="00:00:02" duration="00:00:03" apiFramework="string">' +
-      '<StaticResource creativeType="Image/jpeg">http://fake.net/images/Fallback_2.jpeg</StaticResource>' +
-      '<IconClicks>' +
-      '<IconClickTracking>http://fake.net/trackers/IconClickTracker_2.png</IconClickTracking>' +
-      '<IconClickThrough>http://www.google.com</IconClickThrough>' +
-      '</IconClicks>' +
-      '<IconViewTracking>http://fake.net/trackers/IconViewTracker_1.png</IconViewTracking>' +
-      '</Icon>';
+    var xmlStr1 = `
+      <Icon program="static1" width="80" height="80" xPosition="right" yPosition="bottom" offset="00:00:01" duration="00:00:02" apiFramework="string">
+        <StaticResource creativeType="Image/jpeg">http://fake.net/images/Fallback_1.jpeg</StaticResource>
+        <IconClicks>
+          <IconClickTracking>http://fake.net/trackers/IconClickTracker_1.png</IconClickTracking>
+          <IconClickThrough>http://www.wikipedia.com</IconClickThrough>
+        </IconClicks>
+        <IconViewTracking>http://fake.net/trackers/IconViewTracker_1.png</IconViewTracking>
+      </Icon>`;
+    var xmlStr2 = `
+      <Icon program="static2" width="80" height="80" xPosition="right" yPosition="bottom" offset="00:00:02" duration="00:00:03" apiFramework="string">
+        <StaticResource creativeType="Image/jpeg">http://fake.net/images/Fallback_2.jpeg</StaticResource>
+        <IconClicks>
+          <IconClickTracking>http://fake.net/trackers/IconClickTracker_2.png</IconClickTracking>
+          <IconClickThrough>http://www.google.com</IconClickThrough>
+        </IconClicks>
+        <IconViewTracking>http://fake.net/trackers/IconViewTracker_1.png</IconViewTracking>
+      </Icon>`;
     var arr = [];
     arr.push(new Icon(xml.toJXONTree(xmlStr1)));
     arr.push(new Icon(xml.toJXONTree(xmlStr2)));

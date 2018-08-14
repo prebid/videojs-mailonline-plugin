@@ -4,8 +4,6 @@ var utilities = require('../../utils/utilityFunctions');
 var xml = require('../../utils/xml');
 var parsers = require('./parsers');
 
-//var vastUtil = require('./vastUtil');
-
 var attributesList = [
   'program',
   'width',

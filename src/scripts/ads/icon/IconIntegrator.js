@@ -49,8 +49,6 @@ IconIntegrator.prototype.renderIcons = function renderIcons(icons, callback) {
 };
 
 IconIntegrator.prototype._createIcons = function createIcons(icons, callback) {
-  //var playerWidth = dom.getDimension(this.player.el()).width;
-  //var playerHeight = dom.getDimension(this.player.el()).height;
   var that = this;
 
   for (var i = 0; i < icons.length; i++) {
@@ -198,46 +196,48 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
   }
 
   if (this.icons.length > 0) {
-    this.controlBarTimer = setInterval(function() {
-      var compStyle = window.getComputedStyle(that.player.controlBar.el(), null);
-      var cbHiddenCur = compStyle.backfaceVisibility === 'hidden' || compStyle.transform != 'none';
-      if (cbHiddenCur != that.cbHidden) {
-        that.cbHidden = cbHiddenCur;
-        var cbHeight = cbHiddenCur ? 0 : that.player.controlBar.el().offsetHeight;
-        for (var k = 0; k < that.icons.length; k++) {
-          var ic = that.icons[k];
-          if (ic.div && ic.div.style.display ==='block') {
-            if (cbHeight > 0) {
-              // control bar visible
-              if (elementsIntersected(ic.div, that.player.controlBar.el())) {
-                if (ic.div.style.top && ic.div.style.top.length > 0) {
-                  var yPos = ic.origY - cbHeight;
-                  if (yPos < 0) {
-                    yPos = 0;
-                  }
-                  ic.div.style.top = yPos + 'px';
-                }
-                else {
-                  ic.div.style.bottom = (ic.origY + cbHeight) + 'px';
-                }
-                adjustIconsPosition(ic, cbHeight, that, 1);                  
-              }
-            }
-            else {
+    this.controlBarTimer = setInterval(adjustIconsByControlBar, utilities.isIE11() ? 100 : 500);
+  }
+
+  /**** local functions ******/
+  function adjustIconsByControlBar() {
+    var compStyle = window.getComputedStyle(that.player.controlBar.el(), null);
+    var cbHiddenCur = compStyle.backfaceVisibility === 'hidden' || compStyle.transform != 'none';
+    if (cbHiddenCur != that.cbHidden) {
+      that.cbHidden = cbHiddenCur;
+      var cbHeight = cbHiddenCur ? 0 : that.player.controlBar.el().offsetHeight;
+      for (var k = 0; k < that.icons.length; k++) {
+        var ic = that.icons[k];
+        if (ic.div && ic.div.style.display ==='block') {
+          if (cbHeight > 0) {
+            // control bar visible
+            if (elementsIntersected(ic.div, that.player.controlBar.el())) {
               if (ic.div.style.top && ic.div.style.top.length > 0) {
-                ic.div.style.top = ic.origY + 'px';
+                var yPos = ic.origY - cbHeight;
+                if (yPos < 0) {
+                  yPos = 0;
+                }
+                ic.div.style.top = yPos + 'px';
               }
               else {
                 ic.div.style.bottom = (ic.origY + cbHeight) + 'px';
               }
+              adjustIconsPosition(ic, cbHeight, that, 1);                  
+            }
+          }
+          else {
+            if (ic.div.style.top && ic.div.style.top.length > 0) {
+              ic.div.style.top = ic.origY + 'px';
+            }
+            else {
+              ic.div.style.bottom = (ic.origY + cbHeight) + 'px';
             }
           }
         }
       }
-    }, utilities.isIE11() ? 100 : 500);
+    }
   }
 
-  /**** local functions ******/
   function adjustIconsPosition(ic, cbHeight, that, level) {
     for (var i = 0; i < that.icons.length; i++) {
       var icon = that.icons[i];
