@@ -17,7 +17,7 @@ function VASTClient(options) {
     return new VASTClient(options);
   }
   var defaultOptions = {
-    WRAPPER_LIMIT: 5
+    WRAPPER_LIMIT: options && options.wrapperLimit && options.wrapperLimit > 0 ? options.wrapperLimit : 5
   };
 
   options = options || {};
@@ -135,8 +135,9 @@ VASTClient.prototype._getVASTAd = function (adTagUrl, callback) {
   }
 
   function getAd(adTagUrl, adChain, callback) {
-    if (adChain.length >= that.WRAPPER_LIMIT) {
-      return callback(new VASTError("on VASTClient.getVASTAd.getAd, players wrapper limit reached (the limit is " + that.WRAPPER_LIMIT + ")", 302), adChain);
+    if (adChain.length >= that.settings.WRAPPER_LIMIT) {
+      return callback(new VASTError("on VASTClient.getVASTAd.getAd, players wrapper limit reached (the limit is " + 
+        that.settings.WRAPPER_LIMIT + ")", 302), adChain);
     }
 
     async.waterfall([

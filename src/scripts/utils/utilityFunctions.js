@@ -270,6 +270,11 @@ function getInternetExplorerVersion(navigator) {
   return rv;
 }
 
+function isIE11() {
+  var res = navigator.userAgent.search(/(trident).+rv[:\s]([\w\.]+).+like\sgecko/i);
+  return res >= 0;
+}
+
 /*** Mobile Utility functions ***/
 function isIDevice() {
   return /iP(hone|ad)/.test(utilities._UA);
@@ -317,6 +322,7 @@ var utilities = {
   echoFn: echoFn,
   isISO8601: isISO8601,
   isOldIE: isOldIE,
+  isIE11: isIE11,
   getInternetExplorerVersion: getInternetExplorerVersion,
   isIDevice: isIDevice,
   isMobile: isMobile,

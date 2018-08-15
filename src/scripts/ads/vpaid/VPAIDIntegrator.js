@@ -286,10 +286,11 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
     tracker.trackSkip();
     playerUtils.showBigPlayButton(player, false);
     
+    adUnit.stopAd(utilities.noop);
     // VIDLA-2676 - force player to clean resources
-	setTimeout(function() {
-        player.trigger('vast.adsCancel');
-	}, 300);
+    setTimeout(function() {
+          player.trigger('vast.adsCancel');
+    }, 300);
     //player.trigger('adStop');
   });
 
@@ -369,10 +370,10 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
 			bcTimeDisplay.class = 'vjs-current-time-display';
 			bcTimeDisplay['aria-live'] = 'off';
 			bcTimeDisplay.innerHTML = '<span class="vjs-control-text"></span>0:00';
-			player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = 'none';
+      showOriginalTimeDisplay(player, false);
 		}
 		else {
-			player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = 'none';
+      showOriginalTimeDisplay(player, false);
 			bcTimeDisplay.style.display = 'block';
 		}
 		adUnit.getAdRemainingTime(function(that, time) {
@@ -417,7 +418,10 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
         that.needsShowPlayer = true;
     	if (!window._molSettings.playsInBreak) {
     		that.timeUpdateTimer = setInterval(updateTimeControls, 500);
-    	}
+      }
+      else {
+        player.controlBar.hide();
+      }
     }
   });
 
@@ -624,20 +628,23 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
   adUnit.on('AdSizeChange', function () {
 	  if (player.vast && player.vast.needSyncPlay) {
 		  if (player.paused() !== player.tech_.el_.paused) {
-			  if (player.tech_.el_.paused) {
-				  if (window.MoatApiReference) {
-			    	  window.MoatApiReference.dispatchEvent({type: 'AdPaused', adVolume: player.volume()});
-				  }
-				  notifyPauseToPlayer();
-				  playerUtils.showBigPlayButton(player, true);
-			  }
-			  else {
-				  if (window.MoatApiReference) {
-			    	  window.MoatApiReference.dispatchEvent({type: 'AdPlaying', adVolume: player.volume()});
-				  }
-				  notifyPlayToPlayer();
-				  playerUtils.showBigPlayButton(player, false);
-			  }
+        // ad uses main content tag
+        if (contentSource != player.tech_.el_.src) {
+          if (player.tech_.el_.paused) {
+            if (window.MoatApiReference) {
+                window.MoatApiReference.dispatchEvent({type: 'AdPaused', adVolume: player.volume()});
+            }
+            notifyPauseToPlayer();
+            playerUtils.showBigPlayButton(player, true);
+          }
+          else {
+            if (window.MoatApiReference) {
+                window.MoatApiReference.dispatchEvent({type: 'AdPlaying', adVolume: player.volume()});
+            }
+            notifyPlayToPlayer();
+            playerUtils.showBigPlayButton(player, false);
+          }
+        }
 		  }
 		  player.vast.needSyncPlay = false;
 	  } 
@@ -1050,9 +1057,9 @@ VPAIDIntegrator.prototype._finishPlaying = function (adUnit, vastResponse, next)
 				if (bcTimeDisplay) {
 					player.controlBar.getChild('currentTimeDisplay').el_.removeChild(bcTimeDisplay);
 				}
-				player.controlBar.getChild('currentTimeDisplay').el_.children[0].style.display = '';
-			}
-	        player.controlBar.show();
+        showOriginalTimeDisplay(player, true);
+      }
+	    player.controlBar.show();
 			player.tech_.el_.style.display = 'block';
 		}
     next(error, adUnit, vastResponse);
@@ -1065,6 +1072,15 @@ VPAIDIntegrator.prototype._trackError = function trackError(response, errorCode)
 		vastUtil.track(response.errorURLMacros, {ERRORCODE: errorCode || 901});
 	}
 };
+
+function showOriginalTimeDisplay(player, show) {
+  var children = player.controlBar.getChild('currentTimeDisplay').el_.children;
+  for (var i = 0; i < children.length; i++) {
+    if (children[i].id != 'bc_time_display') {
+      children[i].style.display = show ? '' : 'none';
+    }
+  }
+}
 
 function resizeAd(player, adUnit, VIEW_MODE) {
 	var skipButton = document.getElementById('adSkipButton');

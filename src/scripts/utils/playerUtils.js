@@ -28,6 +28,12 @@ playerUtils.getPlayerSnapshot = function getPlayerSnapshot(player) {
     snapshot.nativePoster = tech.poster;
     snapshot.style = tech.getAttribute('style');
   }
+
+	var els = document.getElementsByClassName('vjs-dock-text');
+	if (els && els.length > 0) {
+		snapshot.dockText = els[0];
+		snapshot.dockText.style.display = 'none';
+	}
   return snapshot;
 
   /**** Local Functions ****/
@@ -72,6 +78,10 @@ playerUtils.restorePlayerSnapshot = function restorePlayerSnapshot(player, snaps
     // overwrite all css style properties to restore state precisely
     tech.setAttribute('style', snapshot.style || '');
   }
+
+	if (snapshot.dockText) {
+		snapshot.dockText.style.display = 'block';
+	}
 
   //if (hasSrcChanged(player, snapshot)) {
 

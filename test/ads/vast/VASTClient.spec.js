@@ -126,7 +126,7 @@ describe("VASTClient", function () {
       });
 
       it("must track the error if a problem occur while getting the VASTResponse", function(){
-        vast.WRAPPER_LIMIT = 1;
+        vast.settings.WRAPPER_LIMIT = 1;
         vast.getVASTResponse('http://fake.url', callback);
         this.clock.tick();
         sinon.assert.calledWith(vast._requestVASTXml, 'http://fake.url');
@@ -468,7 +468,7 @@ describe("VASTClient", function () {
       });
 
       it("must pass a 302 error to the callback and track it if the adChain reached the configured WRAPPER_LIMIT", function(){
-        vast.WRAPPER_LIMIT = 3;
+        vast.settings.WRAPPER_LIMIT = 3;
         var adTagUrl = 'http://foo.bar/';
         vast._getVASTAd(adTagUrl, callback);
         this.clock.tick();

@@ -81,7 +81,7 @@ describe("videojs.vast plugin", function () {
     var player = videojs(document.createElement('video'), {});
 
     player.on('vast.adError', spy);
-    player.vastClient();
+    player.vastClient({});
     sinon.assert.calledOnce(spy);
     assertError(spy, 'on VideoJS VAST plugin, missing adTagUrl on options object');
   });
