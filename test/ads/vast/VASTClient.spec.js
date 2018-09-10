@@ -132,7 +132,7 @@ describe("VASTClient", function () {
         sinon.assert.calledWith(vast._requestVASTXml, 'http://fake.url');
         flushVASTXmlRequest(null, vastXML('<Ad><Wrapper><VASTAdTagURI><![CDATA[http://VASTAdTagURI.com]]></VASTAdTagURI></Wrapper></Ad>'));
 
-        assertError(callback, 'on VASTClient.getVASTAd.getAd, player\'s wrapper limit reached (the limit is 1)', 302);
+        assertError(callback, "on VASTClient.getVASTAd.getAd, player's wrapper limit reached (the limit is 1)", 302);
       });
 
       it("must track a 102 error if the VAST version is not 2.0 or 3.0", function(){
