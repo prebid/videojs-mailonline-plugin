@@ -322,8 +322,7 @@ module.exports = function VASTPlugin(options) {
   	  if (vastResponse.ads[0].inLine.moat.site_id) {
   		  ids.slicer1 = vastResponse.ads[0].inLine.moat.site_id;
   	  }
-  	  //window.MoatApiReference = initMoatTracking(player.el_, ids, player.duration(), vastResponse.ads[0].inLine.moat.partnercode, player.currentSource().src);
-  	  window.MoatApiReference = initMoatTracking(player.el_, ids, player.duration(), 'ninemediavpaid78961164', player.currentSource().src);
+  	  window.MoatApiReference = initMoatTracking(player.el_, ids, player.duration(), vastResponse.ads[0].inLine.moat.partnercode, player.currentSource().src);
     }
     if (window._molSettings.viewabilityTracking) {
   	  window._molSettings.viewabilityTracking.init(window._molSettings.viewability.contextId, 
