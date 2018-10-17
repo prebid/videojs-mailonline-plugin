@@ -361,11 +361,10 @@ module.exports = function VASTPlugin(options) {
     	if (window._molSettings.playsInBreak) {
     		player.on('timeupdate', updateTimeControls);
     	}
-      if (adFinished || player.controlBar.getChild('AdsLabel')) {
+      if (adFinished) {
         return;
       }
 
-      player.controlBar.addChild('AdsLabel');
       if (vastResponse.icons && vastResponse.icons.length > 0) {
         adIconIntegrator = new IconIntegrator(player);
         adIconIntegrator.renderIcons(vastResponse.icons, callback);
@@ -389,7 +388,6 @@ module.exports = function VASTPlugin(options) {
           }
     		}
     	}
-      player.controlBar.removeChild('AdsLabel');
       if (playlistNextButton) {
         playlistNextButton.style.display = '';
         playlistNextButton = null;
