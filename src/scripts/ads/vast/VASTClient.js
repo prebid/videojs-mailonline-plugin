@@ -136,7 +136,7 @@ VASTClient.prototype._getVASTAd = function (adTagUrl, callback) {
 
   function getAd(adTagUrl, adChain, callback) {
     if (adChain.length >= that.settings.WRAPPER_LIMIT) {
-      return callback(new VASTError("on VASTClient.getVASTAd.getAd, players wrapper limit reached (the limit is " + 
+      return callback(new VASTError("on VASTClient.getVASTAd.getAd, player's wrapper limit reached (the limit is " + 
         that.settings.WRAPPER_LIMIT + ")", 302), adChain);
     }
 

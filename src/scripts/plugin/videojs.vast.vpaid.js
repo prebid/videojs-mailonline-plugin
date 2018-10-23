@@ -312,7 +312,7 @@ module.exports = function VASTPlugin(options) {
     }
 
     /*Copyright (c) 2011-2016 Moat Inc. All Rights Reserved.*/
-    function initMoatTracking(a,c,d,h,k){var f=document.createElement("script"),b=[];c={adData:{ids:c,duration:d,url:k},dispatchEvent:function(a){this.sendEvent?(b&&(b.push(a),a=b,b=!1),this.sendEvent(a)):b.push(a)}};d="_moatApi"+Math.floor(1E8*Math.random());var e,g;try{e=a.ownerDocument,g=e.defaultView||e.parentWindow}catch(l){e=document,g=window}g[d]=c;f.type="text/javascript";a&&a.insertBefore(f,a.childNodes[0]||null);f.src="https://z.moatads.com/"+h+"/moatvideo.js#"+d;return c};
+    function initMoatTracking(a,c,d,h,k){var f=document.createElement("script"),b=[];c={adData:{ids:c,duration:d,url:k},dispatchEvent:function(a){this.sendEvent?(b&&(b.push(a),a=b,b=!1),this.sendEvent(a)):b.push(a);}};d="_moatApi"+Math.floor(1E8*Math.random());var e,g;try{e=a.ownerDocument,g=e.defaultView||e.parentWindow;}catch(l){e=document,g=window;}g[d]=c;f.type="text/javascript";a&&a.insertBefore(f,a.childNodes[0]||null);f.src="https://z.moatads.com/"+h+"/moatvideo.js#"+d;return c;}
     window.MoatApiReference = null;
     if (vastResponse.ads && vastResponse.ads.length > 0 && vastResponse.ads[0].inLine && vastResponse.ads[0].inLine.moat) {
   	  var ids = {level1: vastResponse.ads[0].inLine.moat.advid,
@@ -322,8 +322,7 @@ module.exports = function VASTPlugin(options) {
   	  if (vastResponse.ads[0].inLine.moat.site_id) {
   		  ids.slicer1 = vastResponse.ads[0].inLine.moat.site_id;
   	  }
-  	  //window.MoatApiReference = initMoatTracking(player.el_, ids, player.duration(), vastResponse.ads[0].inLine.moat.partnercode, player.currentSource().src);
-  	  window.MoatApiReference = initMoatTracking(player.el_, ids, player.duration(), 'ninemediavpaid78961164', player.currentSource().src);
+  	  window.MoatApiReference = initMoatTracking(player.el_, ids, player.duration(), vastResponse.ads[0].inLine.moat.partnercode, player.currentSource().src);
     }
     if (window._molSettings.viewabilityTracking) {
   	  window._molSettings.viewabilityTracking.init(window._molSettings.viewability.contextId, 
@@ -361,11 +360,10 @@ module.exports = function VASTPlugin(options) {
     	if (window._molSettings.playsInBreak) {
     		player.on('timeupdate', updateTimeControls);
     	}
-      if (adFinished || player.controlBar.getChild('AdsLabel')) {
+      if (adFinished) {
         return;
       }
 
-      player.controlBar.addChild('AdsLabel');
       if (vastResponse.icons && vastResponse.icons.length > 0) {
         adIconIntegrator = new IconIntegrator(player);
         adIconIntegrator.renderIcons(vastResponse.icons, callback);
@@ -389,7 +387,6 @@ module.exports = function VASTPlugin(options) {
           }
     		}
     	}
-      player.controlBar.removeChild('AdsLabel');
       if (playlistNextButton) {
         playlistNextButton.style.display = '';
         playlistNextButton = null;

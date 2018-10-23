@@ -114,6 +114,9 @@ IconIntegrator.prototype._setupEvents = function setupEvents(callback) {
       for (var i = 0; i < that.icons.length; i++) {
         var icon = that.icons[i];
         if (icon.div) {
+          if (icon.clickHandler) {
+            icon.div.removeEventListener('click', icon.clickHandler);
+          }
           player.el().removeChild(icon.div);
         }
       }
@@ -298,7 +301,6 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
 
   function handleClick(icon) {
     return function() {
-      icon.div.removeEventListener('click', icon.clickHandler);
       trackUrls(icon.icon.iconClickTrackings);
       player.pause();
       window.open(icon.icon.iconClickThrough, '_blank');
@@ -333,6 +335,9 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
         setTimeout(function() {
           var idx = that.icons.indexOf(icon);
           if (idx >= 0) {
+            if (icon.clickHandler) {
+              icon.div.removeEventListener('click', icon.clickHandler);
+            }
             player.el().removeChild(icon.div);
             that.icons.splice(idx, 1);
           }

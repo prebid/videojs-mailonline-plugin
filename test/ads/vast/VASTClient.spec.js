@@ -132,7 +132,7 @@ describe("VASTClient", function () {
         sinon.assert.calledWith(vast._requestVASTXml, 'http://fake.url');
         flushVASTXmlRequest(null, vastXML('<Ad><Wrapper><VASTAdTagURI><![CDATA[http://VASTAdTagURI.com]]></VASTAdTagURI></Wrapper></Ad>'));
 
-        assertError(callback, 'on VASTClient.getVASTAd.getAd, players wrapper limit reached (the limit is 1)', 302);
+        assertError(callback, "on VASTClient.getVASTAd.getAd, player's wrapper limit reached (the limit is 1)", 302);
       });
 
       it("must track a 102 error if the VAST version is not 2.0 or 3.0", function(){
@@ -485,8 +485,8 @@ describe("VASTClient", function () {
           '<VAST version="2.0"><Ad id="thirdAd"><Wrapper><VASTAdTagURI><![CDATA[http://vastadtaguri3.com]]></VASTAdTagURI><Error><![CDATA[http://t3.liverail.com/?metric=error&erc=[ERRORCODE]]]></Error></Wrapper></Ad></VAST>');
         this.clock.tick();
 
-        assertError(callback, "on VASTClient.getVASTAd.getAd, players wrapper limit reached (the limit is 3)", 302);
-        assertErrorTrack("on VASTClient.getVASTAd.getAd, players wrapper limit reached (the limit is 3)", 302, ['firstAd', 'secondAd', 'thirdAd']);
+        assertError(callback, "on VASTClient.getVASTAd.getAd, player's wrapper limit reached (the limit is 3)", 302);
+        assertErrorTrack("on VASTClient.getVASTAd.getAd, player's wrapper limit reached (the limit is 3)", 302, ['firstAd', 'secondAd', 'thirdAd']);
       });
 
       it("must pass a 101 error to the callback and track it if one of the ads on the adChain returned an inline and a wrapper on the same ad", function(){
