@@ -24,6 +24,10 @@ playerUtils.getPlayerSnapshot = function getPlayerSnapshot(player) {
     suppressedTracks: getSuppressedTracks(player)
   };
 
+  if (snapshot.ended) {
+    snapshot.currentTime = player.duration() + 1;
+  }
+
   if (tech) {
     snapshot.nativePoster = tech.poster;
     snapshot.style = tech.getAttribute('style');
@@ -161,7 +165,9 @@ playerUtils.restorePlayerSnapshot = function restorePlayerSnapshot(player, snaps
         if(player.currentTime() !== snapshot.currentTime) {
           if (snapshot.playing) { // if needed restore playing status after seek completes
             player.one('seeked', function() {
-              player.play();
+              if (!snapshot.ended) {
+                player.play();
+              }
             });
           }
           player.currentTime(snapshot.currentTime);
