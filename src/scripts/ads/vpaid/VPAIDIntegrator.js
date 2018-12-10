@@ -920,22 +920,25 @@ VPAIDIntegrator.prototype._addSkipButton = function (adUnit, vastResponse, next)
 	}
 	
 	function pubUpdateSkipButtonState(skipButton, skipOffset) {
-		//var timeLeft = Math.ceil(skipOffset - player.currentTime());
 		adUnit.getAdDuration(function(that, dur) {
 			if (dur > 0) {
 				duration = dur;
 			}
 		});
 		adUnit.getAdRemainingTime(function(that, time) {
-			remainingTime = time; 
-		});
-		if (!duration || !remainingTime) {
+      remainingTime = time;
+      // for VPAID 1.0 use remaining time for duration calculation 
+      if (!duration && remainingTime > 0) {
+        duration = remainingTime;
+      }
+    });
+    // return if duration or/and remaining time is not implemented or unknown
+		if (!duration || !remainingTime || duration < 0 || remainingTime < 0) {
 			return;
 		}
-		//console.log("******: skipOffset = " + skipOffset + ", duration = " + duration + ", remainingTime = " + remainingTime);
-		//var remainingTime = adUnit._adUnit.getAdRemainingTime();
 		var timeLeft = Math.ceil(skipOffset - (duration - remainingTime));
-	  if (timeLeft > 0) {
+    // if skip button enabled never show before-button skip text
+	  if (timeLeft > 0 && !dom.hasClass(skipButton, 'enabled')) {
 	      skipButton.innerHTML = '<p class="vast-skip-button-text">' + window._molSettings.skipText.replace('%%TIME%%', utilities.toFixedDigits(timeLeft, 2)) + '</p>';
 	  } else {
 	    if (!dom.hasClass(skipButton, 'enabled')) {
@@ -951,7 +954,6 @@ VPAIDIntegrator.prototype._addSkipButton = function (adUnit, vastResponse, next)
 		  }
 		  skipButton.style.display = 'block';
 	  }
-	  //skipButton.style.display = 'block';
 	}
 };
 

@@ -272,13 +272,12 @@ VASTIntegrator.prototype._addSkipButton = function addSkipButton(source, tracker
 
   function updateSkipButtonState(skipButton, skipOffset, player) {
     var timeLeft = Math.ceil(skipOffset - player.currentTime());
-    if (timeLeft > 0) {
-        //skipButton.innerHTML = "Skip in " + utilities.toFixedDigits(timeLeft, 2) + "...";
+    // if skip button enabled never show before-button skip text
+    if (timeLeft > 0 && !dom.hasClass(skipButton, 'enabled')) {
         skipButton.innerHTML = '<p class="vast-skip-button-text">' + window._molSettings.skipText.replace('%%TIME%%', utilities.toFixedDigits(timeLeft, 2)) + '</p>';
     } else {
       if (!dom.hasClass(skipButton, 'enabled')) {
         dom.addClass(skipButton, 'enabled');
-        //skipButton.innerHTML = "Skip ad";
         skipButton.innerHTML = window._molSettings.skipButtonText;
       }
     }
