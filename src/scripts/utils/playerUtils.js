@@ -185,6 +185,13 @@ playerUtils.restorePlayerSnapshot = function restorePlayerSnapshot(player, snaps
 };
 
 playerUtils.isReadyToResume = function (player) {
+  if (utilities.isIE11()) {
+    // for IE 11 check only player state
+    if (player.readyState() > 1) {
+      return true;
+    }
+    return false;
+  }
 
   if (player.readyState() > 1) {
     // some browsers and media aren't "seekable".
