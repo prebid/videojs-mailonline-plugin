@@ -334,6 +334,25 @@ playerUtils.prepareForAds = function (player) {
       }
       return origPaused.apply(this, arguments);
     };
+
+
+    /**
+     * VIDLA-4391: Needed monkey patch to handle bug in v5.28.x Brightcove Players when passing src MediaFile objects up to vjs player in iframe parent window
+     */
+    var isBrightcoveV5 = function isBrightcoveV5 () {
+      return (videojs && !videojs.getPlugins);   // v5.x.x Brightcove players didn't feature the getPlugins API method
+    };
+
+
+    if (parent && window !== parent && isBrightcoveV5()) {
+      var origSrc = player.src;
+      player.src = function (source) {
+        if (source && !(source instanceof parent.Object)) {
+          source = parent.Object.assign(new parent.Object(), source);
+        }
+        origSrc.call(this, source);
+      };
+    }
   }
   
   function isVpaidPlaying() {
