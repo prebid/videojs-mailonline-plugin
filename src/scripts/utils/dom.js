@@ -177,7 +177,7 @@ dom.remove = function removeNode(node){
 };
 
 dom.isDomElement = function isDomElement(o) {
-  return o instanceof Element;
+  return o instanceof Element || (parent && parent.Element && o instanceof parent.Element);     // If MOL is loaded in an iFrame, a DOM Element may be passed in from the parent document - check for that, too
 };
 
 dom.click = function(el, handler) {
