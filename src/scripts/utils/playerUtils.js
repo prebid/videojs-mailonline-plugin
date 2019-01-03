@@ -33,10 +33,21 @@ playerUtils.getPlayerSnapshot = function getPlayerSnapshot(player) {
     snapshot.style = tech.getAttribute('style');
   }
 
-	var els = document.getElementsByClassName('vjs-dock-text');
+	var els = parent.document.getElementsByClassName('vjs-dock-text');
 	if (els && els.length > 0) {
-		snapshot.dockText = els[0];
-		snapshot.dockText.style.display = 'none';
+	  // Determine which 'vjs-dock-text' element is part of this player
+    var tempParents, foundPlayer = false;
+    for (var i = 0; i < els.length; i++) {
+      tempParents = getParentList(els[i]);
+      if (tempParents.indexOf(player.el_) >= 0) {
+        foundPlayer = true;
+        break;
+      }
+    }
+    if (foundPlayer) {
+      snapshot.dockText = els[i];
+      snapshot.dockText.style.display = 'none';
+    }
 	}
   return snapshot;
 
@@ -62,6 +73,15 @@ playerUtils.getPlayerSnapshot = function getPlayerSnapshot(player) {
     });
 
     return suppressedTracks;
+  }
+
+  function getParentList (element) {
+    var parents = [];
+    while (element.parentElement) {
+      parents.unshift(element.parentElement);
+      element = element.parentElement;
+    }
+    return parents;
   }
 };
 
