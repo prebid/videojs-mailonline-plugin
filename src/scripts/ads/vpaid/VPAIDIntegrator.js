@@ -214,7 +214,7 @@ VPAIDIntegrator.prototype._loadAdUnit = function (tech, vastResponse, next) {
     }
   });
 
-  // we have re-post the message about loaded creative to the current window, 
+  // we to have re-post the message about loaded creative to the current window, 
   // because VPAID client listen this message on current window (not on the parent).
   var onLoaded = function(e) {
     window.postMessage(e.data, e.origin);
