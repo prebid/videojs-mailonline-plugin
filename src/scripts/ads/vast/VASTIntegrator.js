@@ -317,7 +317,10 @@ VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, 
     var clickThroughMacro = response.clickThrough;
 
     dom.addClass(blocker, 'vast-blocker');
-    blocker.href = generateClickThroughURL(clickThroughMacro, player);
+    // 'a' tag in iOS sometime does not navigate. We will use window.open to navigate for iOS.
+    if (!utilities.isIDevice()) {
+      blocker.href = generateClickThroughURL(clickThroughMacro, player);
+    }
 
     if (utilities.isString(clickThroughMacro)) {
       blocker.target = "_blank";
@@ -334,25 +337,34 @@ VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, 
             return false;
         }
 
-          player.pause();
-          tracker.trackClick();
+        player.pause();
+        tracker.trackClick();
 
-          if (window.MoatApiReference) {
-        	  window.MoatApiReference.dispatchEvent({type: 'AdClickThru', adVolume: player.volume()});
+        if (window.MoatApiReference) {
+          window.MoatApiReference.dispatchEvent({type: 'AdClickThru', adVolume: player.volume()});
+        }
+        if (utilities.isIDevice()) {
+          // We are using window.open to navigate for iOS.
+          setTimeout(function() {
+            window.open(generateClickThroughURL(clickThroughMacro, player), '_blank');
+          }, 1);
+          if (window.Event.prototype.stopPropagation !== undefined) {
+              e.stopPropagation();
           }
-          if (utilities.isIDevice()) {
-              window.open(generateClickThroughURL(clickThroughMacro, player), '_blank');
-              if (window.Event.prototype.stopPropagation !== undefined) {
-                  e.stopPropagation();
-              }
-          }
+          // player.pause() in iOS sometime does not work. To make sure player paused we will try pause player in 500 msecs.
+          setTimeout(function() {
+            if (!player.paused()) {
+              player.pause();
+            }
+          }, 500);
+        }
     };
   
     if (utilities.isIDevice()) {
-        blocker.ontouchend = clickHandler;
+      blocker.ontouchend = clickHandler;
     }
     else {
-        blocker.onclick = clickHandler;
+      blocker.onclick = clickHandler;
     }
     
     if (player.isFullscreen() && enableFullscreenClickIFrame) {
@@ -363,7 +375,10 @@ VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, 
   }
 
   function updateBlockerURL(blocker, response, player) {
-    blocker.href = generateClickThroughURL(response.clickThrough, player);
+    // 'a' tag in iOS sometime does not navigate. We will use window.open to navigate for iOS.
+    if (!utilities.isIDevice()) {
+      blocker.href = generateClickThroughURL(response.clickThrough, player);
+    }
   }
 
   function generateClickThroughURL(clickThroughMacro, player) {
