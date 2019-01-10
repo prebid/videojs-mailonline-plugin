@@ -414,17 +414,15 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
         // VIDLA-2336 (simulate user activity to make sure control bar is visible on mobile devices)
         for (var i = 0; i < 4; i++) {
         	setTimeout(function() {
-        		document.getElementsByTagName('IFRAME')[0].dispatchEvent(new Event('mouseover'));
+            player.userActive(true);
         	}, i * 1000);
         }
     }
     if (contentSource === player.tech_.el_.src) {
-        player.trigger({type: 'trace.message', data: {message: 'VPAID creative uses its own video tag'}});
-        //player.tech_.el_.style.display = 'none';
-        //player.controlBar.hide();
-        that.needsShowPlayer = true;
-    	if (!window._molSettings.playsInBreak) {
-    		that.timeUpdateTimer = setInterval(updateTimeControls, 500);
+      player.trigger({type: 'trace.message', data: {message: 'VPAID creative uses its own video tag'}});
+      that.needsShowPlayer = true;
+      if (!window._molSettings.playsInBreak) {
+        that.timeUpdateTimer = setInterval(updateTimeControls, 500);
       }
       else {
         player.controlBar.hide();
