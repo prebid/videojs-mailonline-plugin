@@ -368,7 +368,16 @@ playerUtils.prepareForAds = function (player) {
       var origSrc = player.src;
       player.src = function (source) {
         if (source && !(source instanceof parent.Object)) {
-          source = parent.Object.assign(new parent.Object(), source);
+          if (utilities.isIE11()) {
+             var temp = new parent.Object();
+             for (var prop in source) {
+               temp[prop] = source[prop];
+             }
+             source = temp;
+          }
+          else {
+            source = parent.Object.assign(new parent.Object(), source);
+          }
         }
         origSrc.call(this, source);
       };
