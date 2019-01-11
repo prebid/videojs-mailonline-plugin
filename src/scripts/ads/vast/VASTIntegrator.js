@@ -358,6 +358,17 @@ VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, 
             }
           }, 500);
         }
+        // Brightcove has a bug where they send an "ended" event if paused within a couple seconds of the video end. In this case, the listener
+        // that shows the big play button (among other things) gets removed before the handler fires. This fix makes sure the big button still appears.
+        var remaining = player.duration() - player.currentTime();
+        if (remaining < 3 && remaining > 0) {
+          setTimeout(function () {
+            playerUtils.showBigPlayButton(player, true);
+            playerUtils.once(player, ['playing', 'vast.adEnd', 'vast.adsCancel', 'vast.adSkip'], function () {
+              playerUtils.showBigPlayButton(player, false);
+            });
+          }, 500);
+        }
     };
   
     if (utilities.isIDevice()) {
