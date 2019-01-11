@@ -371,7 +371,9 @@ playerUtils.prepareForAds = function (player) {
           if (utilities.isIE11()) {
              var temp = new parent.Object();
              for (var prop in source) {
-               temp[prop] = source[prop];
+               if (source.hasOwnProperty(prop)) {
+                temp[prop] = source[prop];
+               }
              }
              source = temp;
           }
