@@ -35,9 +35,7 @@ playerUtils.getPlayerSnapshot = function getPlayerSnapshot(player) {
 
   var els;
   // VIDLA-4563: Hack for Edge when Brightcove player embed in not friendly iframe
-  var vjsTags = document.getElementsByTagName('video-js');	// video-js tag is created when Brightcove player emded in iFrame
-  var scriptLoadedInIframe = !(vjsTags && vjsTags.length > 0 && utilities.isEdge());
-  if (scriptLoadedInIframe) {
+  if (utilities.scriptLoadedInIframe()) {
     els = parent.document.getElementsByClassName('vjs-dock-text');
   }
   else {

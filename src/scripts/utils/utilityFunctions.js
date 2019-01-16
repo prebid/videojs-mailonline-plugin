@@ -296,6 +296,11 @@ function isEdge() {
   return /(edge)\/((\d+)?[\w\.]+)/i.test(utilities._UA);
 }
 
+function scriptLoadedInIframe() {
+  var vjsTags = document.getElementsByTagName('video-js');	// video-js tag is created when Brightcove player emded in iFrame
+  return !(vjsTags && vjsTags.length > 0 && isEdge());
+}
+
 var utilities = {
   _UA: navigator.userAgent,
   noop: noop,
@@ -332,7 +337,8 @@ var utilities = {
   isMobile: isMobile,
   isIPhone: isIPhone,
   isAndroid: isAndroid,
-  isEdge: isEdge
+  isEdge: isEdge,
+  scriptLoadedInIframe: scriptLoadedInIframe
 };
 
 module.exports = utilities;
