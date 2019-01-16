@@ -33,7 +33,16 @@ playerUtils.getPlayerSnapshot = function getPlayerSnapshot(player) {
     snapshot.style = tech.getAttribute('style');
   }
 
-	var els = parent.document.getElementsByClassName('vjs-dock-text');
+  var els;
+  // VIDLA-4563: Hack for Edge when Brightcove player embed in not friendly iframe
+  var vjsTags = document.getElementsByTagName('video-js');	// video-js tag is created when Brightcove player emded in iFrame
+  var scriptLoadedInIframe = !(vjsTags && vjsTags.length > 0 && utilities.isEdge());
+  if (scriptLoadedInIframe) {
+    els = parent.document.getElementsByClassName('vjs-dock-text');
+  }
+  else {
+    els = document.getElementsByClassName('vjs-dock-text');
+  }
 	if (els && els.length > 0) {
 	  // Determine which 'vjs-dock-text' element is part of this player
     var tempParents, foundPlayer = false;

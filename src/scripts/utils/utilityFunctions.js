@@ -292,6 +292,10 @@ function isAndroid() {
   return /Android/.test(utilities._UA);
 }
 
+function isEdge() {
+  return /(edge)\/((\d+)?[\w\.]+)/i.test(utilities._UA);
+}
+
 var utilities = {
   _UA: navigator.userAgent,
   noop: noop,
@@ -327,7 +331,8 @@ var utilities = {
   isIDevice: isIDevice,
   isMobile: isMobile,
   isIPhone: isIPhone,
-  isAndroid: isAndroid
+  isAndroid: isAndroid,
+  isEdge: isEdge
 };
 
 module.exports = utilities;
