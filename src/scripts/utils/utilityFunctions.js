@@ -297,8 +297,9 @@ function isEdge() {
 }
 
 function scriptLoadedInIframe() {
-  var vjsTags = document.getElementsByTagName('video-js');	// video-js tag is created when Brightcove player emded in iFrame
-  return !(vjsTags && vjsTags.length > 0 && isEdge());
+	var docClassList = document.documentElement.classList;
+	var scriptInPlayerIframe = docClassList && docClassList.contains('bc-iframe'); // html of player has bc-iframe calss when Brightcove player emded in iFrame
+  return !(scriptInPlayerIframe && isEdge());
 }
 
 var utilities = {

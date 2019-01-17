@@ -370,8 +370,8 @@ playerUtils.prepareForAds = function (player) {
       return (videojs && !videojs.getPlugins);   // v5.x.x Brightcove players didn't feature the getPlugins API method
     };
 
-
-    if (parent && window !== parent && isBrightcoveV5()) {
+    // Have to do this only when MOL script has loaded in iframe
+    if (parent && window !== parent && isBrightcoveV5() && utilities.scriptLoadedInIframe()) {
       var origSrc = player.src;
       player.src = function (source) {
         if (source && !(source instanceof parent.Object)) {
