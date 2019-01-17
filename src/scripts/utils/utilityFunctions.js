@@ -298,7 +298,7 @@ function isEdge() {
 
 function scriptLoadedInIframe() {
 	var docClassList = document.documentElement.classList;
-	var scriptInPlayerIframe = docClassList && docClassList.contains('bc-iframe'); // html of player has bc-iframe calss when Brightcove player emded in iFrame
+	var scriptInPlayerIframe = docClassList && docClassList.contains('bc-iframe'); // html of player has bc-iframe class when Brightcove player emded in iFrame
   return !(scriptInPlayerIframe && isEdge());
 }
 
