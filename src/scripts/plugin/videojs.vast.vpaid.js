@@ -69,7 +69,17 @@ module.exports = function VASTPlugin(options) {
   };
 
   var settings = utilities.extend({}, defaultOpts, options || {});
-  
+
+  // get Brightcove Player Id
+  var playerId = '';
+  if (player.bcinfo) {
+    playerId = player.bcinfo.playerId;
+  }
+  else if (player.options_ && player.options_['data-player']) {
+    playerId = player.options_['data-player'];
+  }
+  logger.setPlayerId(playerId + '-' + player.el_.id);
+
   if(utilities.isUndefined(settings.adTagUrl) && utilities.isDefined(settings.url)){
     settings.adTagUrl = settings.url;
   }

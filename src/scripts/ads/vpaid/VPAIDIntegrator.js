@@ -129,7 +129,7 @@ VPAIDIntegrator.prototype.playAd = function playVPaidAd(vastResponse, callback) 
 
   function removeAdUnit() {
     if (tech) {
-      console.log('[BC-MOL] VPAIDIntegrator->Calling unloadAdUnit (implicitly invokes stopAd and unsubscribes VPAID events)');
+      logger.log('VPAIDIntegrator->Calling unloadAdUnit (implicitly invokes stopAd and unsubscribes VPAID events)');
       tech.unloadAdUnit();
     }
     dom.removeClass(player.el(), 'vjs-vpaid-ad');
@@ -193,7 +193,7 @@ VPAIDIntegrator.prototype._loadAdUnit = function (tech, vastResponse, next) {
       var frms = document.getElementsByTagName('IFRAME');
       if (frms && frms.length > 0) {
         frms[0].addEventListener('mouseover', function() {
-          //console.log("****** user activity");
+          //logger.log("****** user activity");
             player.userActive(true);
             if (!dom.hasClass(player.el(), 'vjs-has-started')) {
                 dom.addClass(player.el(), 'vjs-has-started');
@@ -1105,7 +1105,7 @@ function resizeAd(player, adUnit, VIEW_MODE) {
 	  }
   }
   if (MODE === VIEW_MODE.FULLSCREEN) {
-	  console.log('****** to fullscreen dimension = ' + dimension.width + ',' + dimension.height);
+	  logger.log('****** to fullscreen dimension = ' + dimension.width + ',' + dimension.height);
 	  if (utilities.isAndroid() && skipButton) {
 		  skipButton.style.display = 'none';
 	  }
