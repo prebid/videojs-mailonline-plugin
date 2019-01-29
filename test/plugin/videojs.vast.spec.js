@@ -302,7 +302,7 @@ describe("videojs.vast plugin", function () {
         assertTriggersTrackError(function () {
           player.trigger('vast.firstPlay');
           clock.tick(3001);
-        }, 'timeout while waiting for the video to start playing', 402);
+        }, 'timeout while waiting for the video to start playing. You may need to increase adStartTimeout.', 402);
       });
 
       it("must not cancel the ad if the ad starts before the timeout", function(){
