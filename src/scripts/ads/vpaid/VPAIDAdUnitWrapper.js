@@ -121,7 +121,7 @@ VPAIDAdUnitWrapper.prototype.waitForEvent = function (evtName, cb, context) {
       if (that.options && that.options.player) {
         that.options.player.trigger({type: 'trace.message', data: {message: 'Timeout while waiting for event ' + evtName}});
       }
-			cb(new VASTError("on VPAIDAdUnitWrapper.waitForEvent, timeout while waiting for event '" + evtName + "'"));
+			cb(new VASTError("on VPAIDAdUnitWrapper.waitForEvent, timeout while waiting for event '" + evtName + "'. You may need to increase adStartTimeout."));
 		}
     timeoutId = null;
     cb = utilities.noop;

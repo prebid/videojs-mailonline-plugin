@@ -4,12 +4,23 @@
 var _verbosity = 0;
 var _prefix = "[MOL-Plugin";
 var _playerId = '';
+var _astDebug;
 
 function setPlayerId (id)
 {
   _playerId = id;
 }
 
+// determine the maximum debug level from the page URL
+function setDebugLevelFromPage() {
+  try {
+    // keep track of the new level
+    _astDebug = (getParameterByName('ast_debug').toLowerCase() == 'true') ? 4 : 0;
+
+    // the highest (least restrictive debug level) always wins
+    _verbosity = Math.max(_verbosity, _astDebug);
+  } catch (e) {}
+}
 
 // get a named parameter from the querystring
 function getParameterByName(name) {

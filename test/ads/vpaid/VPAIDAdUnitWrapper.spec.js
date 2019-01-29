@@ -282,7 +282,7 @@ describe("VPAIDAdUnitWrapper", function(){
           error = testUtils.firstArg(callback);
 
           assert.instanceOf(error, VASTError);
-          assert.equal(error.message, "VAST Error: on VPAIDAdUnitWrapper.waitForEvent, timeout while waiting for event 'adInit'");
+          assert.equal(error.message, "VAST Error: on VPAIDAdUnitWrapper.waitForEvent, timeout while waiting for event 'adInit'. You may need to increase adStartTimeout.");
         });
 
         it("must not call the callback once the event response comes", function(){

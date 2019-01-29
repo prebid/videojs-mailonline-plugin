@@ -258,7 +258,7 @@ module.exports = function VASTPlugin(options) {
 
       adCancelTimeoutId = setTimeout(function () {
        	  adCancelTimeoutId = null;
-        trackAdError(new VASTError('timeout while waiting for the video to start playing', 402));
+        trackAdError(new VASTError('timeout while waiting for the video to start playing. You may need to increase adStartTimeout.', 402));
         playerUtils.showBigPlayButton(player, false);
         if (player.vast.VPAID) {
         	player.trigger('vpaid.adEnd');
