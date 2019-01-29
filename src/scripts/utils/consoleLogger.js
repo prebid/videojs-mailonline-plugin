@@ -136,7 +136,13 @@ function warn ()
 
 function error ()
 {
-    handleMsg (console.error, arguments);
+    if (_verbosity < 1)
+    {
+      return;
+    }
+
+    //handleMsg (console.error, arguments);
+    handleMsg (console.warn, arguments);      //VIDLA-4606: Switched to use warning-level logging, since these are technically not unhandled errors
 }
 
 var consoleLogger = {
