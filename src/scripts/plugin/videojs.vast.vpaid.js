@@ -345,6 +345,10 @@ module.exports = function VASTPlugin(options) {
     if (isAdVPAID) {
     	player.trigger('clearAdCancelTimeout');
     }
+    else {
+      // VIDLA-4626 - need this entry-point to track ad start timeout error for media (not VPAID) ad
+      player.vast.trackError = adIntegrator._trackError;
+    }
 
     playerUtils.once(player, ['vast.adStart', 'vast.adsCancel'], function (evt) {
       if (evt.type === 'vast.adStart') {
@@ -495,8 +499,17 @@ module.exports = function VASTPlugin(options) {
 
   function trackAdError(error, vastResponse) {
     player.trigger({type: 'vast.adError', error: error});
-    cancelAds();
     logger.error ('AD ERROR:', error.message, error, vastResponse);
+    if (error && error.code === 402) {
+      // we care only ad start timeout error, all other errors will track in VAST integrator
+      if (player.vast && player.vast.trackError) {
+        player.vast.trackError(error, player.vast.vastResponse);
+      }
+      else {
+        logger.warn ('WARNING: Cannot track ad start timeout error because VAST XML is not parsed yet');
+      }
+    }
+    cancelAds();
   }
 
   function isVPAID(vastResponse) {

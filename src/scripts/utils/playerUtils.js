@@ -55,7 +55,7 @@ playerUtils.getPlayerSnapshot = function getPlayerSnapshot(player) {
       snapshot.dockText = els[i];
       snapshot.dockText.style.display = 'none';
     }
-	}
+  }
   return snapshot;
 
   /**** Local Functions ****/
