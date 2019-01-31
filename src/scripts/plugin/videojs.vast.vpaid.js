@@ -499,6 +499,7 @@ module.exports = function VASTPlugin(options) {
 
   function trackAdError(error, vastResponse) {
     player.trigger({type: 'vast.adError', error: error});
+    logger.error ('AD ERROR:', error.message, error, vastResponse);
     if (error && error.code === 402) {
       // we care only ad start timeout error, all other errors will track in VAST integrator
       if (player.vast && player.vast.trackError) {
@@ -509,7 +510,6 @@ module.exports = function VASTPlugin(options) {
       }
     }
     cancelAds();
-    logger.error ('AD ERROR:', error.message, error, vastResponse);
   }
 
   function isVPAID(vastResponse) {
