@@ -155,7 +155,10 @@ module.exports = function VASTPlugin(options) {
   function tryToPlayPrerollAd() {
 	// make sure we are going to use same plugin instance twice
 	player.off('vast.firstPlay', tryToPlayPrerollAd);
-	
+
+	if (player.vast.adsCancelled) {
+    delete player.vast.adsCancelled;
+  }
 	playerUtils.showBigPlayButton(player, false);
 
 	if (settings.initialAudio === 'off') {
@@ -301,6 +304,8 @@ module.exports = function VASTPlugin(options) {
   function cancelAds() {
     player.trigger('vast.adsCancel');
     adsCanceled = true;
+
+    player.vast.adsCancelled = true;    // Set a flag to interrupt the ad loading waterfall - needed to avoid a race condition where the ad could still play after being cancelled.
   }
 
   function playPrerollAd(callback) {

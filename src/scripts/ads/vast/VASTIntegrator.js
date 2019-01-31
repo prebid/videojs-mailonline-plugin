@@ -545,6 +545,12 @@ VASTIntegrator.prototype._addClickThroughDivBlocker = function addClickThrough(m
 VASTIntegrator.prototype._playSelectedAd = function playSelectedAd(source, response, callback) {
   var player = this.player;
 
+  // This check is necessary to prevent a race condition where the ad loading waterfall may reach this point after ads were cancelled (mid-waterfall).
+  if (this.player.vast.adsCancelled === true) {
+    callback(null);
+    return;
+  }
+
   //window.MoatApiReference = null;
 
   player.preload("auto"); //without preload=auto the durationchange event is never fired
