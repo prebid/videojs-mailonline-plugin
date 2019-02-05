@@ -3,6 +3,7 @@
 var VASTError = require('../vast/VASTError');
 
 var utilities = require('../../utils/utilityFunctions');
+var logger = require ('../../utils/consoleLogger');
 
 function VPAIDAdUnitWrapper(vpaidAdUnit, opts) {
   if (!(this instanceof VPAIDAdUnitWrapper)) {
@@ -120,7 +121,7 @@ VPAIDAdUnitWrapper.prototype.waitForEvent = function (evtName, cb, context) {
       if (that.options && that.options.player) {
         that.options.player.trigger({type: 'trace.message', data: {message: 'Timeout while waiting for event ' + evtName}});
       }
-			cb(new VASTError("on VPAIDAdUnitWrapper.waitForEvent, timeout while waiting for event '" + evtName + "'"));
+			cb(new VASTError("on VPAIDAdUnitWrapper.waitForEvent, timeout while waiting for event '" + evtName + "'. You may need to increase adStartTimeout."));
 		}
     timeoutId = null;
     cb = utilities.noop;
@@ -164,7 +165,7 @@ VPAIDAdUnitWrapper.prototype.handshakeVersion = function (version, cb) {
 
 /* jshint maxparams:6 */
 VPAIDAdUnitWrapper.prototype.initAd = function (width, height, viewMode, desiredBitrate, adUnitData, cb) {
-	console.log('[BC-MOL] VPAIDAdUnitWrapper->Calling initAd on creative');
+	logger.log('VPAIDAdUnitWrapper->Calling initAd on creative');
 	this.waitForEvent('AdLoaded', cb);
   this._adUnit.initAd(width, height, viewMode, desiredBitrate, adUnitData);
 };
@@ -172,7 +173,7 @@ VPAIDAdUnitWrapper.prototype.initAd = function (width, height, viewMode, desired
 VPAIDAdUnitWrapper.prototype.resizeAd = function (width, height, viewMode, cb) {
   // NOTE: AdSizeChange event is only supported on VPAID 2.0 so for the moment we are not going to use it
   // and will assume that everything is fine after the async call
-	console.log('[BC-MOL] VPAIDAdUnitWrapper->Calling resizeAd on creative');
+	logger.log('VPAIDAdUnitWrapper->Calling resizeAd on creative');
   this.adUnitAsyncCall('resizeAd', width, height, viewMode, cb);
   if (window.MoatApiReference) {
   	window.MoatApiReference.dispatchEvent({type: 'AdSizeChange', adVolume: this.options.player.volume()});
@@ -180,7 +181,7 @@ VPAIDAdUnitWrapper.prototype.resizeAd = function (width, height, viewMode, cb) {
 };
 
 VPAIDAdUnitWrapper.prototype.startAd = function (cb) {
-	console.log('[BC-MOL] VPAIDAdUnitWrapper->Calling startAd on creative');
+	logger.log('VPAIDAdUnitWrapper->Calling startAd on creative');
 	if (!this.adStarted) {
 		this.waitForEvent('AdStarted', cb);
 	}
@@ -191,37 +192,37 @@ VPAIDAdUnitWrapper.prototype.startAd = function (cb) {
 };
 
 VPAIDAdUnitWrapper.prototype.stopAd = function (cb) {
-	console.log('[BC-MOL] VPAIDAdUnitWrapper->Calling stopAd on creative');
+	logger.log('VPAIDAdUnitWrapper->Calling stopAd on creative');
   this.waitForEvent('AdStopped', cb);
   this._adUnit.stopAd();
 };
 
 VPAIDAdUnitWrapper.prototype.pauseAd = function (cb) {
-	console.log('[BC-MOL] VPAIDAdUnitWrapper->Calling pauseAd on creative');
+	logger.log('VPAIDAdUnitWrapper->Calling pauseAd on creative');
   this.waitForEvent('AdPaused', cb);
   this._adUnit.pauseAd();
 };
 
 VPAIDAdUnitWrapper.prototype.resumeAd = function (cb) {
-	console.log('[BC-MOL] VPAIDAdUnitWrapper->Calling resumeAd on creative');
+	logger.log('VPAIDAdUnitWrapper->Calling resumeAd on creative');
   this.waitForEvent('AdPlaying', cb);
   this._adUnit.resumeAd();
 };
 
 VPAIDAdUnitWrapper.prototype.expandAd = function (cb) {
-	console.log('[BC-MOL] VPAIDAdUnitWrapper->Calling expandAd on creative');
+	logger.log('VPAIDAdUnitWrapper->Calling expandAd on creative');
   this.waitForEvent('AdExpandedChange', cb);
   this._adUnit.expandAd();
 };
 
 VPAIDAdUnitWrapper.prototype.collapseAd = function (cb) {
-	console.log('[BC-MOL] VPAIDAdUnitWrapper->Calling collapseAd on creative');
+	logger.log('VPAIDAdUnitWrapper->Calling collapseAd on creative');
   this.waitForEvent('AdExpandedChange', cb);
   this._adUnit.collapseAd();
 };
 
 VPAIDAdUnitWrapper.prototype.skipAd = function (cb) {
-	console.log('[BC-MOL] VPAIDAdUnitWrapper->Calling skipAd on creative');
+	logger.log('VPAIDAdUnitWrapper->Calling skipAd on creative');
   this.waitForEvent('AdSkipped', cb);
   this._adUnit.skipAd();
 };

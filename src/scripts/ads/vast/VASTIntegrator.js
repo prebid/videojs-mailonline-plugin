@@ -272,13 +272,12 @@ VASTIntegrator.prototype._addSkipButton = function addSkipButton(source, tracker
 
   function updateSkipButtonState(skipButton, skipOffset, player) {
     var timeLeft = Math.ceil(skipOffset - player.currentTime());
-    if (timeLeft > 0) {
-        //skipButton.innerHTML = "Skip in " + utilities.toFixedDigits(timeLeft, 2) + "...";
+    // if skip button enabled never show before-button skip text
+    if (timeLeft > 0 && !dom.hasClass(skipButton, 'enabled')) {
         skipButton.innerHTML = '<p class="vast-skip-button-text">' + window._molSettings.skipText.replace('%%TIME%%', utilities.toFixedDigits(timeLeft, 2)) + '</p>';
     } else {
       if (!dom.hasClass(skipButton, 'enabled')) {
         dom.addClass(skipButton, 'enabled');
-        //skipButton.innerHTML = "Skip ad";
         skipButton.innerHTML = window._molSettings.skipButtonText;
       }
     }
@@ -318,7 +317,10 @@ VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, 
     var clickThroughMacro = response.clickThrough;
 
     dom.addClass(blocker, 'vast-blocker');
-    blocker.href = generateClickThroughURL(clickThroughMacro, player);
+    // 'a' tag in iOS sometime does not navigate. We will use window.open to navigate for iOS.
+    if (!utilities.isIDevice()) {
+      blocker.href = generateClickThroughURL(clickThroughMacro, player);
+    }
 
     if (utilities.isString(clickThroughMacro)) {
       blocker.target = "_blank";
@@ -335,25 +337,45 @@ VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, 
             return false;
         }
 
-          player.pause();
-          tracker.trackClick();
+        player.pause();
+        tracker.trackClick();
 
-          if (window.MoatApiReference) {
-        	  window.MoatApiReference.dispatchEvent({type: 'AdClickThru', adVolume: player.volume()});
+        if (window.MoatApiReference) {
+          window.MoatApiReference.dispatchEvent({type: 'AdClickThru', adVolume: player.volume()});
+        }
+        if (utilities.isIDevice()) {
+          // We are using window.open to navigate for iOS.
+          setTimeout(function() {
+            window.open(generateClickThroughURL(clickThroughMacro, player), '_blank');
+          }, 1);
+          if (window.Event.prototype.stopPropagation !== undefined) {
+              e.stopPropagation();
           }
-          if (utilities.isIDevice()) {
-              window.open(generateClickThroughURL(clickThroughMacro, player), '_blank');
-              if (window.Event.prototype.stopPropagation !== undefined) {
-                  e.stopPropagation();
-              }
-          }
+          // player.pause() in iOS sometime does not work. To make sure player paused we will try pause player in 500 msecs.
+          setTimeout(function() {
+            if (!player.paused()) {
+              player.pause();
+            }
+          }, 500);
+        }
+        // Brightcove has a bug where they send an "ended" event if paused within a couple seconds of the video end. In this case, the listener
+        // that shows the big play button (among other things) gets removed before the handler fires. This fix makes sure the big button still appears.
+        var remaining = player.duration() - player.currentTime();
+        if (remaining < 3 && remaining > 0) {
+          setTimeout(function () {
+            playerUtils.showBigPlayButton(player, true);
+            playerUtils.once(player, ['playing', 'vast.adEnd', 'vast.adsCancel', 'vast.adSkip'], function () {
+              playerUtils.showBigPlayButton(player, false);
+            });
+          }, 500);
+        }
     };
   
     if (utilities.isIDevice()) {
-        blocker.ontouchend = clickHandler;
+      blocker.ontouchend = clickHandler;
     }
     else {
-        blocker.onclick = clickHandler;
+      blocker.onclick = clickHandler;
     }
     
     if (player.isFullscreen() && enableFullscreenClickIFrame) {
@@ -364,7 +386,10 @@ VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, 
   }
 
   function updateBlockerURL(blocker, response, player) {
-    blocker.href = generateClickThroughURL(response.clickThrough, player);
+    // 'a' tag in iOS sometime does not navigate. We will use window.open to navigate for iOS.
+    if (!utilities.isIDevice()) {
+      blocker.href = generateClickThroughURL(response.clickThrough, player);
+    }
   }
 
   function generateClickThroughURL(clickThroughMacro, player) {
@@ -519,6 +544,12 @@ VASTIntegrator.prototype._addClickThroughDivBlocker = function addClickThrough(m
 
 VASTIntegrator.prototype._playSelectedAd = function playSelectedAd(source, response, callback) {
   var player = this.player;
+
+  // This check is necessary to prevent a race condition where the ad loading waterfall may reach this point after ads were cancelled (mid-waterfall).
+  if (this.player.vast.adsCancelled === true) {
+    callback(null);
+    return;
+  }
 
   //window.MoatApiReference = null;
 

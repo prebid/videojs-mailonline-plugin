@@ -129,7 +129,7 @@ VPAIDIntegrator.prototype.playAd = function playVPaidAd(vastResponse, callback) 
 
   function removeAdUnit() {
     if (tech) {
-      console.log('[BC-MOL] VPAIDIntegrator->Calling unloadAdUnit (implicitly invokes stopAd and unsubscribes VPAID events)');
+      logger.log('VPAIDIntegrator->Calling unloadAdUnit (implicitly invokes stopAd and unsubscribes VPAID events)');
       tech.unloadAdUnit();
     }
     dom.removeClass(player.el(), 'vjs-vpaid-ad');
@@ -193,7 +193,7 @@ VPAIDIntegrator.prototype._loadAdUnit = function (tech, vastResponse, next) {
       var frms = document.getElementsByTagName('IFRAME');
       if (frms && frms.length > 0) {
         frms[0].addEventListener('mouseover', function() {
-          //console.log("****** user activity");
+          //logger.log("****** user activity");
             player.userActive(true);
             if (!dom.hasClass(player.el(), 'vjs-has-started')) {
                 dom.addClass(player.el(), 'vjs-has-started');
@@ -213,6 +213,13 @@ VPAIDIntegrator.prototype._loadAdUnit = function (tech, vastResponse, next) {
       next(e, adUnit, vastResponse);
     }
   });
+
+  // we to have re-post the message about loaded creative to the current window, 
+  // because VPAID client listen this message on current window (not on the parent).
+  var onLoaded = function(e) {
+    window.postMessage(e.data, e.origin);
+  };
+  window.parent.addEventListener('message', onLoaded);
 };
 
 VPAIDIntegrator.prototype._playAdUnit = function (adUnit, vastResponse, callback) {
@@ -407,17 +414,15 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
         // VIDLA-2336 (simulate user activity to make sure control bar is visible on mobile devices)
         for (var i = 0; i < 4; i++) {
         	setTimeout(function() {
-        		document.getElementsByTagName('IFRAME')[0].dispatchEvent(new Event('mouseover'));
+            player.userActive(true);
         	}, i * 1000);
         }
     }
     if (contentSource === player.tech_.el_.src) {
-        player.trigger({type: 'trace.message', data: {message: 'VPAID creative uses its own video tag'}});
-        //player.tech_.el_.style.display = 'none';
-        //player.controlBar.hide();
-        that.needsShowPlayer = true;
-    	if (!window._molSettings.playsInBreak) {
-    		that.timeUpdateTimer = setInterval(updateTimeControls, 500);
+      player.trigger({type: 'trace.message', data: {message: 'VPAID creative uses its own video tag'}});
+      that.needsShowPlayer = true;
+      if (!window._molSettings.playsInBreak) {
+        that.timeUpdateTimer = setInterval(updateTimeControls, 500);
       }
       else {
         player.controlBar.hide();
@@ -920,22 +925,25 @@ VPAIDIntegrator.prototype._addSkipButton = function (adUnit, vastResponse, next)
 	}
 	
 	function pubUpdateSkipButtonState(skipButton, skipOffset) {
-		//var timeLeft = Math.ceil(skipOffset - player.currentTime());
 		adUnit.getAdDuration(function(that, dur) {
 			if (dur > 0) {
 				duration = dur;
 			}
 		});
 		adUnit.getAdRemainingTime(function(that, time) {
-			remainingTime = time; 
-		});
-		if (!duration || !remainingTime) {
+      remainingTime = time;
+      // for VPAID 1.0 use remaining time for duration calculation 
+      if (!duration && remainingTime > 0) {
+        duration = remainingTime;
+      }
+    });
+    // return if duration or/and remaining time is not implemented or unknown
+		if (!duration || !remainingTime || duration < 0 || remainingTime < 0) {
 			return;
 		}
-		//console.log("******: skipOffset = " + skipOffset + ", duration = " + duration + ", remainingTime = " + remainingTime);
-		//var remainingTime = adUnit._adUnit.getAdRemainingTime();
 		var timeLeft = Math.ceil(skipOffset - (duration - remainingTime));
-	  if (timeLeft > 0) {
+    // if skip button enabled never show before-button skip text
+	  if (timeLeft > 0 && !dom.hasClass(skipButton, 'enabled')) {
 	      skipButton.innerHTML = '<p class="vast-skip-button-text">' + window._molSettings.skipText.replace('%%TIME%%', utilities.toFixedDigits(timeLeft, 2)) + '</p>';
 	  } else {
 	    if (!dom.hasClass(skipButton, 'enabled')) {
@@ -951,7 +959,6 @@ VPAIDIntegrator.prototype._addSkipButton = function (adUnit, vastResponse, next)
 		  }
 		  skipButton.style.display = 'block';
 	  }
-	  //skipButton.style.display = 'block';
 	}
 };
 
@@ -1098,7 +1105,7 @@ function resizeAd(player, adUnit, VIEW_MODE) {
 	  }
   }
   if (MODE === VIEW_MODE.FULLSCREEN) {
-	  console.log('****** to fullscreen dimension = ' + dimension.width + ',' + dimension.height);
+	  logger.log('****** to fullscreen dimension = ' + dimension.width + ',' + dimension.height);
 	  if (utilities.isAndroid() && skipButton) {
 		  skipButton.style.display = 'none';
 	  }

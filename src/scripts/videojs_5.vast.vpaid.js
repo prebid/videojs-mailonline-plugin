@@ -12,14 +12,24 @@ var videojs = window.videojs || {
 window._molSettings = null;
 
 require('./plugin/components/black-poster_5');
+var logger = require ('./utils/consoleLogger');
 
-console.log('Prebid MailOnline plugin version 1.2.10');
+logger.log('Prebid MailOnline plugin version 1.3.10');
 
 var videoJsVAST = require('./plugin/videojs.vast.vpaid');
 
 if (videojs.registerPlugin) {
-	videojs.registerPlugin('vastClient', videoJsVAST);
+  if (!videojs.getPlugins().vastClient) {
+    videojs.registerPlugin('vastClient', videoJsVAST);
+  }
 }
 else {
-	videojs.plugin('vastClient', videoJsVAST);
+  if (!videojs.Player.prototype.vastClient) {
+    videojs.plugin('vastClient', videoJsVAST);
+  }
+}
+
+// VIDLA-4391 - Add support for multiple players on the same page, each with a unique MOL plugin loaded from an iFrames
+if (parent && window !== parent) {
+  window.bc_vastClientFunc = videoJsVAST;
 }

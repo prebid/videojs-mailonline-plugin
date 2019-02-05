@@ -69,7 +69,17 @@ module.exports = function VASTPlugin(options) {
   };
 
   var settings = utilities.extend({}, defaultOpts, options || {});
-  
+
+  // get Brightcove Player Id
+  var playerId = '';
+  if (player.bcinfo) {
+    playerId = player.bcinfo.playerId;
+  }
+  else if (player.options_ && player.options_['data-player']) {
+    playerId = player.options_['data-player'];
+  }
+  logger.setPlayerId(playerId + '-' + player.el_.id);
+
   if(utilities.isUndefined(settings.adTagUrl) && utilities.isDefined(settings.url)){
     settings.adTagUrl = settings.url;
   }
@@ -145,7 +155,10 @@ module.exports = function VASTPlugin(options) {
   function tryToPlayPrerollAd() {
 	// make sure we are going to use same plugin instance twice
 	player.off('vast.firstPlay', tryToPlayPrerollAd);
-	
+
+	if (player.vast.adsCancelled) {
+    delete player.vast.adsCancelled;
+  }
 	playerUtils.showBigPlayButton(player, false);
 
 	if (settings.initialAudio === 'off') {
@@ -248,7 +261,7 @@ module.exports = function VASTPlugin(options) {
 
       adCancelTimeoutId = setTimeout(function () {
        	  adCancelTimeoutId = null;
-        trackAdError(new VASTError('timeout while waiting for the video to start playing', 402));
+        trackAdError(new VASTError('timeout while waiting for the video to start playing. You may need to increase adStartTimeout.', 402));
         playerUtils.showBigPlayButton(player, false);
         if (player.vast.VPAID) {
         	player.trigger('vpaid.adEnd');
@@ -291,6 +304,8 @@ module.exports = function VASTPlugin(options) {
   function cancelAds() {
     player.trigger('vast.adsCancel');
     adsCanceled = true;
+
+    player.vast.adsCancelled = true;    // Set a flag to interrupt the ad loading waterfall - needed to avoid a race condition where the ad could still play after being cancelled.
   }
 
   function playPrerollAd(callback) {
@@ -334,6 +349,10 @@ module.exports = function VASTPlugin(options) {
     var adFinished = false;
     if (isAdVPAID) {
     	player.trigger('clearAdCancelTimeout');
+    }
+    else {
+      // VIDLA-4626 - need this entry-point to track ad start timeout error for media (not VPAID) ad
+      player.vast.trackError = adIntegrator._trackError;
     }
 
     playerUtils.once(player, ['vast.adStart', 'vast.adsCancel'], function (evt) {
@@ -485,8 +504,17 @@ module.exports = function VASTPlugin(options) {
 
   function trackAdError(error, vastResponse) {
     player.trigger({type: 'vast.adError', error: error});
-    cancelAds();
     logger.error ('AD ERROR:', error.message, error, vastResponse);
+    if (error && error.code === 402) {
+      // we care only ad start timeout error, all other errors will track in VAST integrator
+      if (player.vast && player.vast.trackError) {
+        player.vast.trackError(error, player.vast.vastResponse);
+      }
+      else {
+        logger.warn ('WARNING: Cannot track ad start timeout error because VAST XML is not parsed yet');
+      }
+    }
+    cancelAds();
   }
 
   function isVPAID(vastResponse) {

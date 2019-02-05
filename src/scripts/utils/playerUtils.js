@@ -33,11 +33,29 @@ playerUtils.getPlayerSnapshot = function getPlayerSnapshot(player) {
     snapshot.style = tech.getAttribute('style');
   }
 
-	var els = document.getElementsByClassName('vjs-dock-text');
+  var els;
+  // VIDLA-4563: Hack for Edge when Brightcove player embed in not friendly iframe
+  if (utilities.scriptLoadedInIframe()) {
+    els = parent.document.getElementsByClassName('vjs-dock-text');
+  }
+  else {
+    els = document.getElementsByClassName('vjs-dock-text');
+  }
 	if (els && els.length > 0) {
-		snapshot.dockText = els[0];
-		snapshot.dockText.style.display = 'none';
-	}
+	  // Determine which 'vjs-dock-text' element is part of this player
+    var tempParents, foundPlayer = false;
+    for (var i = 0; i < els.length; i++) {
+      tempParents = getParentList(els[i]);
+      if (tempParents.indexOf(player.el_) >= 0) {
+        foundPlayer = true;
+        break;
+      }
+    }
+    if (foundPlayer) {
+      snapshot.dockText = els[i];
+      snapshot.dockText.style.display = 'none';
+    }
+  }
   return snapshot;
 
   /**** Local Functions ****/
@@ -62,6 +80,15 @@ playerUtils.getPlayerSnapshot = function getPlayerSnapshot(player) {
     });
 
     return suppressedTracks;
+  }
+
+  function getParentList (element) {
+    var parents = [];
+    while (element.parentElement) {
+      parents.unshift(element.parentElement);
+      element = element.parentElement;
+    }
+    return parents;
   }
 };
 
@@ -185,6 +212,13 @@ playerUtils.restorePlayerSnapshot = function restorePlayerSnapshot(player, snaps
 };
 
 playerUtils.isReadyToResume = function (player) {
+  if (utilities.isIE11()) {
+    // for IE 11 check only player state
+    if (player.readyState() > 1) {
+      return true;
+    }
+    return false;
+  }
 
   if (player.readyState() > 1) {
     // some browsers and media aren't "seekable".
@@ -327,6 +361,36 @@ playerUtils.prepareForAds = function (player) {
       }
       return origPaused.apply(this, arguments);
     };
+
+
+    /**
+     * VIDLA-4391: Needed monkey patch to handle bug in v5.28.x Brightcove Players when passing src MediaFile objects up to vjs player in iframe parent window
+     */
+    var isBrightcoveV5 = function isBrightcoveV5 () {
+      return (videojs && !videojs.getPlugins);   // v5.x.x Brightcove players didn't feature the getPlugins API method
+    };
+
+    // Have to do this only when MOL script has loaded in iframe
+    if (parent && window !== parent && isBrightcoveV5() && utilities.scriptLoadedInIframe()) {
+      var origSrc = player.src;
+      player.src = function (source) {
+        if (source && !(source instanceof parent.Object)) {
+          if (utilities.isIE11()) {
+             var temp = new parent.Object();
+             for (var prop in source) {
+               if (source.hasOwnProperty(prop)) {
+                temp[prop] = source[prop];
+               }
+             }
+             source = temp;
+          }
+          else {
+            source = parent.Object.assign(new parent.Object(), source);
+          }
+        }
+        origSrc.call(this, source);
+      };
+    }
   }
   
   function isVpaidPlaying() {
