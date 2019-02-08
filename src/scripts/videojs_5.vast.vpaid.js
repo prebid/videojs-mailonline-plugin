@@ -14,7 +14,7 @@ window._molSettings = null;
 require('./plugin/components/black-poster_5');
 var logger = require ('./utils/consoleLogger');
 
-logger.log('Prebid MailOnline plugin version 1.3.10');
+logger.log('Prebid MailOnline plugin version 1.3.11');
 
 var videoJsVAST = require('./plugin/videojs.vast.vpaid');
 

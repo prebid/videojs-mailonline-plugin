@@ -36,7 +36,7 @@ var pkg = require('./../package.json');
 var versionText = "v" + pkg.version;
 var licenseHeaders = fs.readFileSync('license-bc-mol.txt');
 var curDateObj = new Date();
-var copyrightText = "(c)" + curDateObj.getUTCFullYear() + " AppNexus, Inc.";
+var copyrightText = "(c)" + curDateObj.getUTCFullYear() + " Xandr";
 var bannerText = "/*! " + copyrightText + " " + versionText + '\n' + licenseHeaders + "*/\n";
 
 
