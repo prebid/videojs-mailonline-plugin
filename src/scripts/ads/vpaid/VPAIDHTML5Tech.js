@@ -45,6 +45,8 @@ VPAIDHTML5Tech.prototype.loadAdUnit = function loadAdUnit(containerEl, videoEl, 
   this.containerEl = containerEl;
   this.videoEl = videoEl;
   this.vpaidHTMLClient = new VPAIDHTML5Tech.VPAIDHTML5Client(containerEl, videoEl, {});
+  // make unique client id for when multiple VPAIDs are running in the same html document at the same time.
+  this.vpaidHTMLClient._id = 'vpaidIframe_' + Date.now();
   this.vpaidHTMLClient.loadAdUnit(this.mediaFile.src, callback);
 
   function sanityCheck(container, video, cb) {
