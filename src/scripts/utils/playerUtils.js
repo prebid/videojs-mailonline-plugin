@@ -439,7 +439,11 @@ playerUtils.prepareForAds = function (player) {
   function restoreVolumeSnapshot(snapshot) {
     if (utilities.isObject(snapshot)) {
       player.volume(snapshot.volume);
-      player.muted(snapshot.muted);
+      // VIDLA-4609 - Delay needed to ensure Brightcove player sets Ad's mute value properly to
+      // the player's configured setting on iPads w/iOS 12 (after the call stack clears)
+      setTimeout(function () {
+        player.muted(snapshot.muted);
+      }, 0);
     }
   }
 
