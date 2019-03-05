@@ -40,8 +40,26 @@ function VPAIDIntegrator(player, settings) {
   this.adFinished = false;
   
   this.timeUpdateTimer = null;
-  
+
+  this.addMouseMoveListener = function addMouseMoveListener () {
+    var frames = this.containerEl.getElementsByTagName("iframe");
+    if (frames.length) {
+      frames[0].contentWindow.addEventListener('mousemove', handleMouseMove);
+    }
+  };
+
+  this.removeMouseMoveListener = function removeMouseMoveListener () {
+    var frames = this.containerEl.getElementsByTagName("iframe");
+    if (frames.length) {
+      frames[0].contentWindow.removeEventListener('mousemove', handleMouseMove);
+    }
+  };
+
   /*** Local functions ***/
+
+  function handleMouseMove () {
+    player.userActive(true);
+  }
 
   function createVPAIDContainerEl() {
     var containerEl = document.createElement('div');
@@ -115,6 +133,7 @@ VPAIDIntegrator.prototype.playAd = function playVPaidAd(vastResponse, callback) 
 
   /*** Local functions ***/
   function adComplete(error, adUnit, vastResponse) {
+    that.removeMouseMoveListener();
     if (error && vastResponse) {
       that._trackError(vastResponse, error.code);
     }
@@ -285,6 +304,7 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
   this.impressionTriggered = false;
 
   adUnit.on('AdSkipped', function () {
+      that.removeMouseMoveListener();
 	  	player.trigger({type: 'trace.event', data: {event: 'vpaid.AdSkipped'}});
 	      if (window.MoatApiReference) {
 	    	  window.MoatApiReference.dispatchEvent({type: 'AdSkipped', adVolume: player.volume()});
@@ -321,6 +341,9 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
 		  // ignore second AdStarted event
 		  return;
 	  }
+
+	  that.addMouseMoveListener();
+
     if (window._molSettings.viewabilityTracking) {
       window._molSettings.viewabilityTracking.init(window._molSettings.viewability.contextId, 
           player.duration(), player.el_.offsetWidth, player.el_.offsetHeight);
@@ -513,6 +536,7 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
   });
 
   adUnit.on('AdVideoComplete', function () {
+    that.removeMouseMoveListener();
 	  if (that.adFinished) {
 		  return;
 	  }
@@ -594,6 +618,7 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
   });
 
   adUnit.on('AdError', function () {
+    that.removeMouseMoveListener();
 	  if (that.adFinished) {
 		  return;
 	  }
@@ -842,6 +867,7 @@ VPAIDIntegrator.prototype._addSkipButton = function (adUnit, vastResponse, next)
     skipButton.id = 'adSkipButton';
 
     skipButton.onclick = function (e) {
+        that.removeMouseMoveListener();
         adUnit.getAdSkippableState(function (error, isSkippable) {
             if (isSkippable) {
                 adUnit.skipAd(utilities.noop);//We skip the adUnit
@@ -899,6 +925,7 @@ VPAIDIntegrator.prototype._addSkipButton = function (adUnit, vastResponse, next)
 	
 	  skipButton.onclick = function (e) {
 	    if (dom.hasClass(skipButton, 'enabled')) {
+	        that.removeMouseMoveListener();
 	        adUnit.getAdSkippableState(function (error, isSkippable) {
                 adUnit.skipAd(utilities.noop);//We skip the adUnit
 	            if (!isSkippable) {
