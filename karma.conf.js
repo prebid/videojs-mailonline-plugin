@@ -31,7 +31,8 @@ module.exports = function (karma) {
             ignore: ['**/node_modules/**', '**/test/**', '**/bower_components/**'],
         }) ]
     },
-    logLevel: 'ERROR',
+    logLevel: 'LOG_INFO',
+    // logLevel: 'LOG_DEBUG',   // Use this level for full test details
     /**
      * How to report, by default.
      */

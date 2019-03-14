@@ -646,17 +646,6 @@ describe("videojs.vast plugin", function () {
       sinon.assert.notCalled(setCurrentTime);
     });
 
-    it("must add the adsLabel component once we know the ad is going to start. (i.e. vast.adstart)", function () {
-      var response = new VASTResponse();
-      response._addMediaFiles([
-        createMediaFile('http://fakeVideoFile', 'video/mp4')
-      ]);
-      callback(null, response);
-      this.clock.tick();
-      player.trigger('vast.adStart');
-      assert.isObject(player.controlBar.getChild('AdsLabel'));
-    });
-
     it("must NOT add the adsLabel component if the ad gets canceled. (i.e. vast.adstart)", function () {
       var response = new VASTResponse();
       response._addMediaFiles([
@@ -679,34 +668,6 @@ describe("videojs.vast plugin", function () {
       player.trigger('error');
       player.trigger('vast.adStart');
       assert.isUndefined(player.controlBar.getChild('AdsLabel'));
-    });
-
-    it("must remove the adsLabel component when the ads finish playing", function () {
-      var response = new VASTResponse();
-      response._addMediaFiles([
-        createMediaFile('http://fakeVideoFile', 'video/mp4')
-      ]);
-      callback(null, response);
-      this.clock.tick();
-      player.trigger('vast.adStart');
-      var playAdCallback = testUtils.secondArg(VASTIntegrator.prototype.playAd);
-      playAdCallback(null, response);
-      this.clock.tick();
-      assert.isNull(player.controlBar.getChild('AdsLabel'));
-    });
-
-    it("must remove the adsLabel component on 'vast.adsCancel' event", function () {
-      var response = new VASTResponse();
-      response._addMediaFiles([
-        createMediaFile('http://fakeVideoFile', 'video/mp4')
-      ]);
-      callback(null, response);
-      this.clock.tick();
-      player.trigger('vast.adStart');
-      player.trigger('vast.adsCancel');
-
-      this.clock.tick();
-      assert.isNull(player.controlBar.getChild('AdsLabel'));
     });
 
     it("must not ad the adsLabel if the ad has finished playing", function(){
