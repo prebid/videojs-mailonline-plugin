@@ -58,8 +58,6 @@ module.exports = {
   DEV: path.normalize('__dirname/../dev_embed'),
 
   vendor: [
-    // 'src/lib/ie8fix.js', //Required for make the ad's work in ie8
-    'node_modules/es5-shim/es5-shim.js', //Required for the player to work on old browsers
   ],
 
   testFiles: function testFiles (videojsVersion){
