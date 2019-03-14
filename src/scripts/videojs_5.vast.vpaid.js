@@ -22,10 +22,15 @@ if (videojs.registerPlugin) {
   if (!videojs.getPlugins().vastClient) {
     videojs.registerPlugin('vastClient', videoJsVAST);
   }
-}
-else {
+} else if (videojs.Player) {
   if (!videojs.Player.prototype.vastClient) {
     videojs.plugin('vastClient', videoJsVAST);
+  }
+} else if (videojs.plugin) {
+  try {
+    videojs.plugin('vastClient', videoJsVAST);
+  } catch (e) {
+    logger.log('*** ERROR: Unable to register MailOnline plugin with VideoJS!');
   }
 }
 

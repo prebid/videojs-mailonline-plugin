@@ -32,6 +32,7 @@ module.exports = function (karma) {
         }) ]
     },
     logLevel: 'ERROR',
+    // logLevel: 'LOG_DEBUG',   // Use this level for full test details
     /**
      * How to report, by default.
      */

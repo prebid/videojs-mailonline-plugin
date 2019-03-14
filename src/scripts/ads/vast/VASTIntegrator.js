@@ -546,7 +546,7 @@ VASTIntegrator.prototype._playSelectedAd = function playSelectedAd(source, respo
   var player = this.player;
 
   // This check is necessary to prevent a race condition where the ad loading waterfall may reach this point after ads were cancelled (mid-waterfall).
-  if (this.player.vast.adsCancelled === true) {
+  if (player && player.vast && player.vast.adsCancelled === true) {
     callback(null);
     return;
   }
