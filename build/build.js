@@ -46,7 +46,6 @@ gulp.task('build', function (done) {
     'lintjs',
     'build-scripts',
     'build-styles',
-    'build-assets',
     'test',
     function (error) {
       if (error) {
@@ -160,17 +159,5 @@ gulp.task('build-styles', function () {
     .pipe(gulpif(isProduction, buildProdCss()))
     .pipe(size({showFiles: true, title: '[Styles]'}));
 });
-
-
-gulp.task('build-assets', function () {
-
-  var destPath  = path.join(devPath, 'scripts');
-
-  return gulp.src(config.vendor)
-    .pipe(size({showFiles: true, title: '[Assets]'}))
-    .pipe(gulp.dest(destPath))
-    .pipe(gulpif(isProduction, gulp.dest(distPath)));
-});
-
 
 module.exports = new BuildTaskDoc('build', 'This task builds the plugin', 4);

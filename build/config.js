@@ -22,19 +22,10 @@ module.exports = {
   DIST: path.normalize('__dirname/../bin'),
   DEV: path.normalize('__dirname/../dev_embed'),
 
-  vendor: [
-  ],
-
   testFiles: function testFiles (videojsVersion){
     var dependencies = [];
     videojsVersion = videojsVersion || '5';
 
-    this.vendor.forEach(function(bundle){
-      dependencies.push({
-        pattern: bundle,
-        included: /\.js$/.test(bundle)
-      });
-    });
     //We add videojs
     dependencies.push('node_modules/video.js/dist/video.js');
     return dependencies.concat([
