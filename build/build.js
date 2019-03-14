@@ -47,6 +47,7 @@ gulp.task('build', function (done) {
     'build-scripts',
     'build-styles',
     'build-assets',
+    'test',
     function (error) {
       if (error) {
         console.log(error.message.red);

@@ -153,18 +153,18 @@ module.exports = function VASTPlugin(options) {
 
   /**** Local functions ****/
   function tryToPlayPrerollAd() {
-	// make sure we are going to use same plugin instance twice
-	player.off('vast.firstPlay', tryToPlayPrerollAd);
+    // make sure we are going to use same plugin instance twice
+    player.off('vast.firstPlay', tryToPlayPrerollAd);
 
-	if (player.vast.adsCancelled) {
-    delete player.vast.adsCancelled;
-  }
-	playerUtils.showBigPlayButton(player, false);
+    if (player.vast.adsCancelled) {
+      delete player.vast.adsCancelled;
+    }
+    playerUtils.showBigPlayButton(player, false);
 
-	if (settings.initialAudio === 'off') {
-		settings.contentVolume = {muted: player.muted(), volume: player.volume()};
-		player.muted(true);
-	}
+    if (settings.initialAudio === 'off') {
+      settings.contentVolume = {muted: player.muted(), volume: player.volume()};
+      player.muted(true);
+    }
 
     //We remove the poster to prevent flickering whenever the content starts playing
     playerUtils.removeNativePoster(player);
@@ -304,8 +304,9 @@ module.exports = function VASTPlugin(options) {
   function cancelAds() {
     player.trigger('vast.adsCancel');
     adsCanceled = true;
-
-    player.vast.adsCancelled = true;    // Set a flag to interrupt the ad loading waterfall - needed to avoid a race condition where the ad could still play after being cancelled.
+    if (player.vast) {
+      player.vast.adsCancelled = true;    // Set a flag to interrupt the ad loading waterfall - needed to avoid a race condition where the ad could still play after being cancelled.
+    }
   }
 
   function playPrerollAd(callback) {
