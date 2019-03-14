@@ -19,7 +19,7 @@ module.exports = function (karma) {
       'test/**/*.js': [ 'browserify' ]
     },
     browserify: {
-      paths: ['src/scripts', 'bower_components'],
+      paths: ['src/scripts'],
       debug: true,
       transform: [ ['babelify', {
         presets: ["es2015"],
@@ -28,7 +28,7 @@ module.exports = function (karma) {
         }],
         istanbul({
             //NOTE: Once we got full ES6 there is a problem in Karma/Istanbul please look https://github.com/karma-runner/karma-coverage/issues/157#issuecomment-160555004
-            ignore: ['**/node_modules/**', '**/test/**', '**/bower_components/**'],
+            ignore: ['**/node_modules/**', '**/test/**'],
         }) ]
     },
     logLevel: 'LOG_INFO',

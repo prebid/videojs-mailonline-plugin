@@ -113,14 +113,8 @@ gulp.task('build-scripts', function() {
     return browserify({
         entries: entryFile,
         debug: true,
-        paths: 'bower_components',
         cache: {},
         packageCache: {}
-      })
-      .transform(babelify, {
-        presets: ['es2015'],
-        sourceMaps: true,
-        only: /VPAIDFLASHClient/
       })
       .bundle()
       .pipe(source(fileName))
@@ -166,7 +160,6 @@ gulp.task('build-styles', function () {
     .pipe(gulp.dest(destPath))
     .pipe(gulpif(isProduction, buildProdCss()))
     .pipe(size({showFiles: true, title: '[Styles]'}));
-
 });
 
 

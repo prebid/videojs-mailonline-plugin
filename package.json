@@ -24,8 +24,7 @@
     "iab"
   ],
   "scripts": {
-    "test": "gulp ci-test",
-    "postinstall": "bower install"
+    "test": "gulp ci-test"
   },
   "license": "MIT",
   "devDependencies": {
@@ -85,7 +84,11 @@
     "sinon": "1.14.1",
     "sinon-chai": "^2.8.0",
     "uglifyify": "^3.0.1",
+    "video.js": "^5.19.2",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^1.1.2"
+  },
+  "dependencies": {
+    "vpaid-html5-client": "git://github.com/MailOnline/VPAIDHTML5Client.git"
   }
 }

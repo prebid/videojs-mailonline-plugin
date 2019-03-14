@@ -9,10 +9,6 @@ var knownOptions = {
 };
 var options = parseArgs(process.argv.slice(2), knownOptions);
 
-var videoJsVersionsMap = {
-  '5': 'bower_components/videojs_5/dist/'
-};
-
 var demoAds = [
   {
   url:'http://servedby.flashtalking.com/imp/1/31714;812030;208;xml;DailyMail;640x360VASTHTML5/?cachebuster=%%CACHEBUSTER%%',
@@ -50,8 +46,7 @@ var demoAds = [
 
 module.exports = {
 
-  versions: Object.keys(videoJsVersionsMap),
-  versionsMap: videoJsVersionsMap,
+  versions: ['5'],
 
   options: options,
   env: options.env,
@@ -69,7 +64,7 @@ module.exports = {
 
   testFiles: function testFiles (videojsVersion){
     var dependencies = [];
-    videojsVersion = videojsVersion || this.versions[0];
+    videojsVersion = videojsVersion || '5';
 
     this.vendor.forEach(function(bundle){
       dependencies.push({
@@ -78,7 +73,7 @@ module.exports = {
       });
     });
     //We add videojs
-    dependencies.push(videoJsVersionsMap[videojsVersion] + 'video.js');
+    dependencies.push('node_modules/video.js/dist/video.js');
     return dependencies.concat([
       'test/test-utils.css',
       'test/**/*.spec.js'
