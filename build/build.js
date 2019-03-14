@@ -74,7 +74,6 @@ gulp.task('lintjs', function() {
     'gulpfile.js',
     'src/**/*.js',
     'test/**/*.js',
-    'demo/**/*.js',
     'build/**/*.js'
   ])
     .pipe(jshint())

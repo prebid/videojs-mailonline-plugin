@@ -9,41 +9,6 @@ var knownOptions = {
 };
 var options = parseArgs(process.argv.slice(2), knownOptions);
 
-var demoAds = [
-  {
-  url:'http://servedby.flashtalking.com/imp/1/31714;812030;208;xml;DailyMail;640x360VASTHTML5/?cachebuster=%%CACHEBUSTER%%',
-  label:'VAST flashtalking Preroll Linear'
-  },
-  {
-  url:'http://search.spotxchange.com/vast/2.00/79391?VPAID=1&content_page_url=test.com&cb=3202405928168446&player_width=300&player_height=250',
-  label:'VPAID Flash spotX Preroll Test Tag'
-  },
-  {
-  url:'http://vast.bp3863356.btrll.com/vast/3863356?n=1426410433&br_w=300&br_h=250&br_pageurl=blah',
-  label:'VPAID Flash Brightroll Preroll test tag'
-  },
-  {
-  url:'https://ad3.liverail.com/?LR_PUBLISHER_ID=1331&LR_CAMPAIGN_ID=229&LR_SCHEMA=vast2-vpaid',
-  label:'VPAID Flash LiveRail Preroll test tag'
-  },
-  {
-  url:'http://cdn-tags.brainient.com/1228/cba8794a-38a5-448b-ad31-e3f6169645c1/vast.xml?platform=vpaid&v=v6&proto=http',
-  label:'VPAID Flash Brainient Preroll Linear Expand'
-  },
-  {
-  url:'http://cdn-tags.brainient.com/1228/34f8e4e6-e83c-46da-8bf6-a37ae9ed5134/vast.xml?platform=vpaid&v=v6&proto=http',
-  label:'VPAID Flash Brainient Preroll Linear Button'
-  },
-  {
-  url:'http://asv.tubemogul.com/vast/CK6HN2uZ3ULMo7rOR4rE?ad_id=eVQayxudgvnI1TJGXf5X',
-  label:'VPAID Flash Tubemogul Preroll Linear'
-  },
-  {
-  url:'http://rtr.innovid.com/r1.5554946ab01d97.36996823;cb=%25%CACHEBUSTER%25%25',
-  label:'VPAID Html5 Innovid test tag'
-  }
-];
-
 module.exports = {
 
   versions: ['5'],
@@ -76,9 +41,8 @@ module.exports = {
       'test/test-utils.css',
       'test/**/*.spec.js'
     ]);
-  },
+  }
 
-  demoAds: demoAds
 };
 
 

@@ -24,7 +24,7 @@ if [ "$TRAVIS" = "true" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
         git commit -m "[RELEASE] build and release $new_version"
         git tag $new_version
         if git push && git push --tags ; then
-            gulp deploy-demo
+            # do nothing - the demo component was removed from this project
         else
             echo "Push failed probably due to concurrent trigger of release build"
         fi
