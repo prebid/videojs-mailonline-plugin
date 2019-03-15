@@ -553,8 +553,8 @@ describe("VASTClient", function () {
           '<VAST version="2.0"><Ad id="secondAd"><Wrapper></Wrapper></Ad></VAST>');
         this.clock.tick();
 
-        assertError(callback, "on VASTClient.getVASTAd.validateAd, missing 'VASTAdTagURI' in wrapper", 101);
-        assertErrorTrack("on VASTClient.getVASTAd.validateAd, missing 'VASTAdTagURI' in wrapper", 101, ['firstAd', 'secondAd']);
+        assertError(callback, "on VASTClient.getVASTAd.validateAd, missing VASTAdTagURI in wrapper", 101);
+        assertErrorTrack("on VASTClient.getVASTAd.validateAd, missing VASTAdTagURI in wrapper", 101, ['firstAd', 'secondAd']);
       });
 
       it("must request the next ad in the waterfall if the previous ad chain returned an error", function(){
