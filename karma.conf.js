@@ -21,11 +21,7 @@ module.exports = function (karma) {
     browserify: {
       paths: ['src/scripts'],
       debug: true,
-      transform: [ ['babelify', {
-        presets: ["es2015"],
-        //only: /VPAIDFLASHClient/
-        only: /VPAIDHTML5Client/
-        }],
+      transform: [
         istanbul({
             //NOTE: Once we got full ES6 there is a problem in Karma/Istanbul please look https://github.com/karma-runner/karma-coverage/issues/157#issuecomment-160555004
             ignore: ['**/node_modules/**', '**/test/**'],

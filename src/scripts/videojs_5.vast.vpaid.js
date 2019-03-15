@@ -1,13 +1,13 @@
 'use strict';
 
-//@exclude
+/* PROD-EXCLUDE-START */
 var videojs = window.videojs || {
 	getComponent : function() {},
 	extend : function() {},
 	registerComponent : function() {},
 	registerPlugin : function() {}
 };
-// @endexclude
+/* PROD-EXCLUDE-END */
 
 window._molSettings = null;
 
