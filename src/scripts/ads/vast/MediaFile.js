@@ -4,12 +4,12 @@ var xml = require('../../utils/xml');
 var vastUtil = require('./vastUtil');
 
 var attributesList = [
-  //Required attributes
+  // Required attributes
   'delivery',
   'type',
   'width',
   'height',
-  //Optional attributes
+  // Optional attributes
   'codec',
   'id',
   'bitrate',
@@ -20,22 +20,22 @@ var attributesList = [
   'apiFramework'
 ];
 
-function MediaFile(mediaFileJTree) {
+function MediaFile (mediaFileJTree) {
   if (!(this instanceof MediaFile)) {
     return new MediaFile(mediaFileJTree);
   }
 
-  //Required attributes
+  // Required attributes
   this.src = xml.keyValue(mediaFileJTree);
 
-  for(var x=0; x<attributesList.length; x++) {
+  for (var x = 0; x < attributesList.length; x++) {
     var attribute = attributesList[x];
     this[attribute] = mediaFileJTree.attr(attribute);
   }
 }
 
-MediaFile.prototype.isSupported = function(){
-  if(vastUtil.isVPAID(this)) {
+MediaFile.prototype.isSupported = function () {
+  if (vastUtil.isVPAID(this)) {
     return !!vastUtil.findSupportedVPAIDTech(this.type);
   }
 

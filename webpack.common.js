@@ -1,7 +1,6 @@
 var webpack = require('webpack');
 var path = require('path');
 var eslintLoader = require('eslint-loader');
-// var eslintStylishConfig = require('eslint-stylish-config');
 var StringReplacePlugin = require('string-replace-webpack-plugin');
 
 var buildProps = require('./webpack.properties.js');
@@ -23,13 +22,11 @@ module.exports = function (mode) {
                 {
                     test: /\.js$/,
                     enforce: 'pre',
-                    // include: [
-                    //     path.resolve(__dirname, 'src'),
-                    //     // path.resolve(__dirname, 'test/**/*.js'),
-                    // ],
+                    include: [
+                         path.resolve(__dirname, 'src')
+                    ],
                     loader: 'eslint-loader',
                     options: {
-                        // formatter: eslintStylishConfig,
                         emitError: true,
                         failOnError: true,
                     }

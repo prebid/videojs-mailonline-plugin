@@ -45,6 +45,7 @@
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-standard": "^3.0.1",
+    "eslint-stylish-config": "0.0.2",
     "express": "^4.16.4",
     "gulp": "^3.9.0",
     "gulp-bump": "^1.0.0",

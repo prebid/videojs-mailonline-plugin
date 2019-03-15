@@ -6,23 +6,23 @@ var utilities = require('../../utils/utilityFunctions');
 
 var xml = require('../../utils/xml');
 
-var logger = require ('../../utils/consoleLogger');
+var logger = require('../../utils/consoleLogger');
 
 
-function Companion(companionJTree) {
+function Companion (companionJTree) {
   if (!(this instanceof Companion)) {
     return new Companion(companionJTree);
   }
 
-  logger.info ("<Companion> found companion ad");
-  logger.debug ("<Companion>  companionJTree:", companionJTree);
+  logger.info('<Companion> found companion ad');
+  logger.debug('<Companion>  companionJTree:', companionJTree);
 
-  //Required Elements
+  // Required Elements
   this.creativeType = xml.attr(companionJTree.staticResource, 'creativeType');
   this.staticResource = xml.keyValue(companionJTree.staticResource);
 
-  logger.info ("<Companion>  creativeType: " + this.creativeType);
-  logger.info ("<Companion>  staticResource: " + this.staticResource);
+  logger.info('<Companion>  creativeType: ' + this.creativeType);
+  logger.info('<Companion>  staticResource: ' + this.staticResource);
 
   // Weird bug when the JXON tree is built it doesn't handle casing properly in this situation...
   var htmlResource = null;
@@ -34,7 +34,7 @@ function Companion(companionJTree) {
 
   if (htmlResource !== null)
   {
-    logger.info ("<Companion> found html resource", htmlResource);
+    logger.info('<Companion> found html resource', htmlResource);
   }
 
   this.htmlResource = htmlResource;
@@ -48,12 +48,12 @@ function Companion(companionJTree) {
 
   if (iframeResource !== null)
   {
-    logger.info ("<Companion> found iframe resource", iframeResource);
+    logger.info('<Companion> found iframe resource', iframeResource);
   }
 
   this.iframeResource = iframeResource;
 
-  //Optional fields
+  // Optional fields
   this.id = xml.attr(companionJTree, 'id');
   this.width = xml.attr(companionJTree, 'width');
   this.height = xml.attr(companionJTree, 'height');
@@ -65,16 +65,16 @@ function Companion(companionJTree) {
   this.adSlotID = xml.attr(companionJTree, 'adSlotID');
   this.companionClickThrough = xml.keyValue(companionJTree.companionClickThrough);
   this.trackingEvents = parseTrackingEvents(companionJTree.trackingEvents && companionJTree.trackingEvents.tracking);
-  
+
   if (window.mol_vastVersion === 4) {
 	  this.pxratio = xml.attr(companionJTree, 'pxratio');
   }
 
-  logger.info ("<Companion>  companionClickThrough: " + this.companionClickThrough);
+  logger.info('<Companion>  companionClickThrough: ' + this.companionClickThrough);
 
 
-  /*** Local functions ***/
-  function parseTrackingEvents(trackingEvents) {
+  // **** Local Functions **** //
+  function parseTrackingEvents (trackingEvents) {
     var trackings = [];
     if (utilities.isDefined(trackingEvents)) {
       trackingEvents = utilities.isArray(trackingEvents) ? trackingEvents : [trackingEvents];

@@ -12,19 +12,19 @@ var parsers = require('./parsers');
 var xml = require('../../utils/xml');
 
 
-function Linear(linearJTree) {
+function Linear (linearJTree) {
   if (!(this instanceof Linear)) {
     return new Linear(linearJTree);
   }
 
-  //Required Elements
+  // Required Elements
   this.duration = parsers.duration(xml.keyValue(linearJTree.duration));
   this.mediaFiles = parseMediaFiles(linearJTree.mediaFiles && linearJTree.mediaFiles.mediaFile);
 
-  //Optional fields
+  // Optional fields
   this.trackingEvents = parseTrackingEvents(linearJTree.trackingEvents && linearJTree.trackingEvents.tracking, this.duration);
   this.skipoffset = parsers.offset(xml.attr(linearJTree, 'skipoffset'), this.duration);
-  
+
   // adjust skipoffset to publisher settings
   if (this.duration && window._molSettings && window._molSettings.skippable) {
 	  if (window._molSettings.skippable.enabled) {
@@ -32,11 +32,11 @@ function Linear(linearJTree) {
 			 this.skipoffset = window._molSettings.skippable.videoOffset;
 		 }
 		 else {
-			 this.skipoffset = null; 
+			 this.skipoffset = null;
 		 }
 	  }
 	  else {
-		  this.skipoffset = null; 
+		  this.skipoffset = null;
 	  }
   }
 
@@ -44,14 +44,14 @@ function Linear(linearJTree) {
     this.videoClicks = new VideoClicks(linearJTree.videoClicks);
   }
 
-  if(linearJTree.adParameters) {
+  if (linearJTree.adParameters) {
     this.adParameters = xml.keyValue(linearJTree.adParameters);
 
-    if(xml.attr(linearJTree.adParameters, 'xmlEncoded')) {
+    if (xml.attr(linearJTree.adParameters, 'xmlEncoded')) {
       this.adParameters = xml.decode(this.adParameters);
     }
   }
-  
+
   if (window.mol_vastVersion === 4) {
 	  if (linearJTree.mediaFiles && linearJTree.mediaFiles.mezzanine) {
 		  this.mezzanine = xml.keyValue(linearJTree.mediaFiles.mezzanine);
@@ -65,8 +65,8 @@ function Linear(linearJTree) {
     this.icons = parseIcons(linearJTree.icons && linearJTree.icons.icon);
   }
 
-  /*** Local functions ***/
-  function parseTrackingEvents(trackingEvents, duration) {
+  // **** Local Functions **** //
+  function parseTrackingEvents (trackingEvents, duration) {
     var trackings = [];
     if (utilities.isDefined(trackingEvents)) {
       trackingEvents = utilities.isArray(trackingEvents) ? trackingEvents : [trackingEvents];
@@ -77,7 +77,7 @@ function Linear(linearJTree) {
     return trackings;
   }
 
-  function parseMediaFiles(mediaFilesJxonTree) {
+  function parseMediaFiles (mediaFilesJxonTree) {
     var mediaFiles = [];
     if (utilities.isDefined(mediaFilesJxonTree)) {
       mediaFilesJxonTree = utilities.isArray(mediaFilesJxonTree) ? mediaFilesJxonTree : [mediaFilesJxonTree];
@@ -89,7 +89,7 @@ function Linear(linearJTree) {
     return mediaFiles;
   }
 
-  function parseIcons(iconsJxonTree) {
+  function parseIcons (iconsJxonTree) {
     var icons = [];
     if (utilities.isDefined(iconsJxonTree)) {
       iconsJxonTree = utilities.isArray(iconsJxonTree) ? iconsJxonTree : [iconsJxonTree];
@@ -107,8 +107,8 @@ function Linear(linearJTree) {
  */
 Linear.prototype.isSupported = function () {
   var i, len;
-  for(i=0, len=this.mediaFiles.length; i<len; i+=1) {
-    if(this.mediaFiles[i].isSupported()) {
+  for (i = 0, len = this.mediaFiles.length; i < len; i += 1) {
+    if (this.mediaFiles[i].isSupported()) {
       return true;
     }
   }

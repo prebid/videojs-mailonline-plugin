@@ -13,17 +13,17 @@ var dom = require('../../utils/dom');
 var playerUtils = require('../../utils/playerUtils');
 var utilities = require('../../utils/utilityFunctions');
 
-var logger = require ('../../utils/consoleLogger');
+var logger = require('../../utils/consoleLogger');
 
-function VPAIDIntegrator(player, settings) {
+function VPAIDIntegrator (player, settings) {
   if (!(this instanceof VPAIDIntegrator)) {
     return new VPAIDIntegrator(player);
   }
 
   this.VIEW_MODE = {
     NORMAL: 'normal',
-    FULLSCREEN: "fullscreen",
-    THUMBNAIL: "thumbnail"
+    FULLSCREEN: 'fullscreen',
+    THUMBNAIL: 'thumbnail'
   };
   this.player = player;
   this.containerEl = createVPAIDContainerEl(player);
@@ -32,36 +32,36 @@ function VPAIDIntegrator(player, settings) {
     VPAID_VERSION: '2.0'
   };
   this.settings = settings;
-  
+
   this.contentSource = player.tech_.el_.src;
   this.needsShowPlayer = false;
-  
+
   this.errorHasBeenTracked = false;
   this.adFinished = false;
-  
+
   this.timeUpdateTimer = null;
 
   this.addMouseMoveListener = function addMouseMoveListener () {
-    var frames = this.containerEl.getElementsByTagName("iframe");
+    var frames = this.containerEl.getElementsByTagName('iframe');
     if (frames.length) {
       frames[0].contentWindow.addEventListener('mousemove', handleMouseMove);
     }
   };
 
   this.removeMouseMoveListener = function removeMouseMoveListener () {
-    var frames = this.containerEl.getElementsByTagName("iframe");
+    var frames = this.containerEl.getElementsByTagName('iframe');
     if (frames.length) {
       frames[0].contentWindow.removeEventListener('mousemove', handleMouseMove);
     }
   };
 
-  /*** Local functions ***/
+  // **** Local Functions **** //
 
   function handleMouseMove () {
     player.userActive(true);
   }
 
-  function createVPAIDContainerEl() {
+  function createVPAIDContainerEl () {
     var containerEl = document.createElement('div');
     containerEl.id = 'BC-VPAID-container';
     dom.addClass(containerEl, 'VPAID-container');
@@ -70,14 +70,14 @@ function VPAIDIntegrator(player, settings) {
   }
 }
 
-VPAIDIntegrator.prototype.playAd = function playVPaidAd(vastResponse, callback) {
+VPAIDIntegrator.prototype.playAd = function playVPaidAd (vastResponse, callback) {
   if (!(vastResponse instanceof VASTResponse)) {
     return callback(new VASTError('on VASTIntegrator.playAd, missing required VASTResponse'));
   }
 
   var that = this;
   var player = this.player;
-  logger.debug ("<VPAIDIntegrator.playAd> looking for supported tech...");
+  logger.debug('<VPAIDIntegrator.playAd> looking for supported tech...');
   var tech = this._findSupportedTech(vastResponse, this.settings);
 
   callback = callback || utilities.noop;
@@ -85,15 +85,15 @@ VPAIDIntegrator.prototype.playAd = function playVPaidAd(vastResponse, callback) 
   this._adUnit = null;
 
   dom.addClass(player.el(), 'vjs-vpaid-ad');
-  
+
   player.on('vast.adsCancel', triggerVpaidAdEnd);
-  player.one('vpaid.adEnd', function(){
+  player.one('vpaid.adEnd', function () {
     player.off('vast.adsCancel', triggerVpaidAdEnd);
     removeAdUnit();
   });
 
   if (tech) {
-    logger.info ("<VPAIDIntegrator.playAd> found tech: ", tech);
+    logger.info('<VPAIDIntegrator.playAd> found tech: ', tech);
 
     async.waterfall([
       function (next) {
@@ -108,31 +108,31 @@ VPAIDIntegrator.prototype.playAd = function playVPaidAd(vastResponse, callback) 
     this._adUnit = {
       _paused: true,
       type: 'VPAID',
-      pauseAd: function() {
+      pauseAd: function () {
         player.trigger('vpaid.pauseAd');
-        player.pause(true);//we make sure that the video content gets stopped.
+        player.pause(true);   // we make sure that the video content gets stopped.
       },
-      resumeAd: function() {
+      resumeAd: function () {
           player.trigger('vpaid.resumeAd');
       },
-      isPaused: function() {
+      isPaused: function () {
         return this._paused;
       },
-      getSrc: function() {
+      getSrc: function () {
         return tech.mediaFile;
       }
     };
 
   } else {
-    logger.debug ("<VPAIDIntegrator.playAd> could not find suitable tech");
+    logger.debug('<VPAIDIntegrator.playAd> could not find suitable tech');
     var error = new VASTError('on VPAIDIntegrator.playAd, could not find a supported mediaFile', 403);
     adComplete(error, this._adUnit, vastResponse);
   }
 
   return this._adUnit;
 
-  /*** Local functions ***/
-  function adComplete(error, adUnit, vastResponse) {
+  // **** Local Functions **** //
+  function adComplete (error, adUnit, vastResponse) {
     that.removeMouseMoveListener();
     if (error && vastResponse) {
       that._trackError(vastResponse, error.code);
@@ -141,12 +141,12 @@ VPAIDIntegrator.prototype.playAd = function playVPaidAd(vastResponse, callback) 
     callback(error, vastResponse);
   }
 
-  function triggerVpaidAdEnd(){
-	    //player.trigger('stopAd');
+  function triggerVpaidAdEnd () {
+	    // player.trigger('stopAd');
     player.trigger('vpaid.adEnd');
   }
 
-  function removeAdUnit() {
+  function removeAdUnit () {
     if (tech) {
       logger.log('VPAIDIntegrator->Calling unloadAdUnit (implicitly invokes stopAd and unsubscribes VPAID events)');
       tech.unloadAdUnit();
@@ -173,9 +173,7 @@ VPAIDIntegrator.prototype._findSupportedTech = function (vastResponse, settings)
     if (!VPAIDTech) { continue; }
 
     // do we have a prefered tech, does it play this media file ?
-    isPreferedTech = preferredTech ?
-      (mediaFile.type === preferredTech || (MimeTypes[preferredTech] && MimeTypes[preferredTech].indexOf(mediaFile.type) > -1 )) :
-      false;
+    isPreferedTech = preferredTech ? (mediaFile.type === preferredTech || (MimeTypes[preferredTech] && MimeTypes[preferredTech].indexOf(mediaFile.type) > -1)) : false;
 
     // our prefered tech can read this mediafile, defaulting to it.
     if (isPreferedTech) {
@@ -193,7 +191,7 @@ VPAIDIntegrator.prototype._findSupportedTech = function (vastResponse, settings)
   return null;
 };
 
-VPAIDIntegrator.prototype._createVPAIDAdUnitWrapper = function(adUnit, src, responseTimeout, player) {
+VPAIDIntegrator.prototype._createVPAIDAdUnitWrapper = function (adUnit, src, responseTimeout, player) {
 	return new VPAIDAdUnitWrapper(adUnit, {src: src, responseTimeout: responseTimeout, player: player});
 };
 
@@ -201,7 +199,7 @@ VPAIDIntegrator.prototype._loadAdUnit = function (tech, vastResponse, next) {
   var that = this;
   var player = this.player;
   var vjsTechEl = player.el().querySelector('.vjs-tech');
-  //var responseTimeout = this.settings.responseTimeout || this.options.responseTimeout;
+  // var responseTimeout = this.settings.responseTimeout || this.options.responseTimeout;
   var responseTimeout = this.settings.adCancelTimeout || this.options.responseTimeout;
   tech.loadAdUnit(this.containerEl, vjsTechEl, function (error, adUnit) {
     if (error) {
@@ -211,21 +209,20 @@ VPAIDIntegrator.prototype._loadAdUnit = function (tech, vastResponse, next) {
     try {
       var frms = document.getElementsByTagName('IFRAME');
       if (frms && frms.length > 0) {
-        frms[0].addEventListener('mouseover', function() {
-          //logger.log("****** user activity");
+        frms[0].addEventListener('mouseover', function () {
+          // logger.log('****** user activity');
             player.userActive(true);
             if (!dom.hasClass(player.el(), 'vjs-has-started')) {
                 dom.addClass(player.el(), 'vjs-has-started');
             }
           });
         }
-        player.trigger({type: 'trace.message', data: {message: 'Playing ' + tech.mediaFile.src + ' (type = ' + tech.mediaFile.type + 
-      	  ', apiFramework = ' + tech.mediaFile.apiFramework + ')'}});
+        player.trigger({type: 'trace.message', data: {message: 'Playing ' + tech.mediaFile.src + ' (type = ' + tech.mediaFile.type + ', apiFramework = ' + tech.mediaFile.apiFramework + ')'}});
       var WrappedAdUnit = that._createVPAIDAdUnitWrapper(adUnit, tech.mediaFile.src, responseTimeout, player);
       var techClass = 'vjs-' + tech.name + '-ad';
       dom.addClass(player.el(), techClass);
-      player.one('vpaid.adEnd', function() {
-        dom.removeClass(player.el(),techClass);
+      player.one('vpaid.adEnd', function () {
+        dom.removeClass(player.el(), techClass);
       });
       next(null, WrappedAdUnit, vastResponse);
     } catch (e) {
@@ -233,9 +230,9 @@ VPAIDIntegrator.prototype._loadAdUnit = function (tech, vastResponse, next) {
     }
   });
 
-  // we to have re-post the message about loaded creative to the current window, 
+  // we to have re-post the message about loaded creative to the current window,
   // because VPAID client listen this message on current window (not on the parent).
-  var onLoaded = function(e) {
+  var onLoaded = function (e) {
     window.postMessage(e.data, window.location.origin);
   };
   window.parent.addEventListener('message', onLoaded);
@@ -249,14 +246,14 @@ VPAIDIntegrator.prototype._playAdUnit = function (adUnit, vastResponse, callback
     this._handshake.bind(this),
     this._setupEvents.bind(this),
     this._initAd.bind(this),
-    //this._setupEvents.bind(this),
+    // this._setupEvents.bind(this),
     this._addSkipButton.bind(this),
     this._linkPlayerControls.bind(this),
     this._startAd.bind(this)
   ], callback);
 };
 
-VPAIDIntegrator.prototype._handshake = function handshake(adUnit, vastResponse, next) {
+VPAIDIntegrator.prototype._handshake = function handshake (adUnit, vastResponse, next) {
   adUnit.handshakeVersion(this.options.VPAID_VERSION, function (error, version) {
     if (error) {
       return next(error, adUnit, vastResponse);
@@ -269,12 +266,12 @@ VPAIDIntegrator.prototype._handshake = function handshake(adUnit, vastResponse, 
     return next(new VASTError('on VPAIDIntegrator._handshake, unsupported version "' + version + '"'), adUnit, vastResponse);
   });
 
-  function isSupportedVersion(version) {
+  function isSupportedVersion (version) {
     var majorNum = major(version);
     return majorNum >= 1 && majorNum <= 2;
   }
 
-  function major(version) {
+  function major (version) {
     var parts = version.split('.');
     return parseInt(parts[0], 10);
   }
@@ -288,7 +285,7 @@ VPAIDIntegrator.prototype._initAd = function (adUnit, vastResponse, next) {
   });
 };
 
-VPAIDIntegrator.prototype._createVASTTracker = function(adUnitSrc, vastResponse) {
+VPAIDIntegrator.prototype._createVASTTracker = function (adUnitSrc, vastResponse) {
   return new VASTTracker(adUnitSrc, vastResponse);
 };
 
@@ -298,9 +295,9 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
   var player = this.player;
   var contentSource = this.contentSource;
   var that = this;
-  
+
   this.tracker = tracker;
-  
+
   this.impressionTriggered = false;
 
   adUnit.on('AdSkipped', function () {
@@ -312,16 +309,16 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
     player.trigger('vpaid.AdSkipped');
     tracker.trackSkip();
     playerUtils.showBigPlayButton(player, false);
-    
+
     adUnit.stopAd(utilities.noop);
     // VIDLA-2676 - force player to clean resources
-    setTimeout(function() {
+    setTimeout(function () {
           player.trigger('vast.adsCancel');
     }, 300);
-    //player.trigger('adStop');
+    // player.trigger('adStop');
   });
 
-  function triggerImpression() {
+  function triggerImpression () {
 	  if (!that.impressionTriggered) {
 		  that.impressionTriggered = true;
 	      if (window.MoatApiReference) {
@@ -345,8 +342,7 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
 	  that.addMouseMoveListener();
 
     if (window._molSettings.viewabilityTracking) {
-      window._molSettings.viewabilityTracking.init(window._molSettings.viewability.contextId, 
-          player.duration(), player.el_.offsetWidth, player.el_.offsetHeight);
+      window._molSettings.viewabilityTracking.init(window._molSettings.viewability.contextId, player.duration(), player.el_.offsetWidth, player.el_.offsetHeight);
     }
     adUnit.adStarted = true;
     if (!dom.hasClass(player.el(), 'vjs-has-started')) {
@@ -355,7 +351,7 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
     player.trigger('vpaid.AdStarted');
     tracker.trackCreativeView();
     if (!window._molSettings.playsInBreak && adUnit.getAdDuration) {
-      adUnit.getAdDuration(function(that, dur) {
+      adUnit.getAdDuration(function (that, dur) {
         if (dur > 0) {
           player.duration(dur);
         }
@@ -363,12 +359,12 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
     }
   	triggerImpression();
     notifyPlayToPlayer();
-    player.one('adStop', function() {
+    player.one('adStop', function () {
       if (adUnit.stopAd) {
         adUnit.stopAd(utilities.noop);
       }
     });
-    
+
     if (utilities.isIDevice()) {
     	// VIDLA-2836 (Ad click thru does not landing click thru url)
     	// iPhone and iPad
@@ -383,15 +379,15 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
 
   });
 
-  function updateTimeControls() {
-	  	var convertTimeToStr = function(time) {
+  function updateTimeControls () {
+	  	var convertTimeToStr = function (time) {
 			var secs = parseInt(time + 0.5);
 			var mins = parseInt(secs / 60);
 			secs -= (mins * 60);
 			var str = mins.toString() + ':' + (secs > 9 ? ''  : '0') + secs.toString();
 			return str;
 		};
-		
+
 		var bcTimeDisplay = document.getElementById('bc_time_display');
 		if (!bcTimeDisplay) {
 			bcTimeDisplay = document.createElement('div');
@@ -399,14 +395,14 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
 			bcTimeDisplay.id = 'bc_time_display';
 			bcTimeDisplay.class = 'vjs-current-time-display';
 			bcTimeDisplay['aria-live'] = 'off';
-			bcTimeDisplay.innerHTML = '<span class="vjs-control-text"></span>0:00';
+			bcTimeDisplay.innerHTML = '<span class="vjs-control-text"></span>0:00';   // eslint-disable-line quotes
       showOriginalTimeDisplay(player, false);
 		}
 		else {
       showOriginalTimeDisplay(player, false);
 			bcTimeDisplay.style.display = 'block';
 		}
-		adUnit.getAdRemainingTime(function(that, time) {
+		adUnit.getAdRemainingTime(function (that, time) {
 			if (time >= 0) {
 				var curTime = player.duration() - time;
 				if (curTime >= 0) {
@@ -415,7 +411,7 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
 			}
 		});
   }
-	  
+
   adUnit.on('AdVideoStart', function () {
 	  player.trigger({type: 'trace.event', data: {event: 'AdVideoStart'}});
       if (window.MoatApiReference) {
@@ -425,7 +421,7 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
     player.trigger('vpaid.AdVideoStart');
     tracker.trackStart();
 	if (!window._molSettings.playsInBreak && adUnit.getAdDuration) {
-		adUnit.getAdDuration(function(that, dur) {
+		adUnit.getAdDuration(function (that, dur) {
 			if (dur > 0) {
 				player.duration(dur);
 			}
@@ -436,7 +432,7 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
     if (utilities.isMobile()) {
         // VIDLA-2336 (simulate user activity to make sure control bar is visible on mobile devices)
         for (var i = 0; i < 4; i++) {
-        	setTimeout(function() {
+        	setTimeout(function () {
             player.userActive(true);
         	}, i * 1000);
         }
@@ -484,16 +480,16 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
     playerUtils.showBigPlayButton(player, true);
   });
 
-  function notifyPlayToPlayer(){
-    if(that._adUnit && that._adUnit.isPaused()){
+  function notifyPlayToPlayer () {
+    if (that._adUnit && that._adUnit.isPaused()) {
       that._adUnit._paused = false;
     }
     player.trigger('play');
 
   }
 
-  function notifyPauseToPlayer() {
-    if(that._adUnit){
+  function notifyPauseToPlayer () {
+    if (that._adUnit) {
       that._adUnit._paused = true;
     }
     player.trigger('pause');
@@ -558,19 +554,19 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
 		  return;
 	  }
 	  var enableFullscreenClickIFrame = false;
-	player.trigger({type: 'trace.event', data: {event: 'vpaid.AdClickThru'}});
-      if (window.MoatApiReference) {
-    	  window.MoatApiReference.dispatchEvent({type: 'AdClickThru', adVolume: player.volume()});
-      }
+	  player.trigger({type: 'trace.event', data: {event: 'vpaid.AdClickThru'}});
+    if (window.MoatApiReference) {
+      window.MoatApiReference.dispatchEvent({type: 'AdClickThru', adVolume: player.volume()});
+    }
     player.trigger('vpaid.AdClickThru');
     var url = data.url;
     var playerHandles = data.playerHandles;
     var clickThruUrl = utilities.isNotEmptyString(url) ? url : generateClickThroughURL(vastResponse.clickThrough);
 
-	if (playerHandles && window._molSettings.disableClickThru) {
-		return;
-	}
-	
+    if (playerHandles && window._molSettings.disableClickThru) {
+      return;
+    }
+
     tracker.trackClick();
     if (playerHandles && clickThruUrl) {
     	if (player.isFullscreen() && enableFullscreenClickIFrame) {
@@ -580,14 +576,14 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
     		window.open(clickThruUrl, '_blank');
     	}
     }
-    
+
     // VIDLA-2269 (Ad does not pause when browsing out to a click url from a vpaid ad)
     adUnit.pauseAd(utilities.noop);
 
-    function generateClickThroughURL(clickThroughMacro) {
+    function generateClickThroughURL (clickThroughMacro) {
       var variables = {
         ASSETURI: adUnit.options.src,
-        CONTENTPLAYHEAD: 0 //In VPAID there is no method to know the current time from the adUnit
+        CONTENTPLAYHEAD: 0 // In VPAID there is no method to know the current time from the adUnit
       };
 
       return clickThroughMacro ? vastUtil.parseURLMacro(clickThroughMacro, variables) : null;
@@ -629,7 +625,7 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
 	    	  window.MoatApiReference.dispatchEvent({type: 'AdError', adVolume: player.volume()});
 	      }
 	      player.trigger('vpaid.AdError');
-	    //NOTE: we track errors code 901, as noted in VAST 3.0
+	    // NOTE: we track errors code 901, as noted in VAST 3.0
 	    tracker.trackErrorWithCode(901);
 	    that.errorHasBeenTracked = true;
 	  }
@@ -677,10 +673,10 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
         }
 		  }
 		  player.vast.needSyncPlay = false;
-	  } 
+	  }
   });
 
-  function addClickThroughDivBlocker(clickThruUrl) {
+  function addClickThroughDivBlocker (clickThruUrl) {
 	  var blocker = createClickThroughDiv(player, clickThruUrl);
 	  var iFrame;
 	  var iFrameBackButton;
@@ -689,62 +685,62 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
 
 	  player.on('fullscreenchange', updateDisplayStyle);
 
-	  function createClickThroughDiv(player, url) {
-	    var blocker = window.document.createElement("div");
+	  function createClickThroughDiv (player, url) {
+	    var blocker = window.document.createElement('div');
 
 	    dom.addClass(blocker, 'vast-blocker');
 
 	    if (window.MoatApiReference) {
     	  window.MoatApiReference.dispatchEvent({type: 'AdClickThru', adVolume: player.volume()});
 	    }
-      
+
 	    // create IFrame with back button
-	    iFrame = window.document.createElement("iframe");
+	    iFrame = window.document.createElement('iframe');
 	    dom.addClass(iFrame, 'vast-blocker');
 	    iFrame.src = url;
 	    blocker.appendChild(iFrame);
-	  
-	    iFrameBackButton = window.document.createElement("div");
-	    dom.addClass(iFrameBackButton, "vast-back-button");
+
+	    iFrameBackButton = window.document.createElement('div');
+	    dom.addClass(iFrameBackButton, 'vast-back-button');
 	    dom.addClass(iFrameBackButton, 'enabled');
-	    iFrameBackButton.innerHTML = "Back";
+	    iFrameBackButton.innerHTML = 'Back';
 	    iFrameBackButton.id = 'iframeBackButton';
 	    blocker.appendChild(iFrameBackButton);
-	    iFrameBackButton.addEventListener ("click", function(e) {
+	    iFrameBackButton.addEventListener('click', function (e) {
 		  // show controls
 		  var skipButton = window.document.getElementById('adSkipButton');
 		  if (skipButton) {
-			  skipButton.style.display = 'block'; 
+			  skipButton.style.display = 'block';
 		  }
 		  player.controls(true);
-		  
+
 		  player.el().removeChild(blocker);
 		  resumeAdUnit();
-		  
+
 		  if (window.Event.prototype.stopPropagation !== undefined) {
 	          e.stopPropagation();
 		  }
 	    });
-		  
+
 	    // hide controls
-	    setTimeout(function() {
+	    setTimeout(function () {
 		  playerUtils.showBigPlayButton(player, false);
 	    }, 1);
 	    var skipButton = window.document.getElementById('adSkipButton');
 	    if (skipButton) {
-		  skipButton.style.display = 'none'; 
+		    skipButton.style.display = 'none';
 	    }
 	    player.controls(false);
 
 	    return blocker;
 	  }
 
-	  function updateDisplayStyle() {
-		  if (!player.isFullscreen()) {			  
+	  function updateDisplayStyle () {
+		  if (!player.isFullscreen()) {
 			  playerUtils.showBigPlayButton(player, true);
 			  var skipButton = window.document.getElementById('adSkipButton');
 			  if (skipButton) {
-				  skipButton.style.display = 'none'; 
+				  skipButton.style.display = 'none';
 			  }
 			  player.controls(true);
 			  player.el().removeChild(blocker);
@@ -781,16 +777,16 @@ VPAIDIntegrator.prototype._setupEvents = function (adUnit, vastResponse, next) {
 
   next(null, adUnit, vastResponse);
 
-  /*** Local Functions ***/
-  function pauseAdUnit() {
+  // **** Local Functions **** //
+  function pauseAdUnit () {
     adUnit.pauseAd(utilities.noop);
   }
 
-  function resumeAdUnit() {
+  function resumeAdUnit () {
     adUnit.resumeAd(utilities.noop);
   }
-  
-  function stopAdUnit() {
+
+  function stopAdUnit () {
     if (adUnit.stopAd) {
       adUnit.stopAd(utilities.noop);
     }
@@ -818,11 +814,10 @@ VPAIDIntegrator.prototype._addSkipButton = function (adUnit, vastResponse, next)
 		  var disableSkippabilityByPublisher = false;
 		  if (window._molSettings && window._molSettings.skippable) {
 			  if (window._molSettings.skippable.enabled === false) {
-				  disableSkippabilityByPublisher = true; 
+				  disableSkippabilityByPublisher = true;
 			  }
-			  if (vastResponse.duration && window._molSettings.skippable.videoThreshold && 
-				  vastResponse.duration < window._molSettings.skippable.videoThreshold) {
-				  disableSkippabilityByPublisher = true; 
+			  if (vastResponse.duration && window._molSettings.skippable.videoThreshold && vastResponse.duration < window._molSettings.skippable.videoThreshold) {
+				  disableSkippabilityByPublisher = true;
 			  }
 		  }
 		  if (!disableSkippabilityByPublisher) {
@@ -834,8 +829,8 @@ VPAIDIntegrator.prototype._addSkipButton = function (adUnit, vastResponse, next)
 
   next(null, adUnit, vastResponse);
 
-  /*** Local function ***/
-  function updateSkipButtonState() {
+  // **** Local Function **** //
+  function updateSkipButtonState () {
     player.trigger('vpaid.AdSkippableStateChange');
     adUnit.getAdSkippableState(function (error, isSkippable) {
       if (isSkippable) {
@@ -848,21 +843,21 @@ VPAIDIntegrator.prototype._addSkipButton = function (adUnit, vastResponse, next)
     });
   }
 
-  function addSkipButton(player) {
+  function addSkipButton (player) {
     skipButton = createSkipButton(player);
     player.el().appendChild(skipButton);
   }
 
-  function removeSkipButton() {
+  function removeSkipButton () {
     dom.remove(skipButton);
     skipButton = null;
   }
 
-  function createSkipButton() {
-    var skipButton = window.document.createElement("div");
-    dom.addClass(skipButton, "vast-skip-button");
-    dom.addClass(skipButton, "enabled");
-    //skipButton.innerHTML = "Skip ad";
+  function createSkipButton () {
+    var skipButton = window.document.createElement('div');
+    dom.addClass(skipButton, 'vast-skip-button');
+    dom.addClass(skipButton, 'enabled');
+    // skipButton.innerHTML = 'Skip ad';
     skipButton.innerHTML = window._molSettings.skipButtonText;
     skipButton.id = 'adSkipButton';
 
@@ -870,15 +865,15 @@ VPAIDIntegrator.prototype._addSkipButton = function (adUnit, vastResponse, next)
         that.removeMouseMoveListener();
         adUnit.getAdSkippableState(function (error, isSkippable) {
             if (isSkippable) {
-                adUnit.skipAd(utilities.noop);//We skip the adUnit
+                adUnit.skipAd(utilities.noop);  // We skip the adUnit
             } else {
             	tracker.trackSkip();
                 adUnit.stopAd(utilities.noop);
             }
           });
-      //adUnit.skipAd(utilities.noop);//We skip the adUnit
+      // adUnit.skipAd(utilities.noop);//We skip the adUnit
 
-      //We prevent event propagation to avoid problems with the clickThrough and so on
+      // We prevent event propagation to avoid problems with the clickThrough and so on
       if (window.Event.prototype.stopPropagation !== undefined) {
         e.stopPropagation();
       } else {
@@ -888,27 +883,27 @@ VPAIDIntegrator.prototype._addSkipButton = function (adUnit, vastResponse, next)
 
     return skipButton;
   }
-	
+
 	// VIDLA-2084 (publisher-specified SKIP behavior for VPAID creatives)
 	// EN - support publisher SKIP settings
-	/*** Local function ***/
-	function pubAddSkipButtonToPlayer(player, skipOffset) {
+	// **** Local Function **** //
+	function pubAddSkipButtonToPlayer (player, skipOffset) {
 	  var skipButton = pubCreateSkipButton(player);
 	  var updateSkipButton = pubUpdateSkipButtonState.bind(that, skipButton, skipOffset);
-	
+
 	  player.el().appendChild(skipButton);
-	  //player.on('timeupdate', updateSkipButton);
+	  // player.on('timeupdate', updateSkipButton);
 	  progressInterval = setInterval(updateSkipButton, 500);
-	
+
 	  playerUtils.once(player, ['vast.adEnd', 'vast.adsCancel'], pubRemoveSkipButton);
-	
-	  function removeSkipButton() {
-	    //player.off('timeupdate', updateSkipButton);
+
+	  function removeSkipButton () {
+	    // player.off('timeupdate', updateSkipButton);
 	    dom.remove(skipButton);
 	    skipButton = null;
 	  }
-	
-	  function pubRemoveSkipButton() {
+
+	  function pubRemoveSkipButton () {
 		  if (progressInterval) {
 			  clearInterval(progressInterval);
 			  progressInterval = null;
@@ -916,50 +911,50 @@ VPAIDIntegrator.prototype._addSkipButton = function (adUnit, vastResponse, next)
 		  removeSkipButton();
 	  }
 	}
-	
-	function pubCreateSkipButton(player) {
-	  var skipButton = window.document.createElement("div");
-	  dom.addClass(skipButton, "vast-skip-button");
+
+	function pubCreateSkipButton (player) {
+	  var skipButton = window.document.createElement('div');
+	  dom.addClass(skipButton, 'vast-skip-button');
 	  skipButton.style.display = 'none';
 	  skipButton.id = 'adSkipButton';
-	
+
 	  skipButton.onclick = function (e) {
 	    if (dom.hasClass(skipButton, 'enabled')) {
 	        that.removeMouseMoveListener();
 	        adUnit.getAdSkippableState(function (error, isSkippable) {
-                adUnit.skipAd(utilities.noop);//We skip the adUnit
+                adUnit.skipAd(utilities.noop);  // We skip the adUnit
 	            if (!isSkippable) {
 	            	tracker.trackSkip();
 	                adUnit.stopAd(utilities.noop);
-	            	setTimeout(function() {
+	            	setTimeout(function () {
 		                player.trigger('vast.adsCancel');
 	            	}, 1);
 	            }
 	          });
-	        //adUnit.skipAd(utilities.noop);//We skip the adUnit
+	        // adUnit.skipAd(utilities.noop);//We skip the adUnit
 	    }
 	    playerUtils.showBigPlayButton(player, false);
-	
-	    //We prevent event propagation to avoid problems with the clickThrough and so on
+
+	    // We prevent event propagation to avoid problems with the clickThrough and so on
 	    if (window.Event.prototype.stopPropagation !== undefined) {
 	      e.stopPropagation();
 	    } else {
 	      return false;
 	    }
 	  };
-	
+
 	  return skipButton;
 	}
-	
-	function pubUpdateSkipButtonState(skipButton, skipOffset) {
-		adUnit.getAdDuration(function(that, dur) {
+
+	function pubUpdateSkipButtonState (skipButton, skipOffset) {
+		adUnit.getAdDuration(function (that, dur) {
 			if (dur > 0) {
 				duration = dur;
 			}
 		});
-		adUnit.getAdRemainingTime(function(that, time) {
+		adUnit.getAdRemainingTime(function (that, time) {
       remainingTime = time;
-      // for VPAID 1.0 use remaining time for duration calculation 
+      // for VPAID 1.0 use remaining time for duration calculation
       if (!duration && remainingTime > 0) {
         duration = remainingTime;
       }
@@ -971,7 +966,7 @@ VPAIDIntegrator.prototype._addSkipButton = function (adUnit, vastResponse, next)
 		var timeLeft = Math.ceil(skipOffset - (duration - remainingTime));
     // if skip button enabled never show before-button skip text
 	  if (timeLeft > 0 && !dom.hasClass(skipButton, 'enabled')) {
-	      skipButton.innerHTML = '<p class="vast-skip-button-text">' + window._molSettings.skipText.replace('%%TIME%%', utilities.toFixedDigits(timeLeft, 2)) + '</p>';
+	      skipButton.innerHTML = '<p class="vast-skip-button-text">' + window._molSettings.skipText.replace('%%TIME%%', utilities.toFixedDigits(timeLeft, 2)) + '</p>';   // eslint-disable-line quotes
 	  } else {
 	    if (!dom.hasClass(skipButton, 'enabled')) {
 	      dom.addClass(skipButton, 'enabled');
@@ -996,8 +991,8 @@ VPAIDIntegrator.prototype._linkPlayerControls = function (adUnit, vastResponse, 
 
   next(null, adUnit, vastResponse);
 
-  /*** Local functions ***/
-  function linkVolumeControl(player, adUnit) {
+  // **** Local Functions **** //
+  function linkVolumeControl (player, adUnit) {
     player.on('volumechange', updateAdUnitVolume);
     adUnit.on('AdVolumeChange', updatePlayerVolume);
 
@@ -1006,13 +1001,13 @@ VPAIDIntegrator.prototype._linkPlayerControls = function (adUnit, vastResponse, 
     });
 
 
-    /*** local functions ***/
-    function updateAdUnitVolume() {
+    // **** Local Functions **** //
+    function updateAdUnitVolume () {
       var vol = player.muted() ? 0 : player.volume();
       adUnit.setAdVolume(vol, logError);
     }
 
-    function updatePlayerVolume() {
+    function updatePlayerVolume () {
 	  if (window.MoatApiReference) {
 		  	window.MoatApiReference.dispatchEvent({type: 'AdVolumeChange', adVolume: player.volume()});
 	  }
@@ -1030,7 +1025,7 @@ VPAIDIntegrator.prototype._linkPlayerControls = function (adUnit, vastResponse, 
     }
   }
 
-  function linkFullScreenControl(player, adUnit, VIEW_MODE) {
+  function linkFullScreenControl (player, adUnit, VIEW_MODE) {
     var updateViewSize = resizeAd.bind(that, player, adUnit, VIEW_MODE);
 
     player.on('fullscreenchange', updateViewSize);
@@ -1073,14 +1068,14 @@ VPAIDIntegrator.prototype._finishPlaying = function (adUnit, vastResponse, next)
         finishPlayingAd(null);
     }
     else {
-    	var errMsg = error? error.message : 'on VPAIDIntegrator, error while waiting for the adUnit to finish playing';
+    	var errMsg = error ? error.message : 'on VPAIDIntegrator, error while waiting for the adUnit to finish playing';
         finishPlayingAd(new VASTError(errMsg));
     }
   });
 
-  /*** local functions ***/
+  // **** Local Functions **** //
   var needsShowPlayer = this.needsShowPlayer;
-  function finishPlayingAd(error) {
+  function finishPlayingAd (error) {
 	  that.adFinished = true;
 		playerUtils.showBigPlayButton(player, false);
 		if (needsShowPlayer) {
@@ -1100,14 +1095,14 @@ VPAIDIntegrator.prototype._finishPlaying = function (adUnit, vastResponse, next)
   }
 };
 
-VPAIDIntegrator.prototype._trackError = function trackError(response, errorCode) {
+VPAIDIntegrator.prototype._trackError = function trackError (response, errorCode) {
 	if (!this.errorHasBeenTracked) {
 		this.errorHasBeenTracked = true;
 		vastUtil.track(response.errorURLMacros, {ERRORCODE: errorCode || 901});
 	}
 };
 
-function showOriginalTimeDisplay(player, show) {
+function showOriginalTimeDisplay (player, show) {
   var children = player.controlBar.getChild('currentTimeDisplay').el_.children;
   for (var i = 0; i < children.length; i++) {
     if (children[i].id != 'bc_time_display') {
@@ -1116,7 +1111,7 @@ function showOriginalTimeDisplay(player, show) {
   }
 }
 
-function resizeAd(player, adUnit, VIEW_MODE) {
+function resizeAd (player, adUnit, VIEW_MODE) {
 	var skipButton = document.getElementById('adSkipButton');
   var tech = player.el().querySelector('.vjs-tech');
   var dimension = dom.getDimension(tech);
@@ -1140,9 +1135,9 @@ function resizeAd(player, adUnit, VIEW_MODE) {
   adUnit.resizeAd(dimension.width, dimension.height, MODE, logError);
 }
 
-function logError(error) {
+function logError (error) {
   if (error) {
-    logger.error ('ERROR: ' + error.message, error);
+    logger.error('ERROR: ' + error.message, error);
   }
 }
 

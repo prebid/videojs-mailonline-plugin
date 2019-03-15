@@ -1,7 +1,7 @@
 'use strict';
 
-function UniversalAdId(universalAdIdJTree) {
-	  if(!(this instanceof UniversalAdId)) {
+function UniversalAdId (universalAdIdJTree) {
+	  if (!(this instanceof UniversalAdId)) {
 	    return new UniversalAdId(universalAdIdJTree);
 	  }
 

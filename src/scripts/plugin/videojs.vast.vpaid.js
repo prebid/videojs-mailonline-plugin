@@ -12,11 +12,11 @@ var async = require('../utils/async');
 var dom = require('../utils/dom');
 var playerUtils = require('../utils/playerUtils');
 var utilities = require('../utils/utilityFunctions');
-var ViewabilityTracking = require("../utils/anVideoViewability");
+var ViewabilityTracking = require('../utils/anVideoViewability');
 
-var logger = require ('../utils/consoleLogger');
+var logger = require('../utils/consoleLogger');
 
-module.exports = function VASTPlugin(options) {
+module.exports = function VASTPlugin (options) {
   var snapshot;
   var player = this;
   var vast = new VASTClient({wrapperLimit: options.wrapperLimit});
@@ -29,8 +29,8 @@ module.exports = function VASTPlugin(options) {
     // ad policies for a video during this time.
     timeout: 500,
 
-    //TODO:finish this IOS FIX
-    //Whenever you play an add on IOS, the native player kicks in and we loose control of it. On very heavy pages the 'play' event
+    // TODO:finish this IOS FIX
+    // Whenever you play an add on IOS, the native player kicks in and we loose control of it. On very heavy pages the 'play' event
     // May occur after the video content has already started. This is wrong if you want to play a preroll ad that needs to happen before the user
     // starts watching the content. To prevent this usec
     iosPrerollCancelTimeout: 2000,
@@ -56,15 +56,15 @@ module.exports = function VASTPlugin(options) {
     // 3 - error, warn, info, log
     // 4 - error, warn, info, log, debug
     verbosity: 0,
-    
+
     // plugin options
     playsInBreak: false,
     skipText: 'Skip in %%TIME%% seconds',
     skipButtonText: 'Skip ad',
-    initialPlayback: "auto",
-    initialAudio: "on",
+    initialPlayback: 'auto',
+    initialAudio: 'on',
     disableClickThru: false,
-    
+
     firstPlay: true
   };
 
@@ -80,21 +80,21 @@ module.exports = function VASTPlugin(options) {
   }
   logger.setPlayerId(playerId + '-' + player.el_.id);
 
-  if(utilities.isUndefined(settings.adTagUrl) && utilities.isDefined(settings.url)){
+  if (utilities.isUndefined(settings.adTagUrl) && utilities.isDefined(settings.url)) {
     settings.adTagUrl = settings.url;
   }
 
   if (utilities.isString(settings.adTagUrl)) {
     settings.adTagUrl = utilities.echoFn(settings.adTagUrl);
   }
-  
+
   if (settings.viewability && settings.viewability.config) {
 	  settings.viewabilityTracking = new ViewabilityTracking(player);
   }
-  
+
   window._molSettings = settings;
   window._timeoutIds = [];
-  
+
   window.MoatApiReference = null;
 
   if (utilities.isDefined(settings.adTagXML) && !utilities.isFunction(settings.adTagXML)) {
@@ -105,13 +105,13 @@ module.exports = function VASTPlugin(options) {
     return trackAdError(new VASTError('on VideoJS VAST plugin, missing adTagUrl on options object'));
   }
 
-  logger.setVerbosity (settings.verbosity);
+  logger.setVerbosity(settings.verbosity);
 
   if (!settings.playsInBreak) {
 	  snapshot = playerUtils.getPlayerSnapshot(player);
 	  snapshot.playing = true;	// force to play content after ad ended
   }
-  
+
   if (settings.initialPlayback === 'click') {
 	  playerUtils.showBigPlayButton(player, true);
   }
@@ -130,7 +130,7 @@ module.exports = function VASTPlugin(options) {
   player.on('vast.firstPlay', tryToPlayPrerollAd);
 
   player.on('vast.reset', function () {
-    //If we are reseting the plugin, we don't want to restore the content
+    // If we are reseting the plugin, we don't want to restore the content
     snapshot = null;
     cancelAds();
   });
@@ -151,8 +151,8 @@ module.exports = function VASTPlugin(options) {
 
   return player.vast;
 
-  /**** Local functions ****/
-  function tryToPlayPrerollAd() {
+  // **** Local Functions **** //
+  function tryToPlayPrerollAd () {
     // make sure we are going to use same plugin instance twice
     player.off('vast.firstPlay', tryToPlayPrerollAd);
 
@@ -166,7 +166,7 @@ module.exports = function VASTPlugin(options) {
       player.muted(true);
     }
 
-    //We remove the poster to prevent flickering whenever the content starts playing
+    // We remove the poster to prevent flickering whenever the content starts playing
     playerUtils.removeNativePoster(player);
 
     playerUtils.once(player, ['vast.adsCancel', 'vast.adEnd'], function () {
@@ -191,17 +191,17 @@ module.exports = function VASTPlugin(options) {
       }
     });
 
-    /*** Local functions ***/
+    // **** Local Functions **** //
 
-    function removeAdUnit() {
+    function removeAdUnit () {
       if (player.vast && player.vast.adUnit) {
-        player.vast.adUnit = null; //We remove the adUnit
+        player.vast.adUnit = null; // We remove the adUnit
         player.vast.VPAID = null;
       }
       window._molSettings.firstPlay = false;
     }
 
-    function restoreVideoContent() {
+    function restoreVideoContent () {
       setupContentEvents();
       if (snapshot) {
         playerUtils.restorePlayerSnapshot(player, snapshot);
@@ -209,7 +209,7 @@ module.exports = function VASTPlugin(options) {
       }
     }
 
-    function setupContentEvents() {
+    function setupContentEvents () {
       playerUtils.once(player, ['playing', 'vast.reset', 'vast.firstPlay'], function (evt) {
         if (evt.type !== 'playing') {
           return;
@@ -225,23 +225,23 @@ module.exports = function VASTPlugin(options) {
       });
     }
 
-    function checkAdsEnabled(next) {
+    function checkAdsEnabled (next) {
       if (settings.adsEnabled) {
         return next(null);
       }
       next(new VASTError('Ads are not enabled'));
     }
 
-    function preparePlayerForAd(next) {
+    function preparePlayerForAd (next) {
       if (canPlayPrerollAd()) {
-        //snapshot = playerUtils.getPlayerSnapshot(player);
+        // snapshot = playerUtils.getPlayerSnapshot(player);
         player.pause();
         addSpinnerIcon();
 
-        if(player.paused()) {
+        if (player.paused()) {
           next(null);
         } else {
-          playerUtils.once(player, ['playing'], function() {
+          playerUtils.once(player, ['playing'], function () {
             player.pause();
             next(null);
           });
@@ -251,11 +251,11 @@ module.exports = function VASTPlugin(options) {
       }
     }
 
-    function canPlayPrerollAd() {
+    function canPlayPrerollAd () {
       return !utilities.isIPhone() || player.currentTime() <= settings.iosPrerollCancelTimeout;
     }
 
-    function startAdCancelTimeout(next) {
+    function startAdCancelTimeout (next) {
       var adCancelTimeoutId;
       adsCanceled = false;
 
@@ -269,12 +269,12 @@ module.exports = function VASTPlugin(options) {
       }, settings.adCancelTimeout);
 
       playerUtils.once(player, ['vast.adStart', 'vast.adsCancel', 'clearAdCancelTimeout'], clearAdCancelTimeout);
-      playerUtils.once(player, ['vast.adError', 'vpaid.adEnd', 'vpaid.adError'], function() {
+      playerUtils.once(player, ['vast.adError', 'vpaid.adEnd', 'vpaid.adError'], function () {
     	  clearAdCancelTimeout();
       });
 
-      /*** local functions ***/
-      function clearAdCancelTimeout() {
+      // **** Local Functions **** //
+      function clearAdCancelTimeout () {
         if (adCancelTimeoutId) {
           clearTimeout(adCancelTimeoutId);
           adCancelTimeoutId = null;
@@ -284,13 +284,13 @@ module.exports = function VASTPlugin(options) {
       next(null);
     }
 
-    function addSpinnerIcon() {
+    function addSpinnerIcon () {
       dom.addClass(player.el(), 'vjs-vast-ad-loading');
       playerUtils.once(player, ['vast.adStart', 'vast.adsCancel'], removeSpinnerIcon);
     }
 
-    function removeSpinnerIcon() {
-      //IMPORTANT NOTE: We remove the spinnerIcon asynchronously to give time to the browser to start the video.
+    function removeSpinnerIcon () {
+      // IMPORTANT NOTE: We remove the spinnerIcon asynchronously to give time to the browser to start the video.
       // If we remove it synchronously we see a flash of the content video before the ad starts playing.
       setTimeout(function () {
         dom.removeClass(player.el(), 'vjs-vast-ad-loading');
@@ -301,7 +301,7 @@ module.exports = function VASTPlugin(options) {
 
   }
 
-  function cancelAds() {
+  function cancelAds () {
     player.trigger('vast.adsCancel');
     adsCanceled = true;
     if (player.vast) {
@@ -309,26 +309,27 @@ module.exports = function VASTPlugin(options) {
     }
   }
 
-  function playPrerollAd(callback) {
+  function playPrerollAd (callback) {
     async.waterfall([
       getVastResponse,
       playAd
     ], callback);
   }
 
-  function getVastResponse(callback) {
+  function getVastResponse (callback) {
     vast.getVASTResponse(settings.adTagUrl ? settings.adTagUrl() : settings.adTagXML, callback);
   }
 
-  function playAd(vastResponse, callback) {
-    //TODO: Find a better way to stop the play. The 'playPrerollWaterfall' ends in an inconsistent situation
-    //If the state is not 'preroll?' it means the ads were canceled therefore, we break the waterfall
+  function playAd (vastResponse, callback) {
+    // TODO: Find a better way to stop the play. The 'playPrerollWaterfall' ends in an inconsistent situation
+    // If the state is not 'preroll?' it means the ads were canceled therefore, we break the waterfall
     if (adsCanceled) {
       return;
     }
 
-    /*Copyright (c) 2011-2016 Moat Inc. All Rights Reserved.*/
-    function initMoatTracking(a,c,d,h,k){var f=document.createElement("script"),b=[];c={adData:{ids:c,duration:d,url:k},dispatchEvent:function(a){this.sendEvent?(b&&(b.push(a),a=b,b=!1),this.sendEvent(a)):b.push(a);}};d="_moatApi"+Math.floor(1E8*Math.random());var e,g;try{e=a.ownerDocument,g=e.defaultView||e.parentWindow;}catch(l){e=document,g=window;}g[d]=c;f.type="text/javascript";a&&a.insertBefore(f,a.childNodes[0]||null);f.src="https://z.moatads.com/"+h+"/moatvideo.js#"+d;return c;}
+    /* Copyright (c) 2011-2016 Moat Inc. All Rights Reserved. */
+    // eslint-disable-next-line
+    function initMoatTracking (a,c,d,h,k){var f=document.createElement("script"),b=[];c={adData:{ids:c,duration:d,url:k},dispatchEvent:function(a){this.sendEvent?(b&&(b.push(a),a=b,b=!1),this.sendEvent(a)):b.push(a);}};d="_moatApi"+Math.floor(1E8*Math.random());var e,g;try{e=a.ownerDocument,g=e.defaultView||e.parentWindow;}catch(l){e=document,g=window;}g[d]=c;f.type="text/javascript";a&&a.insertBefore(f,a.childNodes[0]||null);f.src="https://z.moatads.com/"+h+"/moatvideo.js#"+d;return c;}
     window.MoatApiReference = null;
     if (vastResponse.ads && vastResponse.ads.length > 0 && vastResponse.ads[0].inLine && vastResponse.ads[0].inLine.moat) {
   	  var ids = {level1: vastResponse.ads[0].inLine.moat.advid,
@@ -341,7 +342,7 @@ module.exports = function VASTPlugin(options) {
   	  window.MoatApiReference = initMoatTracking(player.el_, ids, player.duration(), vastResponse.ads[0].inLine.moat.partnercode, player.currentSource().src);
     }
     if (window._molSettings.viewabilityTracking) {
-  	  window._molSettings.viewabilityTracking.init(window._molSettings.viewability.contextId, 
+  	  window._molSettings.viewabilityTracking.init(window._molSettings.viewability.contextId,
   			  player.duration(), player.el_.offsetWidth, player.el_.offsetHeight);
     }
 
@@ -369,14 +370,14 @@ module.exports = function VASTPlugin(options) {
     }
 
     player.vast.vastResponse = vastResponse;
-    logger.debug ("calling adIntegrator.playAd() with vastResponse:", vastResponse);
+    logger.debug('calling adIntegrator.playAd() with vastResponse:', vastResponse);
     player.vast.adUnit = adIntegrator.playAd(vastResponse, callback);
     player.vast.VPAID = isAdVPAID;
 
     var adIconIntegrator;
 
-    /*** Local functions ****/
-    function addAdsLabel() {
+    // **** Local Functions **** //
+    function addAdsLabel () {
     	if (window._molSettings.playsInBreak) {
     		player.on('timeupdate', updateTimeControls);
     	}
@@ -396,7 +397,7 @@ module.exports = function VASTPlugin(options) {
       }
     }
 
-    function removeAdsLabel() {
+    function removeAdsLabel () {
     	if (window._molSettings.playsInBreak) {
     		player.off('timeupdate', updateTimeControls);
     		if (window._molSettings.timeOffset) {
@@ -414,7 +415,7 @@ module.exports = function VASTPlugin(options) {
       adFinished = true;
     }
 
-    function showOriginalTimeDisplay(show) {
+    function showOriginalTimeDisplay (show) {
       var children = player.controlBar.getChild('currentTimeDisplay').el_.children;
       for (var i = 0; i < children.length; i++) {
         if (children[i].id != 'bc_time_display') {
@@ -423,15 +424,15 @@ module.exports = function VASTPlugin(options) {
       }
     }
 
-    function updateTimeControls() {
-    	var convertTimeToStr = function(time) {
+    function updateTimeControls () {
+    	var convertTimeToStr = function (time) {
     		var secs = parseInt(time + 0.5);
     		var mins = parseInt(secs / 60);
     		secs -= (mins * 60);
     		var str = mins.toString() + ':' + (secs > 9 ? ''  : '0') + secs.toString();
     		return str;
     	};
-    	
+
       if (window._molSettings.breakDuration) {
         if (player.duration() != window._molSettings.breakDuration) {
           if (player.duration()) {
@@ -460,8 +461,8 @@ module.exports = function VASTPlugin(options) {
       }
     }
 
-    function preventManualProgress() {
-      //IOS video clock is very unreliable and we need a 3 seconds threshold to ensure that the user forwarded/rewound the ad
+    function preventManualProgress () {
+      // IOS video clock is very unreliable and we need a 3 seconds threshold to ensure that the user forwarded/rewound the ad
       var PROGRESS_THRESHOLD = 3;
       var previousTime = 0;
       var skipad_attempts = 0;
@@ -471,8 +472,8 @@ module.exports = function VASTPlugin(options) {
 
       playerUtils.once(player, ['vast.adEnd', 'vast.adsCancel', 'vast.adError'], stopPreventManualProgress);
 
-      /*** Local functions ***/
-      function preventAdSkip() {
+      // **** Local Functions **** //
+      function preventAdSkip () {
         // Ignore ended event if the Ad time was not 'near' the end
         // and revert time to the previous 'valid' time
         if ((player.duration() - previousTime) > PROGRESS_THRESHOLD) {
@@ -482,7 +483,7 @@ module.exports = function VASTPlugin(options) {
         }
       }
 
-      function preventAdSeek() {
+      function preventAdSeek () {
         var currentTime = player.currentTime();
         var progressDelta = Math.abs(currentTime - previousTime);
         if (progressDelta > PROGRESS_THRESHOLD) {
@@ -496,29 +497,29 @@ module.exports = function VASTPlugin(options) {
         }
       }
 
-      function stopPreventManualProgress() {
+      function stopPreventManualProgress () {
         player.off('timeupdate', preventAdSeek);
         player.off('ended', preventAdSkip);
       }
     }
   }
 
-  function trackAdError(error, vastResponse) {
+  function trackAdError (error, vastResponse) {
     player.trigger({type: 'vast.adError', error: error});
-    logger.error ('AD ERROR:', error.message, error, vastResponse);
+    logger.error('AD ERROR:', error.message, error, vastResponse);
     if (error && error.code === 402) {
       // we care only ad start timeout error, all other errors will track in VAST integrator
       if (player.vast && player.vast.trackError) {
         player.vast.trackError(error, player.vast.vastResponse);
       }
       else {
-        logger.warn ('WARNING: Cannot track ad start timeout error because VAST XML is not parsed yet');
+        logger.warn('WARNING: Cannot track ad start timeout error because VAST XML is not parsed yet');
       }
     }
     cancelAds();
   }
 
-  function isVPAID(vastResponse) {
+  function isVPAID (vastResponse) {
     var i, len;
     var mediaFiles = vastResponse.mediaFiles;
     for (i = 0, len = mediaFiles.length; i < len; i++) {

@@ -14,7 +14,7 @@ var async = require('../../utils/async');
 var playerUtils = require('../../utils/playerUtils');
 var utilities = require('../../utils/utilityFunctions');
 
-function IconIntegrator(player) {
+function IconIntegrator (player) {
   if (!(this instanceof IconIntegrator)) {
     return new IconIntegrator(player);
   }
@@ -22,10 +22,10 @@ function IconIntegrator(player) {
   this.player = player;
   this.icons = [];
   this.controlBarTimer = null;
-  this.cbHidden;
+  this.cbHidden = null;
 }
 
-IconIntegrator.prototype.renderIcons = function renderIcons(icons, callback) {
+IconIntegrator.prototype.renderIcons = function renderIcons (icons, callback) {
   var that = this;
   callback = callback || utilities.noop;
 
@@ -48,7 +48,35 @@ IconIntegrator.prototype.renderIcons = function renderIcons(icons, callback) {
   });
 };
 
-IconIntegrator.prototype._createIcons = function createIcons(icons, callback) {
+IconIntegrator.prototype._createIcons = function createIcons (icons, callback) {
+
+  // **** Local Functions **** //
+  function getContent (icon) {
+    var content = null;
+    if (icon.staticResource) {
+      var imageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+      if (imageTypes.indexOf(icon.creativeType)) {
+        content = "<img src='" + icon.staticResource + "' width='" + icon.width + "' height='" + icon.height + "'>";
+      }
+    }
+    /* else if (icon.htmlResource) {
+      // to do ...
+    }
+    else if (icon.iframeResource) {
+      // to do ...
+    } */
+    return content;
+  }
+
+  function getIconByProgram (program) {
+    for (var i = 0; i < that.icons.length; i++) {
+      if (that.icons[i].icon.program === program) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   var that = this;
 
   for (var i = 0; i < icons.length; i++) {
@@ -69,43 +97,16 @@ IconIntegrator.prototype._createIcons = function createIcons(icons, callback) {
     callback(null);
   }
   else {
-    callback(new VASTError("Could not create AdIcon content", 900));
-  }
-  return;
-
-  /*** Local Functions ***/
-  function getContent(icon) {
-    var content = null;
-    if (icon.staticResource) {
-      var imageTypes = ["image/gif", "image/jpeg", "image/png"];
-      if (imageTypes.indexOf(icon.creativeType)) {
-        content = "<img src='" + icon.staticResource + "' width='" + icon.width + "' height='" + icon.height + "'>";
-      }
-    }
-    /*else if (icon.htmlResource) {
-      // to do ...
-    }
-    else if (icon.iframeResource) {
-      // to do ...
-    }*/
-    return content;
+    callback(new VASTError('Could not create AdIcon content', 900));
   }
 
-  function getIconByProgram(program) {
-    for (var i = 0; i < that.icons.length; i++) {
-      if (that.icons[i].icon.program === program) {
-        return i;
-      }
-    }
-    return -1;
-  }
 };
 
-IconIntegrator.prototype._setupEvents = function setupEvents(callback) {
+IconIntegrator.prototype._setupEvents = function setupEvents (callback) {
   var player = this.player;
   var that = this;
 
-  playerUtils.once(player, ['vast.adEnd', 'vast.adsCancel', 'vast.adSkip', 'adStop'], function(){
+  playerUtils.once(player, ['vast.adEnd', 'vast.adsCancel', 'vast.adSkip', 'adStop'], function () {
     if (that.icons.length > 0) {
       if (that.controlBarTimer) {
         clearInterval(that.controlBarTimer);
@@ -123,49 +124,49 @@ IconIntegrator.prototype._setupEvents = function setupEvents(callback) {
       that.icons = [];
     }
   });
-  
+
   return callback(null);
 };
 
-IconIntegrator.prototype._renderIcons = function renderIcons() {
+IconIntegrator.prototype._renderIcons = function renderIcons () {
   var player = this.player;
   var that = this;
 
   for (var i = 0; i < this.icons.length; i++) {
     var icon = this.icons[i];
 
-    //position by offset
-    var xPosition = "left";//or right
+    // position by offset
+    var xPosition = 'left'; // or right
     var xPositionOffset = 0;
-    var yPosition = "top";//or bottom
+    var yPosition = 'top';  // or bottom
     var yPositionOffset = 0;
     var topMargin = 0;
     var bottomMargin = 0;   // maybe control bar height
 
-    if (icon && icon.icon.xPosition === "left") {
-        xPosition = "left";
+    if (icon && icon.icon.xPosition === 'left') {
+        xPosition = 'left';
         xPositionOffset = 0;
     }
-    if (icon && icon.icon.xPosition === "right") {
-        xPosition = "right";
+    if (icon && icon.icon.xPosition === 'right') {
+        xPosition = 'right';
         xPositionOffset = 0;
     }
     if (icon && Number(icon.icon.xPosition) >= 0) {
-        xPosition = "left";
+        xPosition = 'left';
         xPositionOffset = Number(icon.xPosition);
     }
-    if (icon && icon.icon.yPosition === "bottom") {
-        yPosition = "bottom";
+    if (icon && icon.icon.yPosition === 'bottom') {
+        yPosition = 'bottom';
         yPositionOffset = 0;
         yPositionOffset = yPositionOffset + bottomMargin;
     }
-    if (icon && icon.icon.yPosition === "top") {
-        yPosition = "top";
+    if (icon && icon.icon.yPosition === 'top') {
+        yPosition = 'top';
         yPositionOffset = 0;
         yPositionOffset = yPositionOffset + topMargin;
     }
     if (icon && Number(icon.icon.yPosition) >= 0) {
-        yPosition = "top";
+        yPosition = 'top';
         yPositionOffset = Number(icon.icon.yPosition);
         yPositionOffset = yPositionOffset + topMargin;
     }
@@ -173,24 +174,24 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
     var displayIcon = player.el().ownerDocument.createElement('div');
     player.el().appendChild(displayIcon);
 
-    displayIcon.setAttribute("name", "adicon");
-    displayIcon.id = "adicon_" + icon.icon.program;
+    displayIcon.setAttribute('name', 'adicon');
+    displayIcon.id = 'adicon_' + icon.icon.program;
     displayIcon.innerHTML = icon.content;
-    displayIcon.style.position = "absolute";
-    displayIcon.style[xPosition] = xPositionOffset + "px";
-    displayIcon.style[yPosition] = yPositionOffset + "px";
-    displayIcon.style.zIndex = 2147483647; //top most of 32bit
-    displayIcon.style.display = "none";
+    displayIcon.style.position = 'absolute';
+    displayIcon.style[xPosition] = xPositionOffset + 'px';
+    displayIcon.style[yPosition] = yPositionOffset + 'px';
+    displayIcon.style.zIndex = 2147483647; // top most of 32bit
+    displayIcon.style.display = 'none';
     icon.origY = yPositionOffset;
-  
-    //set width,height of div element 
-    displayIcon.style.width = icon.width + "px";
-    displayIcon.style.height = icon.height + "px";
+
+    // set width, height of div element
+    displayIcon.style.width = icon.width + 'px';
+    displayIcon.style.height = icon.height + 'px';
 
     icon.div = displayIcon;
 
     if (icon.icon.iconClickThrough) {
-      icon.div.style.cursor = "pointer";
+      icon.div.style.cursor = 'pointer';
       icon.clickHandler = handleClick(icon);
       icon.div.addEventListener('click', icon.clickHandler);
     }
@@ -202,16 +203,16 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
     this.controlBarTimer = setInterval(adjustIconsByControlBar, utilities.isIE11() ? 100 : 500);
   }
 
-  /**** local functions ******/
-  function adjustIconsByControlBar() {
+  // **** local functions **** //
+  function adjustIconsByControlBar () {
     var compStyle = window.getComputedStyle(that.player.controlBar.el(), null);
-    var cbHiddenCur = compStyle.backfaceVisibility === 'hidden' || compStyle.transform != 'none';
-    if (cbHiddenCur != that.cbHidden) {
+    var cbHiddenCur = compStyle.backfaceVisibility === 'hidden' || compStyle.transform !== 'none';
+    if (cbHiddenCur !== that.cbHidden) {
       that.cbHidden = cbHiddenCur;
       var cbHeight = cbHiddenCur ? 0 : that.player.controlBar.el().offsetHeight;
       for (var k = 0; k < that.icons.length; k++) {
         var ic = that.icons[k];
-        if (ic.div && ic.div.style.display ==='block') {
+        if (ic.div && ic.div.style.display === 'block') {
           if (cbHeight > 0) {
             // control bar visible
             if (elementsIntersected(ic.div, that.player.controlBar.el())) {
@@ -225,7 +226,7 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
               else {
                 ic.div.style.bottom = (ic.origY + cbHeight) + 'px';
               }
-              adjustIconsPosition(ic, cbHeight, that, 1);                  
+              adjustIconsPosition(ic, cbHeight, that, 1);
             }
           }
           else {
@@ -241,7 +242,7 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
     }
   }
 
-  function adjustIconsPosition(ic, cbHeight, that, level) {
+  function adjustIconsPosition (ic, cbHeight, that, level) {
     for (var i = 0; i < that.icons.length; i++) {
       var icon = that.icons[i];
       if (icon.div.style.display === 'block' && icon.div != ic.div) {
@@ -259,18 +260,18 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
           // protection against infinite recursive
           level++;
           if (level < 5) {
-            adjustIconsPosition(icon, cbHeight, that, level);    
-          }              
+            adjustIconsPosition(icon, cbHeight, that, level);
+          }
         }
       }
     }
   }
 
-  function elementsIntersected(div1, div2) {
-    var collide = function(el1, el2) {
+  function elementsIntersected (div1, div2) {
+    var collide = function (el1, el2) {
       var rect1 = el1.getBoundingClientRect();
       var rect2 = el2.getBoundingClientRect();
-  
+
       return !(
         rect1.top > rect2.bottom ||
         rect1.right < rect2.left ||
@@ -278,10 +279,10 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
         rect1.left > rect2.right
       );
     };
-    var inside = function(el1, el2) {
+    var inside = function (el1, el2) {
       var rect1 = el1.getBoundingClientRect();
       var rect2 = el2.getBoundingClientRect();
-  
+
       return (
         ((rect2.top <= rect1.top) && (rect1.top <= rect2.bottom)) &&
         ((rect2.top <= rect1.bottom) && (rect1.bottom <= rect2.bottom)) &&
@@ -292,24 +293,24 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
     return collide(div1, div2) || inside(div1, div2) || inside(div2, div1);
   }
 
-  function trackUrls(urls) {
+  function trackUrls (urls) {
     urls.forEach(function (src) {
       var img = new Image();
       img.src = src;
     });
   }
 
-  function handleClick(icon) {
-    return function() {
+  function handleClick (icon) {
+    return function () {
       trackUrls(icon.icon.iconClickTrackings);
       player.pause();
       window.open(icon.icon.iconClickThrough, '_blank');
     };
   }
 
-  function startIcon(icon, yPosition) {
+  function startIcon (icon, yPosition) {
     var offset = icon.icon.offset && icon.icon.offset > 0 ? icon.icon.offset : 0;
-    setTimeout(function() {
+    setTimeout(function () {
       icon.div.style.display = 'block';
       trackUrls(icon.icon.iconViewTrackings);
 
@@ -329,10 +330,10 @@ IconIntegrator.prototype._renderIcons = function renderIcons() {
           }
         }
       }
-  
+
       if (icon.icon.duration && icon.icon.duration > 0) {
         var duration = icon.icon.duration;
-        setTimeout(function() {
+        setTimeout(function () {
           var idx = that.icons.indexOf(icon);
           if (idx >= 0) {
             if (icon.clickHandler) {

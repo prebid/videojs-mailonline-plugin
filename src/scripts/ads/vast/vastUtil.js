@@ -5,7 +5,7 @@ var VPAIDHTML5Tech = require('../vpaid/VPAIDHTML5Tech');
 
 var vastUtil = {
 
-  track: function track(URLMacros, variables) {
+  track: function track (URLMacros, variables) {
     var sources = vastUtil.parseURLMacros(URLMacros, variables);
     var trackImgs = [];
     sources.forEach(function (src) {
@@ -16,13 +16,13 @@ var vastUtil = {
     return trackImgs;
   },
 
-  parseURLMacros: function parseMacros(URLMacros, variables) {
+  parseURLMacros: function parseMacros (URLMacros, variables) {
     var parsedURLs = [];
 
     variables = variables || {};
 
-    if (!(variables["CACHEBUSTING"])) {
-      variables["CACHEBUSTING"] = Math.round(Math.random() * 1.0e+10);
+    if (!(variables['CACHEBUSTING'])) {
+      variables['CACHEBUSTING'] = Math.round(Math.random() * 1.0e+10);
     }
 
     URLMacros.forEach(function (URLMacro) {
@@ -32,27 +32,27 @@ var vastUtil = {
     return parsedURLs;
   },
 
-  parseURLMacro: function parseMacro(URLMacro, variables) {
+  parseURLMacro: function parseMacro (URLMacro, variables) {
     variables = variables || {};
 
-    if (!(variables["CACHEBUSTING"])) {
-      variables["CACHEBUSTING"] = Math.round(Math.random() * 1.0e+10);
+    if (!(variables['CACHEBUSTING'])) {
+      variables['CACHEBUSTING'] = Math.round(Math.random() * 1.0e+10);
     }
 
     return vastUtil._parseURLMacro(URLMacro, variables);
   },
 
-  _parseURLMacro: function parseMacro(URLMacro, variables) {
+  _parseURLMacro: function parseMacro (URLMacro, variables) {
     variables = variables || {};
 
     utilities.forEach(variables, function (value, key) {
-      URLMacro = URLMacro.replace(new RegExp("\\[" + key + "\\\]", 'gm'), value);
+      URLMacro = URLMacro.replace(new RegExp('\\[' + key + '\\\]', 'gm'), value);
     });
 
     return URLMacro;
   },
 
-  parseDuration: function parseDuration(durationStr) {
+  parseDuration: function parseDuration (durationStr) {
     var durationRegex = /(\d\d):(\d\d):(\d\d)(\.(\d\d\d))?/;
     var match, durationInMs;
 
@@ -65,21 +65,21 @@ var vastUtil = {
 
     return isNaN(durationInMs) ? null : durationInMs;
 
-    /*** local functions ***/
-    function parseHoursToMs(hourStr) {
+    // **** Local Functions **** //
+    function parseHoursToMs (hourStr) {
       return parseInt(hourStr, 10) * 60 * 60 * 1000;
     }
 
-    function parseMinToMs(minStr) {
+    function parseMinToMs (minStr) {
       return parseInt(minStr, 10) * 60 * 1000;
     }
 
-    function parseSecToMs(secStr) {
+    function parseSecToMs (secStr) {
       return parseInt(secStr, 10) * 1000;
     }
   },
 
-  parseImpressions: function parseImpressions(impressions) {
+  parseImpressions: function parseImpressions (impressions) {
 	    if (impressions) {
 	      impressions = utilities.isArray(impressions) ? impressions : [impressions];
 	      return utilities.transformArray(impressions, function (impression) {
@@ -92,7 +92,7 @@ var vastUtil = {
 	    return [];
 	  },
 
-	  parseErrors: function parseErrors(errors) {
+	  parseErrors: function parseErrors (errors) {
 	    if (errors) {
 	    	errors = utilities.isArray(errors) ? errors : [errors];
 	      return utilities.transformArray(errors, function (error) {
@@ -105,8 +105,8 @@ var vastUtil = {
 	    return [];
 	  },
 
-  //We assume that the progress is going to arrive in milliseconds
-  formatProgress: function formatProgress(progress) {
+  // We assume that the progress is going to arrive in milliseconds
+  formatProgress: function formatProgress (progress) {
     var hours, minutes, seconds, milliseconds;
     hours = progress / (60 * 60 * 1000);
     hours = Math.floor(hours);
@@ -118,42 +118,41 @@ var vastUtil = {
     return utilities.toFixedDigits(hours, 2) + ':' + utilities.toFixedDigits(minutes, 2) + ':' + utilities.toFixedDigits(seconds, 2) + '.' + utilities.toFixedDigits(milliseconds, 3);
   },
 
-  parseOffset: function parseOffset(offset, duration) {
+  parseOffset: function parseOffset (offset, duration) {
     if (isPercentage(offset)) {
       return calculatePercentage(offset, duration);
     }
     return vastUtil.parseDuration(offset);
 
-    /*** Local function ***/
-    function isPercentage(offset) {
+    // **** Local Function **** //
+    function isPercentage (offset) {
       var percentageRegex = /^\d+(\.\d+)?%$/g;
       return percentageRegex.test(offset);
     }
 
-    function calculatePercentage(percentStr, duration) {
+    function calculatePercentage (percentStr, duration) {
       if (duration) {
         return calcPercent(duration, parseFloat(percentStr.replace('%', '')));
       }
       return null;
     }
 
-    function calcPercent(quantity, percent) {
+    function calcPercent (quantity, percent) {
       return quantity * percent / 100;
     }
   },
 
 
-  //List of supported VPAID technologies
+  // List of supported VPAID technologies
   VPAID_techs: [
-    //VPAIDFlashTech,
     VPAIDHTML5Tech
   ],
 
-  isVPAID: function isVPAIDMediaFile(mediaFile) {
+  isVPAID: function isVPAIDMediaFile (mediaFile) {
     return !!mediaFile && mediaFile.apiFramework === 'VPAID';
   },
 
-  findSupportedVPAIDTech: function findSupportedVPAIDTech(mimeType) {
+  findSupportedVPAIDTech: function findSupportedVPAIDTech (mimeType) {
     var i, len, VPAIDTech;
 
     for (i = 0, len = this.VPAID_techs.length; i < len; i += 1) {
@@ -165,7 +164,7 @@ var vastUtil = {
     return null;
   },
 
-  isFlashSupported: function isFlashSupported() {
+  isFlashSupported: function isFlashSupported () {
 	  return false;
   },
 
