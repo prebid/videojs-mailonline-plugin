@@ -68,7 +68,7 @@ function buildProdCss() {
     .pipe(function() {return cloneSink;})
     .pipe(cssnano)
     .pipe(cloneSink.tap)
-    .pipe(gulp.dest, distPath);
+    .pipe(gulp.dest, distPath + "/styles/min");
 
   return process();
 }
@@ -76,7 +76,7 @@ function buildProdCss() {
 gulp.task('build-styles', function () {
 
   var entryFile = path.join('src/styles', 'videojs.vast.vpaid.scss');
-  var destPath  = path.join(devPath, 'styles');
+  var destPath  = path.join(devPath, 'styles/dev');
 
   return gulp.src(entryFile)
     .pipe(sourcemaps.init())
