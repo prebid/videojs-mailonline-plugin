@@ -16,13 +16,13 @@ var attributesList = [
   'pxratio'
 ];
 
-function Icon(iconJTree) {
+function Icon (iconJTree) {
   if (!(this instanceof Icon)) {
     return new Icon(iconJTree);
   }
 
-  //Attributes
-  for(var x=0; x<attributesList.length; x++) {
+  // Attributes
+  for (var x = 0; x < attributesList.length; x++) {
     var attribute = attributesList[x];
     this[attribute] = iconJTree.attr(attribute);
   }
@@ -33,7 +33,7 @@ function Icon(iconJTree) {
     this.offset = parsers.duration(this.offset);
   }
 
-  //Required Elements
+  // Required Elements
   this.creativeType = xml.attr(iconJTree.staticResource, 'creativeType');
   this.staticResource = xml.keyValue(iconJTree.staticResource);
 
@@ -63,7 +63,7 @@ function Icon(iconJTree) {
   }
 
   // Local functions
-  function parseTrackings(trackings) {
+  function parseTrackings (trackings) {
     if (trackings) {
       trackings = utilities.isArray(trackings) ? trackings : [trackings];
       return utilities.transformArray(trackings, function (trackings) {

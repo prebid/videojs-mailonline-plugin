@@ -1,4 +1,4 @@
-//Small subset of async
+// Small subset of async
 
 var utilities = require('./utilityFunctions');
 
@@ -61,7 +61,7 @@ async.waterfall = function (tasks, callback) {
 
 async.when = function (condition, callback) {
   if (!utilities.isFunction(callback)) {
-    throw new Error("async.when error: missing callback argument");
+    throw new Error('async.when error: missing callback argument');
   }
 
   var isAllowed = utilities.isFunction(condition) ? condition : function () {

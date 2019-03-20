@@ -2,9 +2,9 @@
  * Viewability Wrapper
  */
 
-//var ANVideoViewabilityTracker = require("an-video-viewability");//viewability library
+// var ANVideoViewabilityTracker = require('an-video-viewability');//viewability library
 var ANVideoViewabilityTracker = null;
-var logger = require("./consoleLogger");
+var logger = require('./consoleLogger');
 var debug = function (message) {
     logger.debug(message);
 };
@@ -17,24 +17,24 @@ var html5VideoViewability = function (player_) {
 	var player = player_;
     var tracker = null;
     var mappedActions = {
-        "start": "start",
-        "expand": "expand",
-        "collapse": "collapse",
-        "unmute": "sound_on",
-        "mute": "sound_off",
-        "pause": "pause",
-        "resume": "resume",
-        "ad-click": "click",
-        "skip": "stop",
-        "complete": "stop",
-        "fullscreen": "fullscreen",
-        "exitFullscreen": "exitFullscreen"
+        'start': 'start',
+        'expand': 'expand',
+        'collapse': 'collapse',
+        'unmute': 'sound_on',
+        'mute': 'sound_off',
+        'pause': 'pause',
+        'resume': 'resume',
+        'ad-click': 'click',
+        'skip': 'stop',
+        'complete': 'stop',
+        'fullscreen': 'fullscreen',
+        'exitFullscreen': 'exitFullscreen'
     };
 
     var fireOnceEvents = {
-        "start": false,
-        "skip": false,
-        "complete": false
+        'start': false,
+        'skip': false,
+        'complete': false
     };
 
     var getConfig = function () {
@@ -51,7 +51,7 @@ var html5VideoViewability = function (player_) {
 
 	// Using callback for logs helps getting a right logger in each app
 	var loggerCallback = function (_level, _message) {
-		if (_level && _level === "debug") {
+		if (_level && _level === 'debug') {
 			debug(_message);
 		} else {
 			info(_message);
@@ -61,8 +61,8 @@ var html5VideoViewability = function (player_) {
     this.init = function (contextId, duration, width, height) {
         if (!ANVideoViewabilityTracker) {
             return;
-        }   
-        info("initialize with duration: " + duration + ", width: " + width + ", height: " + height);
+        }
+        info('initialize with duration: ' + duration + ', width: ' + width + ', height: ' + height);
         try {
             tracker = new ANVideoViewabilityTracker(
 				getConfig(),
@@ -73,7 +73,7 @@ var html5VideoViewability = function (player_) {
             );
             this.isReady = true;
         } catch (ex) {
-            debug("error on viewability library: ");
+            debug('error on viewability library: ');
             debug(ex);
         }
 
@@ -85,18 +85,18 @@ var html5VideoViewability = function (player_) {
         }
         if (this.isReady && event_ && mappedActions[event_]) {
             try {
-                if(fireOnceEvents.hasOwnProperty(event_)){
-                    if(fireOnceEvents[event_]){
-                        info("supressing fireOnceEvents event as it is already fired once by viewability library: " + mappedActions[event_]);
+                if (fireOnceEvents.hasOwnProperty(event_)) {
+                    if (fireOnceEvents[event_]) {
+                        info('supressing fireOnceEvents event as it is already fired once by viewability library: ' + mappedActions[event_]);
                         return;
-                    } else{
+                    } else {
                         fireOnceEvents[event_] = true; // mark that the event has been fired.
                     }
                 }
-                info("event invoked by viewability library: " + mappedActions[event_]);
+                info('event invoked by viewability library: ' + mappedActions[event_]);
                 tracker.notifyEvent(mappedActions[event_]);
             } catch (ex) {
-                debug("error on viewability library: ");
+                debug('error on viewability library: ');
                 debug(ex);
             }
         }

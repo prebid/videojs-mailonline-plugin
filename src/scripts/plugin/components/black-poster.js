@@ -16,24 +16,24 @@
  */
 var element = document.createElement('div');
 
-var BlackPosterFactory = function(baseComponent) {
+var BlackPosterFactory = function (baseComponent) {
   return {
     /** @constructor */
-    init: function init(player, options) {
+    init: function init (player, options) {
       options.el = element;
       element.className = 'vjs-black-poster';
       baseComponent.call(this, player, options);
 
       var posterImg = player.getChild('posterImage');
 
-      //We need to do it asynchronously to be sure that the black poster el is on the dom.
-      setTimeout(function() {
-        if(posterImg && player && player.el()) {
+      // We need to do it asynchronously to be sure that the black poster el is on the dom.
+      setTimeout(function () {
+        if (posterImg && player && player.el()) {
           player.el().insertBefore(element, posterImg.el());
         }
       }, 0);
     },
-    el: function getElement() {
+    el: function getElement () {
       return element;
     }
   };

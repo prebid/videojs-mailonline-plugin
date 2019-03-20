@@ -4,7 +4,6 @@ languages:
   PHP: false
   Python: false
 exclude_paths:
-- "demo/*"
 - "bin/*"
 - "build/*"
 - "lib/*"

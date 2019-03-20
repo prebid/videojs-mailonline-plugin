@@ -4,16 +4,16 @@ var MimeTypes = require('../../utils/mimetypes');
 
 var VASTError = require('../vast/VASTError');
 
-var VPAIDHTML5Client = require('VPAIDHTML5Client/js/VPAIDHTML5Client');
+var VPAIDHTML5Client = require('vpaid-html5-client');
 
 var utilities = require('../../utils/utilityFunctions');
 var dom = require('../../utils/dom');
 
-var logger = require ('../../utils/consoleLogger');
+var logger = require('../../utils/consoleLogger');
 
-function VPAIDHTML5Tech(mediaFile) {
+function VPAIDHTML5Tech (mediaFile) {
 
-  if(!(this instanceof VPAIDHTML5Tech)) {
+  if (!(this instanceof VPAIDHTML5Tech)) {
     return new VPAIDHTML5Tech(mediaFile);
   }
 
@@ -26,7 +26,7 @@ function VPAIDHTML5Tech(mediaFile) {
 
   this.mediaFile = mediaFile;
 
-  function sanityCheck(mediaFile) {
+  function sanityCheck (mediaFile) {
       if (!mediaFile || !utilities.isString(mediaFile.src)) {
         throw new VASTError(VPAIDHTML5Tech.INVALID_MEDIA_FILE);
       }
@@ -39,7 +39,7 @@ VPAIDHTML5Tech.supports = function (type) {
   return !utilities.isOldIE() && MimeTypes.html5.indexOf(type) > -1;
 };
 
-VPAIDHTML5Tech.prototype.loadAdUnit = function loadAdUnit(containerEl, videoEl, callback) {
+VPAIDHTML5Tech.prototype.loadAdUnit = function loadAdUnit (containerEl, videoEl, callback) {
   sanityCheck(containerEl, videoEl, callback);
 
   this.containerEl = containerEl;
@@ -49,7 +49,7 @@ VPAIDHTML5Tech.prototype.loadAdUnit = function loadAdUnit(containerEl, videoEl, 
   this.vpaidHTMLClient._id = 'vpaidIframe_' + Date.now();
   this.vpaidHTMLClient.loadAdUnit(this.mediaFile.src, callback);
 
-  function sanityCheck(container, video, cb) {
+  function sanityCheck (container, video, cb) {
     if (!dom.isDomElement(container)) {
       throw new VASTError(VPAIDHTML5Tech.INVALID_DOM_CONTAINER_EL);
     }
@@ -64,12 +64,12 @@ VPAIDHTML5Tech.prototype.loadAdUnit = function loadAdUnit(containerEl, videoEl, 
   }
 };
 
-VPAIDHTML5Tech.prototype.unloadAdUnit = function unloadAdUnit() {
+VPAIDHTML5Tech.prototype.unloadAdUnit = function unloadAdUnit () {
   if (this.vpaidHTMLClient) {
     try {
       this.vpaidHTMLClient.destroy();
-    } catch(e) {
-      logger.error ('VAST ERROR: trying to unload the VPAID adunit');
+    } catch (e) {
+      logger.error('VAST ERROR: trying to unload the VPAID adunit');
     }
 
     this.vpaidHTMLClient = null;

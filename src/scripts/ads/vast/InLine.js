@@ -9,22 +9,22 @@ var Verification = require('./Verification');
 var utilities = require('../../utils/utilityFunctions');
 var xml = require('../../utils/xml');
 
-function InLine(inlineJTree) {
+function InLine (inlineJTree) {
   if (!(this instanceof InLine)) {
     return new InLine(inlineJTree);
   }
 
-  //Required Fields
+  // Required Fields
   this.adTitle = xml.keyValue(inlineJTree.adTitle);
   this.adSystem = xml.keyValue(inlineJTree.adSystem);
   this.impressions = vastUtil.parseImpressions(inlineJTree.impression);
   this.creatives = Creative.parseCreatives(inlineJTree.creatives);
 
-  //Optional Fields
+  // Optional Fields
   this.description = xml.keyValue(inlineJTree.description);
   this.advertiser = xml.keyValue(inlineJTree.advertiser);
   this.surveys = parseSurveys(inlineJTree.survey);
-  //this.error = xml.keyValue(inlineJTree.error);
+  // this.error = xml.keyValue(inlineJTree.error);
   this.errors = vastUtil.parseErrors(inlineJTree.error);
   this.pricing = xml.keyValue(inlineJTree.pricing);
   this.extensions = inlineJTree.extensions;
@@ -43,11 +43,11 @@ function InLine(inlineJTree) {
 	  }
   }
 
-  /*** Local Functions ***/
-  function parseSurveys(inlineSurveys) {
+  // **** Local Functions **** //
+  function parseSurveys (inlineSurveys) {
     if (inlineSurveys) {
       return utilities.transformArray(utilities.isArray(inlineSurveys) ? inlineSurveys : [inlineSurveys], function (survey) {
-        if(utilities.isNotEmptyString(survey.keyValue)){
+        if (utilities.isNotEmptyString(survey.keyValue)) {
           return {
             uri: survey.keyValue,
             type: survey.attr('type')
@@ -60,8 +60,8 @@ function InLine(inlineJTree) {
     return [];
   }
 
-  function parseMoat(extensions) {
-	  var getMoatConfigData = function(arrExtentions) {
+  function parseMoat (extensions) {
+	  var getMoatConfigData = function (arrExtentions) {
 		  for (var i = 0; i < arrExtentions.length; i++) {
 			  var extension = arrExtentions[i].extension;
 			  if (extension && extension.moat) {
@@ -90,15 +90,15 @@ function InLine(inlineJTree) {
 /**
  * Returns true if the browser supports all the creatives.
  */
-InLine.prototype.isSupported = function(){
-  var i,len;
+InLine.prototype.isSupported = function () {
+  var i, len;
 
-  if(this.creatives.length === 0) {
+  if (this.creatives.length === 0) {
     return false;
   }
 
-  for(i = 0, len = this.creatives.length; i< len; i+=1){
-    if(!this.creatives[i].isSupported()){
+  for (i = 0, len = this.creatives.length; i < len; i += 1) {
+    if (!this.creatives[i].isSupported()) {
       return false;
     }
   }

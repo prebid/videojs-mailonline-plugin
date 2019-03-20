@@ -3,12 +3,12 @@
 var xml = require('../../utils/xml');
 var utilities = require('../../utils/utilityFunctions');
 
-function ViewableImpression(viewableImpressionJTree) {
-	  if(!(this instanceof ViewableImpression)) {
+function ViewableImpression (viewableImpressionJTree) {
+	  if (!(this instanceof ViewableImpression)) {
 	    return new ViewableImpression(viewableImpressionJTree);
 	  }
 
-	  //Optional Fields
+	  // Optional Fields
 	  this.id = viewableImpressionJTree.attr('id');
 	  if (viewableImpressionJTree.viewable) {
 		  this.viewables = parseUriArray(viewableImpressionJTree.viewable);
@@ -20,7 +20,7 @@ function ViewableImpression(viewableImpressionJTree) {
 		  this.viewUndetermineds = parseUriArray(viewableImpressionJTree.viewUndetermined);
 	  }
 
-	  function parseUriArray(arrJTree) {
+	  function parseUriArray (arrJTree) {
 		  var arr = [];
 		  var arrData;
 		  if (arrJTree) {

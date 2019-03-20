@@ -3,8 +3,8 @@
 var xml = require('../../utils/xml');
 var utilities = require('../../utils/utilityFunctions');
 
-function Category(categoryJTree) {
-	  if(!(this instanceof Category)) {
+function Category (categoryJTree) {
+	  if (!(this instanceof Category)) {
 	    return new Category(categoryJTree);
 	  }
 
@@ -12,7 +12,7 @@ function Category(categoryJTree) {
 	  this.category = xml.keyValue(categoryJTree);
 }
 
-Category.parseCategories = function parseCategoties(categoriesJTree) {
+Category.parseCategories = function parseCategoties (categoriesJTree) {
 	  var categories = [];
 	  var categoriesData;
 	  if (categories) {

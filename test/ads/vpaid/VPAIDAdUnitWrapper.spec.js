@@ -87,7 +87,7 @@ describe("VPAIDAdUnitWrapper", function(){
       assert.throws(function() {
         /*jshint unused:false*/
         var adUnitWrapper = new VPAIDAdUnitWrapper(vpaidAdUnit, 'foo');
-      }, VASTError, "on VPAIDAdUnitWrapper, expected options hash  but got 'foo'");
+      }, VASTError, "on VPAIDAdUnitWrapper, expected options hash  but got \"foo\"");
     });
 
     it("must publish the VPAIDAdUnit in '_adUnit'", function(){
@@ -160,7 +160,7 @@ describe("VPAIDAdUnitWrapper", function(){
           sinon.assert.calledOnce(cb);
           var error = testUtils.firstArg(cb);
           assert.instanceOf(error, VASTError);
-          assert.equal(error.message, "VAST Error: on VPAIDAdUnitWrapper, timeout while waiting for a response on call 'initAd'");
+          assert.equal(error.message, "VAST Error: on VPAIDAdUnitWrapper, timeout while waiting for a response on call \"initAd\"");
 
           //it must not call the callback again
           wrapperCb(null);
@@ -282,7 +282,7 @@ describe("VPAIDAdUnitWrapper", function(){
           error = testUtils.firstArg(callback);
 
           assert.instanceOf(error, VASTError);
-          assert.equal(error.message, "VAST Error: on VPAIDAdUnitWrapper.waitForEvent, timeout while waiting for event 'adInit'. You may need to increase adStartTimeout.");
+          assert.equal(error.message, "VAST Error: on VPAIDAdUnitWrapper.waitForEvent, timeout while waiting for event \"adInit\". You may need to increase adStartTimeout.");
         });
 
         it("must not call the callback once the event response comes", function(){

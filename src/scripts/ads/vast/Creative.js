@@ -5,8 +5,8 @@ var Companion = require('./Companion');
 var UniversalAdId = require('./UniversalAdId');
 var utilities = require('../../utils/utilityFunctions');
 
-function Creative(creativeJTree) {
-  if(!(this instanceof Creative)) {
+function Creative (creativeJTree) {
+  if (!(this instanceof Creative)) {
     return new Creative(creativeJTree);
   }
 
@@ -15,7 +15,7 @@ function Creative(creativeJTree) {
   this.adId = creativeJTree.attr('adId');
   this.apiFramework = creativeJTree.attr('apiFramework');
 
-  if(creativeJTree.linear) {
+  if (creativeJTree.linear) {
     this.linear = new Linear(creativeJTree.linear);
   }
 
@@ -39,15 +39,15 @@ function Creative(creativeJTree) {
 /**
  * Returns true if the browser supports at the creative.
  */
-Creative.prototype.isSupported = function(){
-  if(this.linear) {
+Creative.prototype.isSupported = function () {
+  if (this.linear) {
     return this.linear.isSupported();
   }
 
   return true;
 };
 
-Creative.parseCreatives = function parseCreatives(creativesJTree) {
+Creative.parseCreatives = function parseCreatives (creativesJTree) {
   var creatives = [];
   var creativesData;
   if (utilities.isDefined(creativesJTree) && utilities.isDefined(creativesJTree.creative)) {

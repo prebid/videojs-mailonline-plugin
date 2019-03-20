@@ -19,9 +19,9 @@ var dom = require('../../utils/dom');
 var playerUtils = require('../../utils/playerUtils');
 var utilities = require('../../utils/utilityFunctions');
 
-var logger = require ('../../utils/consoleLogger');
+var logger = require('../../utils/consoleLogger');
 
-function VASTIntegrator(player) {
+function VASTIntegrator (player) {
   if (!(this instanceof VASTIntegrator)) {
     return new VASTIntegrator(player);
   }
@@ -30,7 +30,7 @@ function VASTIntegrator(player) {
   this.enableFullscreenClickIFrame = false;
 }
 
-VASTIntegrator.prototype.playAd = function playAd(vastResponse, callback) {
+VASTIntegrator.prototype.playAd = function playAd (vastResponse, callback) {
   var that = this;
   callback = callback || utilities.noop;
 
@@ -82,11 +82,11 @@ VASTIntegrator.prototype.playAd = function playAd(vastResponse, callback) {
   return this._adUnit;
 };
 
-VASTIntegrator.prototype._selectAdSource = function selectAdSource(response, callback) {
+VASTIntegrator.prototype._selectAdSource = function selectAdSource (response, callback) {
   var source;
 
   var playerWidth = dom.getDimension(this.player.el()).width;
-  response.mediaFiles.sort(function compareTo(a, b) {
+  response.mediaFiles.sort(function compareTo (a, b) {
     var deltaA = Math.abs(playerWidth - a.width);
     var deltaB = Math.abs(playerWidth - b.width);
     return deltaA - deltaB;
@@ -96,9 +96,9 @@ VASTIntegrator.prototype._selectAdSource = function selectAdSource(response, cal
   if (source) {
     this.player.trigger({type: 'trace.message', data: {message: 'Playing ' + source.src + ' (type = ' + source.type + ')'}});
   }
-  
+
   if (source) {
-    logger.info ("selected source: ", source);
+    logger.info('selected source: ', source);
     if (this._adUnit) {
       this._adUnit._src = source;
     }
@@ -106,10 +106,10 @@ VASTIntegrator.prototype._selectAdSource = function selectAdSource(response, cal
   }
 
   // code 403 <== Couldn't find MediaFile that is supported by this video player
-  callback(new VASTError("Could not find Ad mediafile supported by this player", 403), response);
+  callback(new VASTError('Could not find Ad mediafile supported by this player', 403), response);
 };
 
-VASTIntegrator.prototype._createVASTTracker = function createVASTTracker(adMediaFile, response, callback) {
+VASTIntegrator.prototype._createVASTTracker = function createVASTTracker (adMediaFile, response, callback) {
   try {
     callback(null, adMediaFile, new VASTTracker(adMediaFile.src, response), response);
   } catch (e) {
@@ -117,7 +117,7 @@ VASTIntegrator.prototype._createVASTTracker = function createVASTTracker(adMedia
   }
 };
 
-VASTIntegrator.prototype._setupEvents = function setupEvents(adMediaFile, tracker, response, callback) {
+VASTIntegrator.prototype._setupEvents = function setupEvents (adMediaFile, tracker, response, callback) {
   var previouslyMuted;
   var player = this.player;
   player.on('fullscreenchange', trackFullscreenChange);
@@ -127,8 +127,8 @@ VASTIntegrator.prototype._setupEvents = function setupEvents(adMediaFile, tracke
   player.on('volumechange', trackVolumeChange);
 
   playerUtils.once(player, ['vast.adEnd', 'vast.adsCancel'], unbindEvents);
-  playerUtils.once(player, ['vast.adEnd', 'vast.adsCancel', 'vast.adSkip'], function(evt){
-    if(evt.type === 'vast.adEnd'){
+  playerUtils.once(player, ['vast.adEnd', 'vast.adsCancel', 'vast.adSkip'], function (evt) {
+    if (evt.type === 'vast.adEnd') {
       tracker.trackComplete();
     }
     if (window.MoatApiReference) {
@@ -136,15 +136,15 @@ VASTIntegrator.prototype._setupEvents = function setupEvents(adMediaFile, tracke
   	  window.MoatApiReference.dispatchEvent({type: type, adVolume: player.volume()});
     }
   });
-  
-  player.one('adStop', function() {
-	 player.trigger('vast.adsCancel'); 
+
+  player.one('adStop', function () {
+	 player.trigger('vast.adsCancel');
   });
 
   return callback(null, adMediaFile, response);
 
-  /*** Local Functions ***/
-  function unbindEvents() {
+  // **** Local Functions **** //
+  function unbindEvents () {
     player.off('fullscreenchange', trackFullscreenChange);
     player.off('vast.adStart', trackImpressions);
     player.off('pause', trackPause);
@@ -152,7 +152,7 @@ VASTIntegrator.prototype._setupEvents = function setupEvents(adMediaFile, tracke
     player.off('volumechange', trackVolumeChange);
   }
 
-  function trackFullscreenChange() {
+  function trackFullscreenChange () {
     if (player.isFullscreen()) {
       tracker.trackFullscreen();
     } else {
@@ -160,10 +160,10 @@ VASTIntegrator.prototype._setupEvents = function setupEvents(adMediaFile, tracke
     }
   }
 
-  function trackPause() {
-    //NOTE: whenever a video ends the video Element triggers a 'pause' event before the 'ended' event.
-    //      We should not track this pause event because it makes the VAST tracking confusing again we use a
-    //      Threshold of 2 seconds to prevent false positives on IOS.
+  function trackPause () {
+    // NOTE: Whenever a video ends the video Element triggers a 'pause' event before the 'ended' event.
+    //       We should not track this pause event because it makes the VAST tracking confusing again we use a
+    //       Threshold of 2 seconds to prevent false positives on IOS.
 		if (window._molSettings.breakDuration) {
 			if (window._molSettings.realVideoDuration) {
 			    if (Math.abs(window._molSettings.realVideoDuration - player.currentTime()) < 2) {
@@ -181,7 +181,7 @@ VASTIntegrator.prototype._setupEvents = function setupEvents(adMediaFile, tracke
     tracker.trackPause();
     playerUtils.showBigPlayButton(player, true);
     playerUtils.once(player, ['play', 'vast.adEnd', 'vast.adsCancel'], function (evt) {
-      if(evt.type === 'play'){
+      if (evt.type === 'play') {
 	    if (window.MoatApiReference) {
 	    	  window.MoatApiReference.dispatchEvent({type: 'AdPlaying', adVolume: player.volume()});
 	    }
@@ -191,12 +191,12 @@ VASTIntegrator.prototype._setupEvents = function setupEvents(adMediaFile, tracke
     });
   }
 
-  function trackProgress() {
+  function trackProgress () {
     var currentTimeInMs = player.currentTime() * 1000;
     tracker.trackProgress(currentTimeInMs);
   }
 
-  function trackImpressions() {
+  function trackImpressions () {
     if (window.MoatApiReference) {
     	  window.MoatApiReference.dispatchEvent({type: 'AdImpression', adVolume: player.volume()});
     }
@@ -204,7 +204,7 @@ VASTIntegrator.prototype._setupEvents = function setupEvents(adMediaFile, tracke
     tracker.trackCreativeView();
   }
 
-  function trackVolumeChange() {
+  function trackVolumeChange () {
     if (window.MoatApiReference) {
   	  window.MoatApiReference.dispatchEvent({type: 'AdVolumeChange', adVolume: player.volume()});
     }
@@ -218,7 +218,7 @@ VASTIntegrator.prototype._setupEvents = function setupEvents(adMediaFile, tracke
   }
 };
 
-VASTIntegrator.prototype._addSkipButton = function addSkipButton(source, tracker, response, callback) {
+VASTIntegrator.prototype._addSkipButton = function addSkipButton (source, tracker, response, callback) {
   var skipOffsetInSec;
   var that = this;
 
@@ -228,8 +228,8 @@ VASTIntegrator.prototype._addSkipButton = function addSkipButton(source, tracker
   }
   callback(null, source, tracker, response);
 
-  /*** Local function ***/
-  function addSkipButtonToPlayer(player, skipOffset) {
+  // **** Local function **** //
+  function addSkipButtonToPlayer (player, skipOffset) {
     var skipButton = createSkipButton(player);
     var updateSkipButton = updateSkipButtonState.bind(that, skipButton, skipOffset, player);
 
@@ -238,15 +238,15 @@ VASTIntegrator.prototype._addSkipButton = function addSkipButton(source, tracker
 
     playerUtils.once(player, ['vast.adEnd', 'vast.adsCancel'], removeSkipButton);
 
-    function removeSkipButton() {
+    function removeSkipButton () {
       player.off('timeupdate', updateSkipButton);
       dom.remove(skipButton);
     }
   }
 
-  function createSkipButton(player) {
-    var skipButton = window.document.createElement("div");
-    dom.addClass(skipButton, "vast-skip-button");
+  function createSkipButton (player) {
+    var skipButton = window.document.createElement('div');
+    dom.addClass(skipButton, 'vast-skip-button');
     skipButton.id = 'adSkipButton';
 
     skipButton.onclick = function (e) {
@@ -259,7 +259,7 @@ VASTIntegrator.prototype._addSkipButton = function addSkipButton(source, tracker
       }
       playerUtils.showBigPlayButton(player, false);
 
-      //We prevent event propagation to avoid problems with the clickThrough and so on
+      // We prevent event propagation to avoid problems with the clickThrough and so on
       if (window.Event.prototype.stopPropagation !== undefined) {
         e.stopPropagation();
       } else {
@@ -270,7 +270,7 @@ VASTIntegrator.prototype._addSkipButton = function addSkipButton(source, tracker
     return skipButton;
   }
 
-  function updateSkipButtonState(skipButton, skipOffset, player) {
+  function updateSkipButtonState (skipButton, skipOffset, player) {
     var timeLeft = Math.ceil(skipOffset - player.currentTime());
     // if skip button enabled never show before-button skip text
     if (timeLeft > 0 && !dom.hasClass(skipButton, 'enabled')) {
@@ -288,9 +288,9 @@ VASTIntegrator.prototype._addSkipButton = function addSkipButton(source, tracker
   }
 };
 
-VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, tracker, response, callback) {
+VASTIntegrator.prototype._addClickThrough = function addClickThrough (mediaFile, tracker, response, callback) {
   var enableFullscreenClickIFrame = this.enableFullscreenClickIFrame;
-  
+
   var player = this.player;
   var blocker = createClickThroughBlocker(player, tracker, response);
   var updateBlocker = updateBlockerURL.bind(this, blocker, response, player);
@@ -298,22 +298,22 @@ VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, 
   player.el().insertBefore(blocker, player.controlBar.el());
   player.on('timeupdate', updateBlocker);
   playerUtils.once(player, ['vast.adEnd', 'vast.adsCancel'], removeBlocker);
-  
+
   if (enableFullscreenClickIFrame) {
 	  player.on('fullscreenchange', updateDisplayStyle);
   }
 
   return callback(null, mediaFile, tracker, response);
 
-  /*** Local Functions ***/
+  // **** Local Functions **** //
 
-  function createClickThroughBlocker(player, tracker, response) {
+  function createClickThroughBlocker (player, tracker, response) {
 		if (window._molSettings.disableClickThru) {
-		    var blockerDiv = window.document.createElement("div");
+		    var blockerDiv = window.document.createElement('div');
 		    dom.addClass(blockerDiv, 'vast-blocker');
 			return blockerDiv;
 		}
-    var blocker = window.document.createElement("a");
+    var blocker = window.document.createElement('a');
     var clickThroughMacro = response.clickThrough;
 
     dom.addClass(blocker, 'vast-blocker');
@@ -323,14 +323,14 @@ VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, 
     }
 
     if (utilities.isString(clickThroughMacro)) {
-      blocker.target = "_blank";
+      blocker.target = '_blank';
     }
 
-    var clickHandler = function(e) {
+    var clickHandler = function (e) {
         if (player.paused()) {
             player.play();
 
-            //We prevent event propagation to avoid problems with the player's normal pause mechanism
+            // We prevent event propagation to avoid problems with the player's normal pause mechanism
             if (window.Event.prototype.stopPropagation !== undefined) {
               e.stopPropagation();
             }
@@ -345,14 +345,14 @@ VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, 
         }
         if (utilities.isIDevice()) {
           // We are using window.open to navigate for iOS.
-          setTimeout(function() {
+          setTimeout(function () {
             window.open(generateClickThroughURL(clickThroughMacro, player), '_blank');
           }, 1);
           if (window.Event.prototype.stopPropagation !== undefined) {
               e.stopPropagation();
           }
           // player.pause() in iOS sometime does not work. To make sure player paused we will try pause player in 500 msecs.
-          setTimeout(function() {
+          setTimeout(function () {
             if (!player.paused()) {
               player.pause();
             }
@@ -370,14 +370,14 @@ VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, 
           }, 500);
         }
     };
-  
+
     if (utilities.isIDevice()) {
       blocker.ontouchend = clickHandler;
     }
     else {
       blocker.onclick = clickHandler;
     }
-    
+
     if (player.isFullscreen() && enableFullscreenClickIFrame) {
     	blocker.style.display = 'none';
     }
@@ -385,14 +385,14 @@ VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, 
     return blocker;
   }
 
-  function updateBlockerURL(blocker, response, player) {
+  function updateBlockerURL (blocker, response, player) {
     // 'a' tag in iOS sometime does not navigate. We will use window.open to navigate for iOS.
     if (!utilities.isIDevice()) {
       blocker.href = generateClickThroughURL(response.clickThrough, player);
     }
   }
 
-  function generateClickThroughURL(clickThroughMacro, player) {
+  function generateClickThroughURL (clickThroughMacro, player) {
     var variables = {
       ASSETURI: mediaFile.src,
       CONTENTPLAYHEAD: vastUtil.formatProgress(player.currentTime() * 1000)
@@ -400,19 +400,19 @@ VASTIntegrator.prototype._addClickThrough = function addClickThrough(mediaFile, 
 
     return clickThroughMacro ? vastUtil.parseURLMacro(clickThroughMacro, variables) : '#';
   }
-  
-  function updateDisplayStyle() {
+
+  function updateDisplayStyle () {
 	  blocker.style.display = player.isFullscreen() ? 'none' : 'block';
   }
 
-  function removeBlocker() {
+  function removeBlocker () {
     player.off('timeupdate', updateBlocker);
 	player.off('fullscreenchange', updateDisplayStyle);
     dom.remove(blocker);
   }
 };
 
-VASTIntegrator.prototype._addClickThroughDivBlocker = function addClickThrough(mediaFile, tracker, response, callback) {
+VASTIntegrator.prototype._addClickThroughDivBlocker = function addClickThrough (mediaFile, tracker, response, callback) {
 	if (!this.enableFullscreenClickIFrame) {
 		return callback(null, mediaFile, tracker, response);
 	}
@@ -430,9 +430,9 @@ VASTIntegrator.prototype._addClickThroughDivBlocker = function addClickThrough(m
 	  player.on('fullscreenchange', updateDisplayStyle);
 
 	  return callback(null, mediaFile, tracker, response);
-	
-	  function createClickThroughDiv(player, tracker) {
-	    var blocker = window.document.createElement("div");
+
+	  function createClickThroughDiv (player, tracker) {
+	    var blocker = window.document.createElement('div');
 
 	    dom.addClass(blocker, 'vast-blocker');
 
@@ -440,61 +440,61 @@ VASTIntegrator.prototype._addClickThroughDivBlocker = function addClickThrough(m
 		    blocker.onclick = function (e) {
 		      if (player.paused()) {
 		        player.play();
-	
-		        //We prevent event propagation to avoid problems with the player's normal pause mechanism
+
+		        // We prevent event propagation to avoid problems with the player's normal pause mechanism
 		        if (window.Event.prototype.stopPropagation !== undefined) {
 		          e.stopPropagation();
 		        }
 		        return false;
 		      }
-	
+
 		      player.pause();
 		      tracker.trackClick();
-	
+
 		      if (window.MoatApiReference) {
 		    	  window.MoatApiReference.dispatchEvent({type: 'AdClickThru', adVolume: player.volume()});
 		      }
-		      
+
 		      // create IFrame with back button
-		      iFrame = window.document.createElement("iframe");
+		      iFrame = window.document.createElement('iframe');
 			  dom.addClass(iFrame, 'vast-blocker');
 			  iFrame.src = blockerUrl;
 			  blocker.appendChild(iFrame);
-			  
-			  iFrameBackButton = window.document.createElement("div");
-			  dom.addClass(iFrameBackButton, "vast-back-button");
+
+			  iFrameBackButton = window.document.createElement('div');
+			  dom.addClass(iFrameBackButton, 'vast-back-button');
 		      dom.addClass(iFrameBackButton, 'enabled');
-			  iFrameBackButton.innerHTML = "Back";
+			  iFrameBackButton.innerHTML = 'Back';
 			  iFrameBackButton.id = 'iframeBackButton';
 			  blocker.appendChild(iFrameBackButton);
-			  iFrameBackButton.addEventListener ("click", function() {
+			  iFrameBackButton.addEventListener('click', function () {
 				  blocker.removeChild(iFrame);
 				  iFrame = null;
 				  blocker.removeChild(iFrameBackButton);
 				  iFrameBackButton = null;
-	
+
 				  // show controls
 				  var skipButton = window.document.getElementById('adSkipButton');
 				  if (skipButton) {
-					  skipButton.style.display = 'block'; 
+					  skipButton.style.display = 'block';
 				  }
 				  player.controls(true);
-				  
+
 				  if (window.Event.prototype.stopPropagation !== undefined) {
 			          e.stopPropagation();
 				  }
 			  });
-			  
+
 			  // hide controls
-			  setTimeout(function() {
+			  setTimeout(function () {
 				  playerUtils.showBigPlayButton(player, false);
 			  }, 1);
 			  var skipButton = window.document.getElementById('adSkipButton');
 			  if (skipButton) {
-				  skipButton.style.display = 'none'; 
+				  skipButton.style.display = 'none';
 			  }
 			  player.controls(false);
-	
+
 		    };
 		}
 
@@ -505,11 +505,11 @@ VASTIntegrator.prototype._addClickThroughDivBlocker = function addClickThrough(m
 	    return blocker;
 	  }
 
-	  function updateBlockerURL(blocker, response, player) {
+	  function updateBlockerURL (blocker, response, player) {
 		  blockerUrl = generateClickThroughURL(response.clickThrough, player);
 	  }
 
-	  function generateClickThroughURL(clickThroughMacro, player) {
+	  function generateClickThroughURL (clickThroughMacro, player) {
 	    var variables = {
 	      ASSETURI: mediaFile.src,
 	      CONTENTPLAYHEAD: vastUtil.formatProgress(player.currentTime() * 1000)
@@ -518,31 +518,31 @@ VASTIntegrator.prototype._addClickThroughDivBlocker = function addClickThrough(m
 	    return clickThroughMacro ? vastUtil.parseURLMacro(clickThroughMacro, variables) : '#';
 	  }
 
-	  function updateDisplayStyle() {
+	  function updateDisplayStyle () {
 		  blocker.style.display = player.isFullscreen() ? 'block' : 'none';
 		  if (!player.isFullscreen() && iFrame) {
 			  blocker.removeChild(iFrame);
 			  iFrame = null;
 			  blocker.removeChild(iFrameBackButton);
 			  iFrameBackButton = null;
-			  
+
 			  playerUtils.showBigPlayButton(player, true);
 			  var skipButton = window.document.getElementById('adSkipButton');
 			  if (skipButton) {
-				  skipButton.style.display = 'none'; 
+				  skipButton.style.display = 'none';
 			  }
 			  player.controls(true);
 		  }
 	  }
 
-	  function removeBlocker() {
+	  function removeBlocker () {
 	    player.off('timeupdate', updateBlocker);
 		player.off('fullscreenchange', updateDisplayStyle);
 	    dom.remove(blocker);
 	  }
 };
 
-VASTIntegrator.prototype._playSelectedAd = function playSelectedAd(source, response, callback) {
+VASTIntegrator.prototype._playSelectedAd = function playSelectedAd (source, response, callback) {
   var player = this.player;
 
   // This check is necessary to prevent a race condition where the ad loading waterfall may reach this point after ads were cancelled (mid-waterfall).
@@ -551,33 +551,34 @@ VASTIntegrator.prototype._playSelectedAd = function playSelectedAd(source, respo
     return;
   }
 
-  //window.MoatApiReference = null;
+  // window.MoatApiReference = null;
 
-  player.preload("auto"); //without preload=auto the durationchange event is never fired
+  player.preload('auto'); // without preload=auto the durationchange event is never fired
   player.src(source);
 
-  logger.debug ("<VASTIntegrator._playSelectedAd> waiting for durationchange to play the ad...");
+  logger.debug('<VASTIntegrator._playSelectedAd> waiting for durationchange to play the ad...');
 
   playerUtils.once(player, ['durationchange', 'error', 'vast.adsCancel'], function (evt) {
     if (evt.type === 'durationchange') {
-      logger.debug ("<VASTIntegrator._playSelectedAd> got durationchange; calling playAd()");
+      logger.debug('<VASTIntegrator._playSelectedAd> got durationchange; calling playAd()');
       playAd();
-    } else if(evt.type === 'error') {
-      callback(new VASTError("on VASTIntegrator, Player is unable to play the Ad", 400), response);
+    } else if (evt.type === 'error') {
+      callback(new VASTError('on VASTIntegrator, Player is unable to play the Ad', 400), response);
     }
-    //NOTE: If the ads get canceled we do nothing/
+    // NOTE: If the ads get canceled we do nothing/
   });
 
-  /**** local functions ******/
-  function playAd() {
+  // ***** Local Functions **** //
+  function playAd () {
 
     playerUtils.once(player, ['playing', 'vast.adsCancel'], function (evt) {
-      if(evt.type === 'vast.adsCancel'){
+      if (evt.type === 'vast.adsCancel') {
         return;
       }
 
-      /*Copyright (c) 2011-2016 Moat Inc. All Rights Reserved.*/
-      /*function initMoatTracking(a,c,d,h,k){var f=document.createElement("script"),b=[];c={adData:{ids:c,duration:d,url:k},dispatchEvent:function(a){this.sendEvent?(b&&(b.push(a),a=b,b=!1),this.sendEvent(a)):b.push(a)}};d="_moatApi"+Math.floor(1E8*Math.random());var e,g;try{e=a.ownerDocument,g=e.defaultView||e.parentWindow}catch(l){e=document,g=window}g[d]=c;f.type="text/javascript";a&&a.insertBefore(f,a.childNodes[0]||null);f.src="https://z.moatads.com/"+h+"/moatvideo.js#"+d;return c};
+      /* Copyright (c) 2011-2016 Moat Inc. All Rights Reserved. */
+      /*
+      function initMoatTracking(a,c,d,h,k){var f=document.createElement("script"),b=[];c={adData:{ids:c,duration:d,url:k},dispatchEvent:function(a){this.sendEvent?(b&&(b.push(a),a=b,b=!1),this.sendEvent(a)):b.push(a)}};d="_moatApi"+Math.floor(1E8*Math.random());var e,g;try{e=a.ownerDocument,g=e.defaultView||e.parentWindow}catch(l){e=document,g=window}g[d]=c;f.type="text/javascript";a&&a.insertBefore(f,a.childNodes[0]||null);f.src="https://z.moatads.com/"+h+"/moatvideo.js#"+d;return c};
       window.MoatApiReference = null;
       if (response.ads && response.ads.length > 0 && response.ads[0].inLine && response.ads[0].inLine.moat) {
     	  var ids = {level1: response.ads[0].inLine.moat.advid,
@@ -591,18 +592,19 @@ VASTIntegrator.prototype._playSelectedAd = function playSelectedAd(source, respo
     	  //window.MoatApiReference = initMoatTracking(player.el_, ids, player.duration(), 'ninemediavpaid78961164', player.currentSource().src);
       }
       if (window._molSettings.viewabilityTracking) {
-    	  window._molSettings.viewabilityTracking.init(window._molSettings.viewability.contextId, 
+    	  window._molSettings.viewabilityTracking.init(window._molSettings.viewability.contextId,
     			  player.duration(), player.el_.offsetWidth, player.el_.offsetHeight);
-      }*/
-      
-      logger.debug ("<VASTIntegrator._playSelectedAd/playAd> got playing event; triggering vast.adStart...");
+      }
+      */
+
+      logger.debug('<VASTIntegrator._playSelectedAd/playAd> got playing event; triggering vast.adStart...');
 
       player.trigger('vast.adStart');
 
       if (utilities.isMobile()) {
           // VIDLA-2336 (simulate user activity to make sure control-bar is visible on mobile devices)
           for (var i = 0; i < 5; i++) {
-          	setTimeout(function() {
+          	setTimeout(function () {
           		player.userActive(true);
           	}, i * 2000);
           }
@@ -616,9 +618,9 @@ VASTIntegrator.prototype._playSelectedAd = function playSelectedAd(source, respo
       player.on('vast.adsCancel', proceed);
       player.on('vast.adSkip', proceed);
 
-      function proceed(evt) {
+      function proceed (evt) {
 
-          if(evt.type === 'ended') {
+          if (evt.type === 'ended') {
               // Ignore ended event if the Ad time was not 'near' the end
               // avoids issues where IOS controls could skip the Ad
             	if (window._molSettings.breakDuration) {
@@ -633,30 +635,32 @@ VASTIntegrator.prototype._playSelectedAd = function playSelectedAd(source, respo
     			}
             }
 
-        /*if(evt.type === 'ended' && (player.duration() - player.currentTime()) > 3 ) {
+        /*
+        if(evt.type === 'ended' && (player.duration() - player.currentTime()) > 3 ) {
           // Ignore ended event if the Ad time was not 'near' the end
           // avoids issues where IOS controls could skip the Ad
           return;
-        }*/
+        }
+        */
 
         player.off('ended', proceed);
         player.off('vast.adsCancel', proceed);
         player.off('vast.adSkip', proceed);
 
-        //NOTE: if the ads get cancel we do nothing apart removing the listners
-        if(evt.type === 'ended' || evt.type === 'vast.adSkip'){
+        // NOTE: if the ads get cancel we do nothing apart removing the listners
+        if (evt.type === 'ended' || evt.type === 'vast.adSkip') {
           callback(null, response);
         }
       }
     });
 
-    logger.debug ("<VASTIntegrator._playSelectedAd/playAd> calling player.play()...");
+    logger.debug('<VASTIntegrator._playSelectedAd/playAd> calling player.play()...');
 
     player.play();
   }
 };
 
-VASTIntegrator.prototype._trackError = function trackError(error, response) {
+VASTIntegrator.prototype._trackError = function trackError (error, response) {
   vastUtil.track(response.errorURLMacros, {ERRORCODE: error.code || 900});
 };
 

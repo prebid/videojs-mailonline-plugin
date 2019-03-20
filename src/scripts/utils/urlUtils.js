@@ -58,20 +58,20 @@ var utilities = require('./utilityFunctions');
  *
  */
 
-var urlParsingNode = document.createElement("a");
+var urlParsingNode = document.createElement('a');
 /**
  * documentMode is an IE-only property
  * http://msdn.microsoft.com/en-us/library/ie/cc196988(v=vs.85).aspx
  */
 var msie = document.documentMode;
 
-function urlParts(url) {
+function urlParts (url) {
   var href = url;
 
   if (msie) {
     // Normalize before parse.  Refer Implementation Notes on why this is
     // done in two steps on IE.
-    urlParsingNode.setAttribute("href", href);
+    urlParsingNode.setAttribute('href', href);
     href = urlParsingNode.href;
   }
 
@@ -85,7 +85,7 @@ function urlParts(url) {
     search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
     hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
     hostname: urlParsingNode.hostname,
-    port: utilities.isNotEmptyString(urlParsingNode.port)? urlParsingNode.port: 80,
+    port: utilities.isNotEmptyString(urlParsingNode.port) ? urlParsingNode.port : 80,
     pathname: (urlParsingNode.pathname.charAt(0) === '/')
       ? urlParsingNode.pathname
       : '/' + urlParsingNode.pathname
@@ -98,10 +98,10 @@ function urlParts(url) {
  * the different key value pairs
  * @param {string} qs queryString
  */
-function queryStringToObj(qs, cond) {
+function queryStringToObj (qs, cond) {
   var pairs, qsObj;
 
-  cond = utilities.isFunction(cond)? cond : function() {
+  cond = utilities.isFunction(cond) ? cond : function () {
     return true;
   };
 
@@ -115,7 +115,7 @@ function queryStringToObj(qs, cond) {
       keyValue = pair.split('=');
       key = keyValue[0];
       value = keyValue[1];
-      if(cond(key, value)){
+      if (cond(key, value)) {
         qsObj[key] = value;
       }
     }
@@ -129,7 +129,7 @@ function queryStringToObj(qs, cond) {
  * @param obj
  * @returns {string}
  */
-function objToQueryString(obj) {
+function objToQueryString (obj) {
   var pairs = [];
   utilities.forEach(obj, function (value, key) {
     pairs.push(key + '=' + value);
