@@ -25,8 +25,8 @@
   ],
   "scripts": {
     "test": "gulp ci-test",
-    "dev": "webpack --config webpack.dev.js",
-    "prod": "webpack --config webpack.prod.js"
+    "build-dev": "webpack --config webpack.dev.js",
+    "build-prod": "webpack --config webpack.prod.js"
   },
   "license": "MIT",
   "devDependencies": {

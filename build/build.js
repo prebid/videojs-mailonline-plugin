@@ -61,22 +61,10 @@ gulp.task('build-prod', function(done) {
   webpack(webpack_config_prod, getWebpackCallback(done));
 });
 
-function buildProdCss() {
-  var cloneSink = clone.sink();
-
-  var process = lazypipe()
-    .pipe(function() {return cloneSink;})
-    .pipe(cssnano)
-    .pipe(cloneSink.tap)
-    .pipe(gulp.dest, distPath + "/styles/min");
-
-  return process();
-}
-
 gulp.task('build-styles', function () {
 
   var entryFile = path.join('src/styles', 'videojs.vast.vpaid.scss');
-  var destPath  = path.join(devPath, 'styles/dev');
+  var destPath  = path.join(devPath, 'styles');
 
   return gulp.src(entryFile)
     .pipe(sourcemaps.init())
@@ -87,7 +75,6 @@ gulp.task('build-styles', function () {
     	path.basename = 'bc_vpaid_vast_mo';
     }))
     .pipe(gulp.dest(destPath))
-    .pipe(gulpif(isProduction, buildProdCss()))
     .pipe(size({showFiles: true, title: '[Styles]'}));
 });
 
