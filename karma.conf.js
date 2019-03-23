@@ -16,7 +16,8 @@ module.exports = function (karma) {
     frameworks: [ 'browserify', 'mocha', 'chai-sinon'],
 
     preprocessors: {
-      'test/**/*.js': [ 'browserify' ]
+      'src/**/*.js': ['coverage'],
+      'test/**/*.js': [ 'browserify']
     },
     browserify: {
       paths: ['src/scripts'],
@@ -32,7 +33,10 @@ module.exports = function (karma) {
     /**
      * How to report, by default.
      */
-    reporters: ['progress'],
+    reporters: ['progress', 'coverage'],
+
+    // enable / disable colors in the output (reporters and logs)
+    colors: true,
 
     /**
      * On which port should the browser connect, on which port is the test runner
@@ -64,6 +68,15 @@ module.exports = function (karma) {
       //'Safari',
       //'Firefox',
       'Chrome'
-    ]
+    ],
+
+    coverageReporter: {
+      includeAllSources: true,
+      dir: 'coverage/',
+      reporters: [
+        { type: 'html' },
+        { type: 'text-summary' }
+      ]
+    }
   });
 };
