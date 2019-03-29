@@ -42,7 +42,7 @@ gulp.task('build', function (done) {
 
 
 var getWebpackCallback = function getWebpackCallback (done) {
-  return function(err, stats) {
+  return function (err, stats) {
     if (err) {
       throw new gutil.PluginError('webpack', err);
     }
@@ -57,7 +57,7 @@ gulp.task('build-dev', function (done) {
   webpack(webpack_config_dev, getWebpackCallback(done));
 });
 
-gulp.task('build-prod', function(done) {
+gulp.task('build-prod', function (done) {
   webpack(webpack_config_prod, getWebpackCallback(done));
 });
 
@@ -71,11 +71,11 @@ gulp.task('build-styles', function () {
     .pipe(sass()
       .on('error', sass.logError))
     .pipe(sourcemaps.write())
-    .pipe(rename(function(path) {
+    .pipe(rename(function (path) {
     	path.basename = 'bc_vpaid_vast_mo';
     }))
     .pipe(gulp.dest(destPath))
     .pipe(size({showFiles: true, title: '[Styles]'}));
 });
 
-module.exports = new BuildTaskDoc('build', 'This task builds the plugin', 4);
+module.exports = new BuildTaskDoc('build', 'This task builds the plugin and runs karma tests', 1);

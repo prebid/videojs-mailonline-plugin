@@ -27,7 +27,7 @@ This plugin includes the following modifications to the original MailOnline/vide
 ## Integration with video.js 5+
 To integrate the plugin with videoJs you need to:
 
-**1- Add all files from `videojs-mailonline-plugin/bin` to some path in your server**
+**1- Add all files from `videojs-mailonline-plugin/dist` to some path in your server**
 
 **2- If you don't have videoJs, add it's scripts and stylesheet to your page**
 ```html
@@ -156,20 +156,6 @@ Flag to enable/disable the ads.
 #### autoResize
 Flag to enable resize of the adUnit on window's `resize` and `orientationchange` events. This is useful for responsive players.
 ```Defaults to true```
-
-#### preferredTech
-Option to tell the plugin what type of mediaFile to open first. By default, the plugin will load the first supported mediaFile. This is a way to ensure HTML5 is loaded even if a .swf is the first option in the MediaFiles array.
-```Defaults to undefined```
-
-Available Options:
-
-```flash``` which will attempt to load available ```application/x-shockwave-flash```  **not supported** -or-
-
-```html5``` which will attempt to load available ```application/javascript```
-
-You can also pass in the mimeType itself if you'd like to be more explicit.
-
-**NOTE: if you set this option to 'flash', your setting will be ignored in this plugin.  A preferred tech of 'html5' is always assumed.**
 
 #### verbosity
 verbosity of console logging;
@@ -366,29 +352,13 @@ ____   ____.__     .___                     __          ____   ____             
 ╔═════════════════════════╤════════════════════════════════════════════════════════════════════════════════╗
 ║ Name                    │ Description                                                                    ║
 ╟─────────────────────────┼────────────────────────────────────────────────────────────────────────────────╢
-║ start                   │ Starts dev server and watch task                                               ║
-╟─────────────────────────┼────────────────────────────────────────────────────────────────────────────────╢
-║ watch║                  │ watches for changes on the plugin files and executes the appropriate tasks     ║
-╟─────────────────────────┼────────────────────────────────────────────────────────────────────────────────╢
-║ build                   │ This task builds the plugin                                                    ║
+║ build                   │ This task builds the plugin and runs karma tests                               ║
 ╟─────────────────────────┼────────────────────────────────────────────────────────────────────────────────╢
 ║ ci-test                 │ Starts karma test and generates test code coverage, to be used by CI Server    ║
 ╟─────────────────────────┼────────────────────────────────────────────────────────────────────────────────╢
 ║ test                    │ Starts karma and test the player                                               ║
 ╚═════════════════════════╧════════════════════════════════════════════════════════════════════════════════╝
 
-NOTE: if a task is run with '--env production' it will execute the build task for production. Minifying scripts and so on
-
-```
-Which will show you a table with the main build tasks. If you want start the demo locally just run:
-
-```
-$ gulp start
-```
-and open the following link into your browser
-http://localhost:8086
-
----
 
 ## License
 

@@ -9,7 +9,7 @@ var commonConfig = require('./webpack.common.js')(WEBPACK_MODE);
 
 module.exports = function (env, argv) {
 
-    devConfig = devConfig(env, argv);  // Don't generate devConfig until we have the env and argv to pass in
+    devConfig = devConfig(env, argv);
 
     var pluginConfig = {
         mode: WEBPACK_MODE,
@@ -38,12 +38,6 @@ module.exports = function (env, argv) {
     };
 
     pluginConfig = merge(pluginConfig, commonConfig);
-
-    // console.log('---------------------------------------------');
-    // buildProps.util.traceObj(loaderConfig);
-    // console.log('---------------------------------------------');
-    // buildProps.util.traceObj(pluginConfig);
-    // console.log('---------------------------------------------');
 
     return devConfig.concat([pluginConfig]);
 };

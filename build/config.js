@@ -16,17 +16,17 @@ module.exports = {
   options: options,
   env: options.env,
   git: {
-    remoteUrl: process.env.GH_TOKEN ? 'https://'+process.env.GH_TOKEN+'@github.com/MailOnline/videojs-vast-vpaid' : 'origin'
+    remoteUrl: process.env.GH_TOKEN ? 'https://' + process.env.GH_TOKEN + '@github.com/MailOnline/videojs-vast-vpaid' : 'origin'
   },
 
   DIST: path.normalize('__dirname/../dist'),
   DEV: path.normalize('__dirname/../dist'),
 
-  testFiles: function testFiles (videojsVersion){
+  testFiles: function testFiles (videojsVersion) {
     var dependencies = [];
     videojsVersion = videojsVersion || '5';
 
-    //We add videojs
+    // We add videojs
     dependencies.push('node_modules/video.js/dist/video.js');
     return dependencies.concat([
       'test/test-utils.css',
