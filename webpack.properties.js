@@ -10,7 +10,7 @@ var licenseHeaders = fs.readFileSync('license-bc-mol.txt');
 
 var curDateObj = new Date();
 
-var copyrightText = '(c)' + curDateObj.getUTCFullYear() + ' Xandr';
+var copyrightText = '(c)' + curDateObj.getUTCFullYear() + ' PREBID.ORG, INC';
 
 var pluginBannerText = copyrightText + ' ' + versionText + '\n' + licenseHeaders;
 

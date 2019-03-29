@@ -1,6 +1,5 @@
 var webpack = require('webpack');
 var path = require('path');
-var eslintLoader = require('eslint-loader');
 var StringReplacePlugin = require('string-replace-webpack-plugin');
 
 var buildProps = require('./webpack.properties.js');
@@ -46,7 +45,6 @@ module.exports = function (mode) {
                                  * that this code is embedded within on the parent html page. */
                                 pattern: /<\/script>/gi,
                                 replacement: function (match, p1, offset, string) {
-                                    // console.log('####################### STRING REPLACE PLUGIN >> match: ' + match + ' --- p1: ' + p1 + /* ' --- offset: ' + offset + */' --- string: ' + string);
                                     console.warn('*******************************************************************************************');
                                     console.warn('*** WARNING: "<\/script>" string found in code - THIS SHOULD BE ESCAPED to: "<\\/script>" ***');
                                     console.warn('*******************************************************************************************');
@@ -57,9 +55,8 @@ module.exports = function (mode) {
                                 /* Remove any debugger statements for a production build */
                                 pattern: /debugger;|debugger/g,
                                 replacement: function (match, p1, offset, string) {
-                                    // console.log('####################### STRING REPLACE PLUGIN >> match: ' + match + ' --- p1: ' + p1 + /* ' --- offset: ' + offset + */' --- string: ' + string);
                                     if (mode === buildProps.MODE_PRODUCTION) {
-                                        throw new Error('*** ERROR: HEY YOU! REMOVE THE debugger; STATEMENT FROM YOUR CODE! ***');
+                                        return '';
                                     } else {
                                         console.warn('********************************************************************************');
                                         console.warn('*** DEV WARNING: debugger; statement found in code - DO NOT COMMIT THIS CODE ***');

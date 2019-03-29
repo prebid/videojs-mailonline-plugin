@@ -5,10 +5,10 @@ var async      = require('async');
 var Table      = require('cli-table');
 var BuildTaskDoc = require('./build/BuildTaskDoc');
 
-//Init colors
+// Init colors
 require('./build/COLORS');
 
-//We retrieve the build-tasks
+// We retrieve the build-tasks
 var buildTasksMap = requireDir('./build');
 
 
@@ -21,21 +21,21 @@ gulp.task('default', function (finishTask) {
         finishTask
     );
 
-    /*** Local functions ***/
+    /** Local functions **/
 
-    function printWelcomeMessage(done) {
+    function printWelcomeMessage (done) {
         console.log("Welcome to MailOnline's new".info);
         done();
     }
 
-    function printBanner(done) {
+    function printBanner (done) {
         asciify('Videojs Vast Vpaid', function (err, res) {
             console.log(res.help);
             done();
         });
     }
 
-    function printTasksHelpTable(done) {
+    function printTasksHelpTable (done) {
         var table = new Table({
             head: ['Name', 'Description'],
             colWidths: [25, 80],
@@ -43,15 +43,15 @@ gulp.task('default', function (finishTask) {
                 'top': '═',
                 'top-mid': '╤',
                 'top-left': '╔',
-                'top-right': '╗' ,
+                'top-right': '╗',
                 'bottom': '═',
                 'bottom-mid': '╧',
                 'bottom-left': '╚',
-                'bottom-right': '╝' ,
+                'bottom-right': '╝',
                 'left': '║',
                 'left-mid': '╟',
                 'mid': '─',
-                'mid-mid': '┼' ,
+                'mid-mid': '┼',
                 'right': '║',
                 'right-mid': '╢',
                 'middle': '│'
@@ -67,21 +67,19 @@ gulp.task('default', function (finishTask) {
         console.log('###### Below, you have the list of all the available build tasks ########');
         console.log(table.toString());
         console.log('   ');
-        console.log("NOTE: if a task is run with '--env production' it will execute the build task for production. Minifying scripts and so on".green);
-        console.log('   ');
         done();
     }
 
-    function getBuildTasks(tasksDir) {
+    function getBuildTasks (tasksDir) {
 
         var tasks = Object.keys(tasksDir)
-            .map(function mapTasks(taskName) {
+            .map(function mapTasks (taskName) {
                 return tasksDir[taskName];
             })
-            .filter(function filterTasks(task) {
+            .filter(function filterTasks (task) {
                 return task instanceof BuildTaskDoc;
             })
-            .sort(function compareTasks(a, b) {
+            .sort(function compareTasks (a, b) {
                 return a.order > b.order ? 1 : -1;
             });
 
