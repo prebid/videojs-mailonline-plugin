@@ -78,4 +78,4 @@ gulp.task('build-styles', function () {
     .pipe(size({showFiles: true, title: '[Styles]'}));
 });
 
-module.exports = new BuildTaskDoc('build', 'This task runs karma tests and builds the plugin', 1);
+module.exports = new BuildTaskDoc('build', 'This task builds the plugin and runs karma tests', 1);
