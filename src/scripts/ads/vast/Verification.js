@@ -4,8 +4,8 @@ var xml = require('../../utils/xml');
 var vastUtil = require('./vastUtil');
 var utilities = require('../../utils/utilityFunctions');
 
-function Verification(verificationJTree) {
-  if(!(this instanceof Verification)) {
+function Verification (verificationJTree) {
+  if (!(this instanceof Verification)) {
     return new Verification(verificationJTree);
   }
 
@@ -19,8 +19,8 @@ function Verification(verificationJTree) {
   if (verificationJTree.viewableImpression) {
 	  this.viewableImpression = {id: verificationJTree.viewableImpression.attr('id'), uri: xml.keyValue(verificationJTree.viewableImpression)};
   }
-  
-  function parseResources(resources) {
+
+  function parseResources (resources) {
 	  var arr = [];
 	  var arrData;
 	  if (resources) {
@@ -33,7 +33,7 @@ function Verification(verificationJTree) {
   }
 }
 
-Verification.parseAdVerifications = function parseAdVerifications(verificationsJTree) {
+Verification.parseAdVerifications = function parseAdVerifications (verificationsJTree) {
   var verifications = [];
   var verificationsData;
   if (utilities.isDefined(verificationsJTree) && utilities.isDefined(verificationsJTree.verification)) {

@@ -9,15 +9,15 @@ describe("xml", function () {
     it("must throw an exception if it encounters a problem parsing the xml", function(){
       assert.throws(function () {
         xml.strToXMLDoc('');
-      }, Error, "Error parsing the string: ''");
+      }, Error, "Error parsing the string: \"\"");
 
       assert.throws(function () {
         xml.strToXMLDoc();
-      }, Error, "Error parsing the string: 'undefined'");
+      }, Error, "Error parsing the string: \"undefined\"");
 
       assert.throws(function () {
         xml.strToXMLDoc({});
-      }, Error, "Error parsing the string: '[object Object]'");
+      }, Error, "Error parsing the string: \"[object Object]\"");
     });
 
     it("must, given an xml string, return an equivalent XML document object", function(){

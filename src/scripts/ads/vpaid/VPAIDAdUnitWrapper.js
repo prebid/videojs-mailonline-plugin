@@ -3,9 +3,9 @@
 var VASTError = require('../vast/VASTError');
 
 var utilities = require('../../utils/utilityFunctions');
-var logger = require ('../../utils/consoleLogger');
+var logger = require('../../utils/consoleLogger');
 
-function VPAIDAdUnitWrapper(vpaidAdUnit, opts) {
+function VPAIDAdUnitWrapper (vpaidAdUnit, opts) {
   if (!(this instanceof VPAIDAdUnitWrapper)) {
     return new VPAIDAdUnitWrapper(vpaidAdUnit, opts);
   }
@@ -16,24 +16,24 @@ function VPAIDAdUnitWrapper(vpaidAdUnit, opts) {
 
   this._adUnit = vpaidAdUnit;
 
-  /*** Local Functions ***/
-  function sanityCheck(adUnit, opts) {
+  // **** Local Functions **** //
+  function sanityCheck (adUnit, opts) {
     if (!adUnit || !VPAIDAdUnitWrapper.checkVPAIDInterface(adUnit)) {
       throw new VASTError('on VPAIDAdUnitWrapper, the passed VPAID adUnit does not fully implement the VPAID interface');
     }
 
     if (!utilities.isObject(opts)) {
-      throw new VASTError("on VPAIDAdUnitWrapper, expected options hash  but got '" + opts + "'");
+      throw new VASTError('on VPAIDAdUnitWrapper, expected options hash  but got "' + opts + '"');
     }
 
-    if (!("responseTimeout" in opts) || !utilities.isNumber(opts.responseTimeout) ){
-      throw new VASTError("on VPAIDAdUnitWrapper, expected responseTimeout in options");
+    if (!('responseTimeout' in opts) || !utilities.isNumber(opts.responseTimeout)) {
+      throw new VASTError('on VPAIDAdUnitWrapper, expected responseTimeout in options');
     }
   }
 }
 
-VPAIDAdUnitWrapper.checkVPAIDInterface = function checkVPAIDInterface(VPAIDAdUnit) {
-  //NOTE: skipAd is not part of the method list because it only appears in VPAID 2.0 and we support VPAID 1.0
+VPAIDAdUnitWrapper.checkVPAIDInterface = function checkVPAIDInterface (VPAIDAdUnit) {
+  // NOTE: skipAd is not part of the method list because it only appears in VPAID 2.0 and we support VPAID 1.0
   var VPAIDInterfaceMethods = [
     'handshakeVersion', 'initAd', 'startAd', 'stopAd', 'resizeAd', 'pauseAd', 'expandAd', 'collapseAd'
   ];
@@ -47,13 +47,13 @@ VPAIDAdUnitWrapper.checkVPAIDInterface = function checkVPAIDInterface(VPAIDAdUni
 
   return canSubscribeToEvents(VPAIDAdUnit) && canUnsubscribeFromEvents(VPAIDAdUnit);
 
-  /*** Local Functions ***/
+  // **** Local Functions **** //
 
-  function canSubscribeToEvents(adUnit) {
+  function canSubscribeToEvents (adUnit) {
     return utilities.isFunction(adUnit.subscribe) || utilities.isFunction(adUnit.addEventListener) || utilities.isFunction(adUnit.on);
   }
 
-  function canUnsubscribeFromEvents(adUnit) {
+  function canUnsubscribeFromEvents (adUnit) {
     return utilities.isFunction(adUnit.unsubscribe) || utilities.isFunction(adUnit.removeEventListener) || utilities.isFunction(adUnit.off);
 
   }
@@ -71,22 +71,22 @@ VPAIDAdUnitWrapper.prototype.adUnitAsyncCall = function () {
   this._adUnit[method].apply(this._adUnit, args);
   timeoutId = setTimeout(function () {
     timeoutId = null;
-    cb(new VASTError("on VPAIDAdUnitWrapper, timeout while waiting for a response on call '" + method + "'"));
+    cb(new VASTError('on VPAIDAdUnitWrapper, timeout while waiting for a response on call "' + method + '"'));
     cb = utilities.noop;
   }, this.options.responseTimeout);
 
-  /*** Local functions ***/
-  function sanityCheck(method, cb, adUnit) {
+  // **** Local Functions **** //
+  function sanityCheck (method, cb, adUnit) {
     if (!utilities.isString(method) || !utilities.isFunction(adUnit[method])) {
-      throw new VASTError("on VPAIDAdUnitWrapper.adUnitAsyncCall, invalid method name");
+      throw new VASTError('on VPAIDAdUnitWrapper.adUnitAsyncCall, invalid method name');
     }
 
     if (!utilities.isFunction(cb)) {
-      throw new VASTError("on VPAIDAdUnitWrapper.adUnitAsyncCall, missing callback");
+      throw new VASTError('on VPAIDAdUnitWrapper.adUnitAsyncCall, missing callback');
     }
   }
 
-  function wrapCallback() {
+  function wrapCallback () {
     return function () {
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -121,7 +121,7 @@ VPAIDAdUnitWrapper.prototype.waitForEvent = function (evtName, cb, context) {
       if (that.options && that.options.player) {
         that.options.player.trigger({type: 'trace.message', data: {message: 'Timeout while waiting for event ' + evtName}});
       }
-			cb(new VASTError("on VPAIDAdUnitWrapper.waitForEvent, timeout while waiting for event '" + evtName + "'. You may need to increase adStartTimeout."));
+			cb(new VASTError('on VPAIDAdUnitWrapper.waitForEvent, timeout while waiting for event "' + evtName + '". You may need to increase adStartTimeout.'));
 		}
     timeoutId = null;
     cb = utilities.noop;
@@ -130,18 +130,18 @@ VPAIDAdUnitWrapper.prototype.waitForEvent = function (evtName, cb, context) {
   // EN
   window._timeoutIds.push(timeoutId);
 
-  /*** Local functions ***/
-  function sanityCheck(evtName, cb) {
+  // **** Local Functions **** //
+  function sanityCheck (evtName, cb) {
     if (!utilities.isString(evtName)) {
-      throw new VASTError("on VPAIDAdUnitWrapper.waitForEvent, missing evt name");
+      throw new VASTError('on VPAIDAdUnitWrapper.waitForEvent, missing evt name');
     }
 
     if (!utilities.isFunction(cb)) {
-      throw new VASTError("on VPAIDAdUnitWrapper.waitForEvent, missing callback");
+      throw new VASTError('on VPAIDAdUnitWrapper.waitForEvent, missing callback');
     }
   }
 
-  function responseListener() {
+  function responseListener () {
     if (that.options && that.options.player) {
       that.options.player.trigger({type: 'trace.event', data: {event: evtName}});
     }
@@ -227,7 +227,7 @@ VPAIDAdUnitWrapper.prototype.skipAd = function (cb) {
   this._adUnit.skipAd();
 };
 
-//VPAID property getters
+// VPAID property getters
 [
   'adLinear',
   'adWidth',
@@ -247,9 +247,9 @@ VPAIDAdUnitWrapper.prototype.skipAd = function (cb) {
   };
 });
 
-//VPAID property setters
-VPAIDAdUnitWrapper.prototype.setAdVolume = function(volume, cb){
-  this.adUnitAsyncCall('setAdVolume',volume, cb);
+// VPAID property setters
+VPAIDAdUnitWrapper.prototype.setAdVolume = function (volume, cb) {
+  this.adUnitAsyncCall('setAdVolume', volume, cb);
 };
 
 module.exports = VPAIDAdUnitWrapper;

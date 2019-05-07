@@ -1,20 +1,20 @@
 'use strict';
 
-//@exclude
+/* PROD-EXCLUDE-START */
 var videojs = window.videojs || {
-	getComponent : function() {},
-	extend : function() {},
-	registerComponent : function() {},
-	registerPlugin : function() {}
+	getComponent: function () {},
+	extend: function () {},
+	registerComponent: function () {},
+	registerPlugin: function () {}
 };
-// @endexclude
+/* PROD-EXCLUDE-END */
 
 window._molSettings = null;
 
 require('./plugin/components/black-poster_5');
-var logger = require ('./utils/consoleLogger');
+var logger = require('./utils/consoleLogger');
 
-logger.log('Prebid MailOnline plugin version 1.3.13');
+logger.log('Prebid MailOnline plugin version 1.3.14');
 
 var videoJsVAST = require('./plugin/videojs.vast.vpaid');
 

@@ -16,7 +16,7 @@ var testUtils = require('../test-utils');
 
 require('videojs_5.vast.vpaid');
 
-describe("videojs.vast plugin", function () {
+describe("videojs.vast plugin", function (){
   var testDiv, videoEl, player;
 
   function assertError(callback, msg, code) {
@@ -36,11 +36,11 @@ describe("videojs.vast plugin", function () {
     return new MediaFile(xml.toJXONTree(xmlStr));
   }
 
-  function assertVASTTrackRequest(URLs, variables) {
+  function assertVASTTrackRequest(URLs, variables){
     URLs = utilities.isArray(URLs) ? URLs : [URLs];
     sinon.assert.calledOnce(vastUtil.track);
     sinon.assert.calledWithExactly(vastUtil.track, URLs, variables);
-  }
+  }   //dsfdsfdsf
 
   function assertTriggersTrackError(fn, msg, code, vastResponse) {
     var adsCanceledSpy = sinon.spy();

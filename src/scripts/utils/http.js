@@ -3,13 +3,13 @@
 var urlUtils = require('./urlUtils');
 var utilities = require('./utilityFunctions');
 
-function HttpRequestError(message) {
+function HttpRequestError (message) {
   this.message = 'HttpRequest Error: ' + (message || '');
 }
 HttpRequestError.prototype = new Error();
-HttpRequestError.prototype.name = "HttpRequest Error";
+HttpRequestError.prototype.name = 'HttpRequest Error';
 
-function HttpRequest(createXhr) {
+function HttpRequest (createXhr) {
   if (!utilities.isFunction(createXhr)) {
     throw new HttpRequestError('Missing XMLHttpRequest factory method');
   }
@@ -87,7 +87,7 @@ HttpRequest.prototype.run = function (method, url, callback, options) {
     }, timeout);
   }
 
-  function sanityCheck(url, callback, options) {
+  function sanityCheck (url, callback, options) {
     if (!utilities.isString(url) || utilities.isEmptyString(url)) {
       throw new HttpRequestError("Invalid url '" + url + "'");
     }
@@ -101,7 +101,7 @@ HttpRequest.prototype.run = function (method, url, callback, options) {
     }
   }
 
-  function setHeaders(xhr, headers) {
+  function setHeaders (xhr, headers) {
     utilities.forEach(headers, function (value, key) {
       if (utilities.isDefined(value)) {
         xhr.setRequestHeader(key, value);
@@ -109,7 +109,7 @@ HttpRequest.prototype.run = function (method, url, callback, options) {
     });
   }
 
-  function requestError() {
+  function requestError () {
     callback(-1, null, null, '');
   }
 };
@@ -117,7 +117,7 @@ HttpRequest.prototype.run = function (method, url, callback, options) {
 HttpRequest.prototype.get = function (url, callback, options) {
   this.run('GET', url, processResponse, options);
 
-  function processResponse(status, response, headersString, statusText) {
+  function processResponse (status, response, headersString, statusText) {
     if (isSuccess(status)) {
       callback(null, response, status, headersString, statusText);
     } else {
@@ -125,14 +125,14 @@ HttpRequest.prototype.get = function (url, callback, options) {
     }
   }
 
-  function isSuccess(status) {
-    return 200 <= status && status < 300;
+  function isSuccess (status) {
+    return 200 <= status && status < 300; // eslint-disable-line yoda
   }
 };
 
-function createXhr() {
+function createXhr () {
   var xhr = new XMLHttpRequest();
-  if (!("withCredentials" in xhr)) {
+  if (!('withCredentials' in xhr)) {
     // XDomainRequest for IE.
     xhr = new XDomainRequest();
   }

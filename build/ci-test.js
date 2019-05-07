@@ -3,6 +3,7 @@
 var gulp        = require('gulp');
 var Server      = require('karma').Server;
 var runSequence = require('run-sequence');
+var path    = require('path');
 
 var config       = require('./config');
 var BuildTaskDoc = require('./BuildTaskDoc');
@@ -12,14 +13,14 @@ var BuildTaskDoc = require('./BuildTaskDoc');
  */
 
 var testTasks = [];
-config.versions.forEach(function(version) {
+config.versions.forEach(function (version) {
 
   var testTask = 'ci-test-videojs_' + version;
 
   gulp.task(testTask, function (done) {
 
     new Server({
-      configFile: __dirname + '/../karma.conf.js',
+      configFile: path.join(__dirname, '/../karma.conf.js'),
       files: config.testFiles(version),
       autoWatch: false,
       singleRun: true,
@@ -58,18 +59,18 @@ config.versions.forEach(function(version) {
 });
 
 
-gulp.task('ci-test', function(done) {
+gulp.task('ci-test', function (done) {
 
   testTasks.push(function (error) {
-      if(error){
+      if (error) {
         console.log(error.message.red);
-      } else{
+      } else {
         console.log('TEST FINISHED SUCCESSFULLY'.green);
       }
       done(error);
     });
-  runSequence.apply(this,testTasks);
+  runSequence.apply(this, testTasks);
 
 });
 
-module.exports = new BuildTaskDoc('ci-test', 'Starts karma test and generates test code coverage, to be used by CI Server', 6.1);
+module.exports = new BuildTaskDoc('ci-test', 'Starts karma test and generates test code coverage, to be used by CI Server', 2);

@@ -13,22 +13,19 @@ module.exports = function (karma) {
     /**
      * This is the list of file patterns to load into the browser during testing.
      */
-    frameworks: [ 'browserify', 'mocha', 'chai-sinon'],
+    frameworks: ['browserify', 'mocha', 'chai-sinon'],
 
     preprocessors: {
-      'test/**/*.js': [ 'browserify' ]
+      'src/**/*.js': ['coverage'],
+      'test/**/*.js': ['browserify']
     },
     browserify: {
-      paths: ['src/scripts', 'bower_components'],
+      paths: ['src/scripts'],
       debug: true,
-      transform: [ ['babelify', {
-        presets: ["es2015"],
-        //only: /VPAIDFLASHClient/
-        only: /VPAIDHTML5Client/
-        }],
+      transform: [
         istanbul({
-            //NOTE: Once we got full ES6 there is a problem in Karma/Istanbul please look https://github.com/karma-runner/karma-coverage/issues/157#issuecomment-160555004
-            ignore: ['**/node_modules/**', '**/test/**', '**/bower_components/**'],
+            // NOTE: Once we got full ES6 there is a problem in Karma/Istanbul please look https://github.com/karma-runner/karma-coverage/issues/157#issuecomment-160555004
+            ignore: ['**/node_modules/**', '**/test/**'],
         }) ]
     },
     logLevel: 'LOG_INFO',
@@ -36,7 +33,10 @@ module.exports = function (karma) {
     /**
      * How to report, by default.
      */
-    reporters: ['progress'],
+    reporters: ['progress', 'coverage'],
+
+    // enable / disable colors in the output (reporters and logs)
+    colors: true,
 
     /**
      * On which port should the browser connect, on which port is the test runner
@@ -65,9 +65,16 @@ module.exports = function (karma) {
      * the aesthetic advantage of not launching a browser every time you save.
      */
     browsers: [
-      //'Safari',
-      //'Firefox',
       'Chrome'
-    ]
+    ],
+
+    coverageReporter: {
+      includeAllSources: true,
+      dir: 'coverage/',
+      reporters: [
+        { type: 'html' },
+        { type: 'text-summary' }
+      ]
+    }
   });
 };

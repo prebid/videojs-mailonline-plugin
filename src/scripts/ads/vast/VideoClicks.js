@@ -3,7 +3,7 @@
 var utilities = require('../../utils/utilityFunctions');
 var xml = require('../../utils/xml');
 
-function VideoClicks(videoClickJTree) {
+function VideoClicks (videoClickJTree) {
   if (!(this instanceof VideoClicks)) {
     return new VideoClicks(videoClickJTree);
   }
@@ -12,8 +12,8 @@ function VideoClicks(videoClickJTree) {
   this.clickTrackings = parseClickTrackings(videoClickJTree.clickTracking);
   this.customClicks = parseClickTrackings(videoClickJTree.customClick);
 
-  /*** Local functions ***/
-  function parseClickTrackings(trackingData) {
+  // **** Local Functions **** //
+  function parseClickTrackings (trackingData) {
     var clickTrackings = [];
     if (trackingData) {
       trackingData = utilities.isArray(trackingData) ? trackingData : [trackingData];

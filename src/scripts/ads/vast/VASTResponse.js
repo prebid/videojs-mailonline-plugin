@@ -7,10 +7,10 @@ var InLine = require('./InLine');
 var Wrapper = require('./Wrapper');
 
 var utilities = require('../../utils/utilityFunctions');
-//var xml = require('../../utils/xml');
+// var xml = require('../../utils/xml');
 
 window.InLine__A = InLine;
-function VASTResponse() {
+function VASTResponse () {
   if (!(this instanceof VASTResponse)) {
     return new VASTResponse();
   }
@@ -49,12 +49,14 @@ VASTResponse.prototype.addAd = function (ad) {
   }
 };
 
-/*VASTResponse.prototype._addErrorTrackUrl = function (error) {
+  /*
+  VASTResponse.prototype._addErrorTrackUrl = function (error) {
 	  var errorURL = error instanceof xml.JXONTree ? xml.keyValue(error) : error;
 	  if (errorURL) {
 	    this.errorURLMacros.push(errorURL);
 	  }
-	};*/
+	};
+	*/
 VASTResponse.prototype._addErrorTrackUrls = function (errors) {
 	  utilities.isArray(errors) && appendToArray(this.errorURLMacros, errors);
 	};
@@ -178,7 +180,7 @@ VASTResponse.prototype._addWrapper = function (wrapper) {
       var linear = creative.linear;
       if (linear) {
         that._addVideoClicks(linear.videoClicks);
-        that.clickThrough = undefined;//We ensure that no clickThrough has been added
+        that.clickThrough = undefined;// We ensure that no clickThrough has been added
         that._addTrackingEvents(linear.trackingEvents);
         that._addIcons(linear.icons);
       }
@@ -186,11 +188,11 @@ VASTResponse.prototype._addWrapper = function (wrapper) {
   }
 };
 
-VASTResponse.prototype.hasLinear = function(){
+VASTResponse.prototype.hasLinear = function () {
   return this._linearAdded;
 };
 
-function appendToArray(array, items) {
+function appendToArray (array, items) {
   items.forEach(function (item) {
     if (item) {
       array.push(item);
