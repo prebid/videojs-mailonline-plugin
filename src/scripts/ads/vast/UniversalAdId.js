@@ -5,8 +5,14 @@ function UniversalAdId (universalAdIdJTree) {
 	    return new UniversalAdId(universalAdIdJTree);
 	  }
 
-	  this.idRegistry = universalAdIdJTree.attr('idRegistry');
-	  this.idValue = universalAdIdJTree.attr('idValue');
+	  if (universalAdIdJTree) {
+		this.idRegistry = universalAdIdJTree.attr('idRegistry');
+		this.idValue = universalAdIdJTree.attr('idValue');
+	  }
+	  else {
+		this.idRegistry = 'unknown';
+		this.idValue = 'unknown';
+	  }
 }
 
 module.exports = UniversalAdId;
