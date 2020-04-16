@@ -13,6 +13,7 @@ var VASTError = require('../vast/VASTError');
 var async = require('../../utils/async');
 var playerUtils = require('../../utils/playerUtils');
 var utilities = require('../../utils/utilityFunctions');
+var http = require('../../utils/http').http;
 
 function IconIntegrator (player) {
   if (!(this instanceof IconIntegrator)) {
@@ -55,16 +56,23 @@ IconIntegrator.prototype._createIcons = function createIcons (icons, callback) {
     var content = null;
     if (icon.staticResource) {
       var imageTypes = ['image/gif', 'image/jpeg', 'image/png'];
-      if (imageTypes.indexOf(icon.creativeType)) {
+      if (imageTypes.indexOf(icon.creativeType) >= 0) {
         content = "<img src='" + icon.staticResource + "' width='" + icon.width + "' height='" + icon.height + "'>";
       }
     }
-    /* else if (icon.htmlResource) {
-      // to do ...
+    else if (icon.htmlResource) {
+      content = icon.htmlResource;
     }
     else if (icon.iframeResource) {
-      // to do ...
-    } */
+      var iframe = document.createElement('iframe');
+      iframe.src = icon.iframeResource;
+      iframe.scrolling = 'no';
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.border = 'none';
+      iframe.style.overflow = 'hidden';
+      content = iframe;
+    }
     return content;
   }
 
@@ -176,7 +184,22 @@ IconIntegrator.prototype._renderIcons = function renderIcons () {
 
     displayIcon.setAttribute('name', 'adicon');
     displayIcon.id = 'adicon_' + icon.icon.program;
-    displayIcon.innerHTML = icon.content;
+    if (icon.icon.staticResource) {
+      displayIcon.innerHTML = icon.content;
+    }
+    else if (icon.icon.htmlResource) {
+      http.get(icon.content,
+        function (error, response, status) {
+          if (!error) {
+            displayIcon.style.overflow = 'hidden';
+            displayIcon.innerHTML = response;
+          }
+        },
+        {withCredentials: true});
+    }
+    else {
+      displayIcon.appendChild(icon.content);
+    }
     displayIcon.style.position = 'absolute';
     displayIcon.style[xPosition] = xPositionOffset + 'px';
     displayIcon.style[yPosition] = yPositionOffset + 'px';
@@ -185,8 +208,8 @@ IconIntegrator.prototype._renderIcons = function renderIcons () {
     icon.origY = yPositionOffset;
 
     // set width, height of div element
-    displayIcon.style.width = icon.width + 'px';
-    displayIcon.style.height = icon.height + 'px';
+    displayIcon.style.width = icon.icon.width + 'px';
+    displayIcon.style.height = icon.icon.height + 'px';
 
     icon.div = displayIcon;
 

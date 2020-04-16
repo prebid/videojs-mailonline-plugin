@@ -49,8 +49,8 @@ function Icon (iconJTree) {
   var iframeResource = null;
   if (xml.keyValue(iconJTree.IFrameResource)) {
     iframeResource = xml.keyValue(iconJTree.IFrameResource);
-  } else if (xml.keyValue(iconJTree.iFrameresource)) {
-    iframeResource = xml.keyValue(iconJTree.iFrameresource);
+  } else if (xml.keyValue(iconJTree.iFrameResource)) {
+    iframeResource = xml.keyValue(iconJTree.iFrameResource);
   }
 
   this.iframeResource = iframeResource;
