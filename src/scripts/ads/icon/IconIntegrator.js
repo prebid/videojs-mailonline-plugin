@@ -56,7 +56,7 @@ IconIntegrator.prototype._createIcons = function createIcons (icons, callback) {
     var content = null;
     if (icon.staticResource) {
       var imageTypes = ['image/gif', 'image/jpeg', 'image/png'];
-      if (imageTypes.indexOf(icon.creativeType)) {
+      if (imageTypes.indexOf(icon.creativeType) >= 0) {
         content = "<img src='" + icon.staticResource + "' width='" + icon.width + "' height='" + icon.height + "'>";
       }
     }
