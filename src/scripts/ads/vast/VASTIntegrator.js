@@ -553,6 +553,8 @@ VASTIntegrator.prototype._playSelectedAd = function playSelectedAd (source, resp
 
   // window.MoatApiReference = null;
 
+  var mainDuration = player.duration();
+  logger.debug('<VASTIntegrator._playSelectedAd>  Main content duration: ' + mainDuration);
   player.preload('auto'); // without preload=auto the durationchange event is never fired
   player.src(source);
 
@@ -561,6 +563,10 @@ VASTIntegrator.prototype._playSelectedAd = function playSelectedAd (source, resp
   playerUtils.once(player, ['durationchange', 'error', 'vast.adsCancel'], function (evt) {
     if (evt.type === 'durationchange') {
       logger.debug('<VASTIntegrator._playSelectedAd> got durationchange; calling playAd()');
+      if (tempInt) {
+        clearInterval(tempInt);
+        tempInt = null;
+      }
       playAd();
     } else if (evt.type === 'error') {
       callback(new VASTError('on VASTIntegrator, Player is unable to play the Ad', 400), response);
@@ -568,10 +574,29 @@ VASTIntegrator.prototype._playSelectedAd = function playSelectedAd (source, resp
     // NOTE: If the ads get canceled we do nothing/
   });
 
+  // !!! Sometimes durationchange event nor fired when source of player changed.
+  // In this case we try to figured out if duration changed and fire durationchange event by ourself.
+  var tempInt = setInterval(function () {
+    logger.debug('<VASTIntegrator._playSelectedAd> Ad video duration: ' + player.duration());
+    var curDur = player.duration();
+    if (!isNaN(curDur) &&  mainDuration != player.duration()) {
+      clearInterval(tempInt);
+      tempInt = null;
+      player.duration(curDur + 0.01); // this code will fire durationchange event automatically
+    }
+  }, 500);
+  // stop checking duration in 5 secons
+  setTimeout(function () {
+    if (tempInt) {
+      clearInterval(tempInt);
+      tempInt = null;
+    }
+  }, 5000);
+
   // ***** Local Functions **** //
   function playAd () {
 
-    playerUtils.once(player, ['playing', 'vast.adsCancel'], function (evt) {
+    playerUtils.once(player, ['playing', 'alreadyPlaying', 'vast.adsCancel'], function (evt) {
       if (evt.type === 'vast.adsCancel') {
         return;
       }
@@ -656,7 +681,14 @@ VASTIntegrator.prototype._playSelectedAd = function playSelectedAd (source, resp
 
     logger.debug('<VASTIntegrator._playSelectedAd/playAd> calling player.play()...');
 
-    player.play();
+    // player.muted(true);
+    if (player.currentTime() > 0) {
+      logger.debug('<VASTIntegrator._playSelectedAd/playAd> Trigger alreadyPlaying event if ad video already playing');
+      player.trigger('alreadyPlaying');
+    }
+    else {
+      player.play();
+    }
   }
 };
 
