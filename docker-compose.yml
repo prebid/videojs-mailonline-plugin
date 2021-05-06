@@ -1,0 +1,13 @@
+version: '3'
+
+volumes:
+    deps:
+
+services:
+    app:
+        image: node:10
+        volumes:
+            - .:/usr/src/app
+            - deps:/usr/src/app/node_modules
+        working_dir: /usr/src/app
+        command: bash -c "npm run build-prod && npm run build-styles"

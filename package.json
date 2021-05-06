@@ -26,7 +26,8 @@
   "scripts": {
     "test": "gulp ci-test",
     "build-dev": "webpack --config webpack.dev.js",
-    "build-prod": "webpack --config webpack.prod.js"
+    "build-prod": "webpack --config webpack.prod.js",
+    "build-styles": "gulp build-styles"
   },
   "license": "MIT",
   "devDependencies": {
@@ -90,6 +91,6 @@
     "webpack-strip-block": "^0.2.0"
   },
   "dependencies": {
-    "vpaid-html5-client": "git://github.com/MailOnline/VPAIDHTML5Client.git"
+    "vpaid-html5-client": "git+https://github.com/bmanth60/VPAIDHTML5Client.git#master"
   }
 }
