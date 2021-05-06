@@ -68,6 +68,7 @@ module.exports = function VASTPlugin (options) {
     firstPlay: true
   };
 
+  logger.debug('player set as, ', player);
   var settings = utilities.extend({}, defaultOpts, options || {});
 
   // get Brightcove Player Id
