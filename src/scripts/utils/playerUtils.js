@@ -2,6 +2,7 @@
 
 var dom = require('./dom');
 var utilities = require('./utilityFunctions');
+var logger = require('./consoleLogger');
 
 var playerUtils = {};
 
@@ -23,6 +24,8 @@ playerUtils.getPlayerSnapshot = function getPlayerSnapshot (player) {
     playing: !player.paused(),
     suppressedTracks: getSuppressedTracks(player)
   };
+
+  logger.debug('generated snapshot...', snapshot);
 
   if (snapshot.ended) {
     snapshot.currentTime = player.duration() + 1;
@@ -101,6 +104,7 @@ playerUtils.restorePlayerSnapshot = function restorePlayerSnapshot (player, snap
   var tech = player.el().querySelector('.vjs-tech');
   var attempts = 20; // the number of remaining attempts to restore the snapshot
 
+  logger.debug('restoring snapshot...', snapshot);
   if (snapshot.nativePoster) {
     tech.poster = snapshot.nativePoster;
   }

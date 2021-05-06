@@ -1,7 +1,7 @@
 'use strict';
 
 var _verbosity = 0;
-var _prefix = '[MOL-Plugin';
+var _prefix = '[Prebid-Vast-Plugin';
 var _playerId = '';
 var _astDebug;
 
