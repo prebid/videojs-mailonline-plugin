@@ -68,7 +68,6 @@ module.exports = function VASTPlugin (options) {
     firstPlay: true
   };
 
-  logger.debug('player set as, ', player);
   var settings = utilities.extend({}, defaultOpts, options || {});
 
   // get Brightcove Player Id
@@ -108,6 +107,7 @@ module.exports = function VASTPlugin (options) {
 
   logger.setVerbosity(settings.verbosity);
 
+  logger.debug('player set as, ', player);
   if (!settings.playsInBreak) {
 	  snapshot = playerUtils.getPlayerSnapshot(player);
 	  snapshot.playing = true;	// force to play content after ad ended
